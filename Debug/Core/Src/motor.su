@@ -1,0 +1,3 @@
+motor.c:25:6:configStepMotor1	32	static
+motor.c:56:6:configStepMotor2	32	static
+motor.c:87:6:configStepMotor3	32	static

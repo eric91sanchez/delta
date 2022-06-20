@@ -1,0 +1,4 @@
+homing.c:12:6:homingAprox	24	static
+homing.c:87:6:homingArm1	24	static
+homing.c:124:6:homingArm2	24	static
+homing.c:165:6:homingArm3	24	static
