@@ -1,0 +1,5 @@
+../Core/Src/trayectoria.c:55:6:inicializarTrayectoria	88	static
+../Core/Src/trayectoria.c:185:6:obtenerVelCurva	32	static
+../Core/Src/trayectoria.c:236:6:cinematicaInversa	56	static
+../Core/Src/trayectoria.c:280:6:jacobianoInverso	192	static
+../Core/Src/trayectoria.c:363:6:SetPerfilTimers	40	static

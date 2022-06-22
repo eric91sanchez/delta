@@ -43,20 +43,11 @@ extern TIM_HandleTypeDef htim14;
 extern TIM_HandleTypeDef htim15;
 extern UART_HandleTypeDef huart3;
 
-typedef struct{
-	double m[3][3];
-}array2D;
-
 
 void inicializarTrayectoria(double XiHip1, double XfHip4, double V0Hip, double Vf, double Vmax, double Amax, double Jerk );
 void obtenerVelCurva(double t);
 void cinematicaInversa(double Pxaux, double Pyaux, double Pzaux);
-array2D transpuesta (double Maux[3][3]);
-double productDot(double VectA[], double VectB[]);
-double determinante (double Maux[3][3]);
-array2D adjunta (double Maux[3][3]);
-array2D inversa (double A[3][3]);
-array2D productMatriz (double MatrizA[3][3], double MatrizB[3][3]);
+
 void jacobianoInverso(double Vxaux, double Vyaux, double Vzaux, double Pxaux, double Pyaux, double Pzaux);
 void SetPerfilTimers(double omeg1, double omeg2, double omeg3);
 
