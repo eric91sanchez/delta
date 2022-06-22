@@ -22,7 +22,7 @@ void interpretaComando(void){
 		case '1':
 			HAL_UART_Transmit(&huart3, "Motor1\n\r", 8, 100);
 			auxM =  strtod(&rx_buffer[2], NULL);
-			if(auxM>=0 && auxM<=90){
+			if(auxM>=0 && auxM<=90){  // verificacion de limites articulares
 				titha1 = auxM;
 			}
 			else{
@@ -31,7 +31,7 @@ void interpretaComando(void){
 			break;
 		case '2':
 			HAL_UART_Transmit(&huart3, "Motor2\n\r", 8, 100);
-			if(auxM>=0 && auxM<=90){
+			if(auxM>=0 && auxM<=90){  // verificacion de limites articulares
 				titha2 = auxM;
 			}
 			else{
@@ -40,7 +40,7 @@ void interpretaComando(void){
 			break;
 		case '3':
 			HAL_UART_Transmit(&huart3, "Motor3\n\r", 8, 100);
-			if(auxM>=0 && auxM<=90){
+			if(auxM>=0 && auxM<=90){   // verificacion de limites articulares
 				titha3 = auxM;
 			}
 			else{

@@ -6,8 +6,12 @@
  */
 #include "motor.h"
 
-double stepRev = 1600; //Numero de pasos por revolucion (Observar tabla de micropasos del Driver y verificar)
-double reductor = 6;							//Relacion de reduccion del reductor
+#define stepRev 1600			 //Numero de pasos por revolucion (Observar tabla de micropasos del Driver y verificar)
+#define reductor 6				 //Relacion de reduccion del reductor
+
+
+//double stepRev = 1600; //Numero de pasos por revolucion (Observar tabla de micropasos del Driver y verificar)
+//double reductor = 6;							//Relacion de reduccion del reductor
 
 double anguloActual1 = 0;
 double anguloActual2 = 0;

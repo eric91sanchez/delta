@@ -8,14 +8,36 @@
 #include <operaciones.h>
 #include "trayectoria.h"
 
+//Una constante a diferencia de una macro ocupa un espacio(memoria) durante la ejecución del programa.
+//Ya que son valores que nunca van a cambiar en el programa, es mejor definirlos como tal (constantes)
+
+#define c30 0.866025403784439
+#define s30 0.500000000000000
+#define c150 -0.866025403784439
+#define s150 0.500000000000000
+#define pi 3.14159265359
+#define RAD_TO_DEG 180.0 / pi
+
+#define fi1 270
+#define fi2 30
+#define fi3 150
+#define L1 0.4
+#define L2 0.6
+#define R 0.168
+#define r 0.070
+
+
 // Para tihta = 0, Pxaux=0 Pyaux=0 y Pzaux=0.334658034417224
-double fi1 = 270;
-double fi2 = 30;
-double fi3 = 150;
-double L1 = 0.4;
-double L2 = 0.6;
-double R = 0.168;
-double r = 0.070;
+
+//double fi1 = 270;
+//double fi2 = 30;
+//double fi3 = 150;
+//double L1 = 0.4;
+//double L2 = 0.6;
+//double R = 0.168;
+//double r = 0.070;
+
+
 double A1, B1, C1, XJ1_1, XJ1_2, YJ1_1, YJ1_2, ZJ1_1, ZJ1_2, A11, A12, A13, A14, A15;
 double A2, B2, C2, XJ2_1, XJ2_2, YJ2_1, YJ2_2, ZJ2_1, ZJ2_2;
 double A3, B3, C3, XJ3_1, XJ3_2, YJ3_1, YJ3_2, ZJ3_1, ZJ3_2;
@@ -38,11 +60,12 @@ double cross_P1[3];
 double cross_P2[3];
 double cross_P3[3];
 double dot[3];
-double c30 = 0.866025403784439;
-double s30 = 0.500000000000000;
-double c150 = -0.866025403784439;
-double s150 = 0.500000000000000;
-double pi = 3.14159265359;
+
+//double c30 = 0.866025403784439;
+//double s30 = 0.500000000000000;
+//double c150 = -0.866025403784439;
+//double s150 = 0.500000000000000;
+//double pi = 3.14159265359;
 
 double Ai, Af, a0Hip1, a1Hip1, a2Hip1, a3Hip1, a0Hip2, a1Hip2, a2Hip2, a3Hip2,
 		a0Hip3, a1Hip3, a2Hip3, a3Hip3, a0Hip4, a1Hip4, a2Hip4, a3Hip4;
@@ -269,11 +292,11 @@ void cinematicaInversa(double Pxaux, double Pyaux, double Pzaux) {
 	ZJ3_2 = YJ3_2 * ((2 * sqrt(3.0) * (Pxaux + r * c150) - 2.0 * (Pyaux + r * s150) - 2.0 * sqrt(3) * R * c150 + 2.0 * R * s150) / (2.0 * Pzaux)) + ((pow((Pxaux + r * c150), 2.0) + pow((Pyaux + r * s150), 2) + pow(Pzaux, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * Pzaux));
 
 	titha1 = -1.0 * asin(ZJ1_1 / L1);
-	titha1 = titha1 * (180.0 / pi);
+	titha1 = titha1 * RAD_TO_DEG;
 	titha2 = -1.0 * asin(ZJ2_1 / L1);
-	titha2 = titha2 * (180.0 / pi);
+	titha2 = titha2 * RAD_TO_DEG;
 	titha3 = -1.0 * asin(ZJ3_1 / L1);
-	titha3 = titha3 * (180.0 / pi);
+	titha3 = titha3 * RAD_TO_DEG;
 }
 
 
