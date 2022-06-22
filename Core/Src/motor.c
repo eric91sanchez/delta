@@ -19,8 +19,8 @@ double remanente1;
 double remanente2;
 double remanente3;
 double Periodo;		//periodo de timer PWM
-double ErrorPeriodo;
-double ErrorAcumuladoPeriodo[3];
+//double ErrorPeriodo;
+//double ErrorAcumuladoPeriodo[3];
 
 void configStepMotor1(double angulo) {
 	double anguloDif;
