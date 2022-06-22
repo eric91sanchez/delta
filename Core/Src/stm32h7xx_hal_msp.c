@@ -76,6 +76,7 @@ void HAL_MspInit(void)
   /* Peripheral interrupt init */
   /* FPU_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(FPU_IRQn, 1, 0);
+  /* FPU_IRQn interrupt configuration */
   HAL_NVIC_EnableIRQ(FPU_IRQn);
 
   /* USER CODE BEGIN MspInit 1 */
@@ -86,5 +87,3 @@ void HAL_MspInit(void)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
