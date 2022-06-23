@@ -42,6 +42,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define Fcl 64000000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -62,7 +63,7 @@ uint32_t numStep3;		//Numero de pasos PaP3 consigna
 double titha1;
 double titha2;
 double titha3;
-double Fcl = 64000000;
+//double Fcl = 64000000;
 float_t Pxini;
 float_t Pyini;
 float_t Pzini;
