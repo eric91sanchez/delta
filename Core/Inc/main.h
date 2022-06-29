@@ -146,7 +146,7 @@ void Error_Handler(void);
 
 
 /* USER CODE BEGIN Private defines */
-
+#define FCL 64000000
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

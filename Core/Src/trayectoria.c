@@ -11,12 +11,14 @@
 //Una constante a diferencia de una macro ocupa un espacio(memoria) durante la ejecución del programa.
 //Ya que son valores que nunca van a cambiar en el programa, es mejor definirlos como tal (constantes)
 
-#define c30 0.866025403784439
-#define s30 0.500000000000000
-#define c150 -0.866025403784439
-#define s150 0.500000000000000
+#define C30 0.866025403784439
+#define S30 0.500000000000000
+#define C150 -0.866025403784439
+#define S150 0.500000000000000
 #define pi 3.14159265359
 #define RAD_TO_DEG 180.0 / pi
+
+
 
 #define fi1 270
 #define fi2 30
@@ -61,10 +63,10 @@ double cross_P2[3];
 double cross_P3[3];
 double dot[3];
 
-//double c30 = 0.866025403784439;
-//double s30 = 0.500000000000000;
-//double c150 = -0.866025403784439;
-//double s150 = 0.500000000000000;
+//double C30 = 0.866025403784439;
+//double S30 = 0.500000000000000;
+//double C150 = -0.866025403784439;
+//double S150 = 0.500000000000000;
 //double pi = 3.14159265359;
 
 double Ai, Af, a0Hip1, a1Hip1, a2Hip1, a3Hip1, a0Hip2, a1Hip2, a2Hip2, a3Hip2,
@@ -74,8 +76,9 @@ double Vm, VfHip1, VfHip3;
 double tfHip1, tiHip2, tfHip2, tiHip3, tfHip3, tiHip4, TiempoTotX, tfHip4;
 double DVHip, Aaux1, ViHip2, XiHip2, Aaux, XiHip3, ViHip4, XiHip4;
 
+//(Posinicio , Posfin , Vinicio , Vfin , Vmaxima, Amaxima, jerk)
 
-void inicializarTrayectoria(double XiHip1, double XfHip4, double V0Hip, double Vf, double Vmax, double Amax, double Jerk) {	//(Vinicio , Vfin , Vmaxima, Amaxima, jerk)
+void inicializarTrayectoria(double XiHip1, double XfHip4, double V0Hip, double Vf, double Vmax, double Amax, double Jerk) {
 
 	if (XfHip4 < XiHip1) {
 		Ai = -Amax;
@@ -256,19 +259,19 @@ void obtenerVelCurva(double t) {
 
 }
 
-void cinematicaInversa(double Pxaux, double Pyaux, double Pzaux) {
+void cinematicaInversa(Vec3D _Pfin) {
 
-	A1 = 1.0 + pow(((-2.0  * (R + (Pyaux - r))) / (2 * Pzaux)), 2);
-	A2 = 4.0 + pow(((2.0 * sqrt(3.0) * R * c30 + 2.0 * R * s30 - 2.0 * sqrt(3) * (Pxaux + r * c30) - 2.0 * (Pyaux + r * s30)) / (2.0 * Pzaux)), 2.0);
-	A3 = 4.0 + pow(((2.0 * sqrt(3.0) * (Pxaux + r * c150) - 2.0 * (Pyaux + r * s150) - 2.0 * sqrt(3) * R * c150 + 2.0 * R * s150) / (2.0 * Pzaux)), 2.0);
+	A1 = 1.0 + pow(((-2.0  * (R + (_Pfin.y - r))) / (2 * _Pfin.z)), 2);
+	A2 = 4.0 + pow(((2.0 * sqrt(3.0) * R * C30 + 2.0 * R * S30 - 2.0 * sqrt(3) * (_Pfin.x + r * C30) - 2.0 * (_Pfin.y + r * S30)) / (2.0 * _Pfin.z)), 2.0);
+	A3 = 4.0 + pow(((2.0 * sqrt(3.0) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2.0 * _Pfin.z)), 2.0);
 
-	B1 = (2.0 * R) + (2.0 * ((-2.0  * (R + (Pyaux - r))) / (2.0 * Pzaux)) * ((-pow(R, 2.0) + pow(L1, 2.0) + pow((Pyaux - r), 2.0) + pow(Pzaux, 2.0) - pow(L2, 2.0) + pow(Pxaux, 2)) / (2 * Pzaux)));
-	B2 = -2.0 * sqrt(3) * R * c30 - 2.0 * R * s30 + 2.0 * (((2.0 * sqrt(3) * R * c30 + 2.0 * R * s30)	+ (-2 * sqrt(3) * (Pxaux + r * c30)	- 2.0 * (Pyaux + r * s30))) / (2 * Pzaux)) * ((-pow(R, 2) + pow(L1, 2) + pow((Pxaux + r * c30), 2) + pow((Pyaux + r * s30), 2) + pow(Pzaux, 2) - pow(L2, 2)) / (2 * Pzaux));
-	B3 = 2.0 * sqrt(3) * R * c150 - 2.0 * R * s150 + 2.0 * ((2.0 * sqrt(3) * (Pxaux + r * c150) - 2.0 * (Pyaux + r * s150) - 2.0 * sqrt(3) * R * c150 + 2.0 * R * s150) / (2 * Pzaux)) * ((pow((Pxaux + r * c150), 2) + pow((Pyaux + r * s150), 2) + pow(Pzaux, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * Pzaux));
+	B1 = (2.0 * R) + (2.0 * ((-2.0  * (R + (_Pfin.y - r))) / (2.0 * _Pfin.z)) * ((-pow(R, 2.0) + pow(L1, 2.0) + pow((_Pfin.y - r), 2.0) + pow(_Pfin.z, 2.0) - pow(L2, 2.0) + pow(_Pfin.x, 2)) / (2 * _Pfin.z)));
+	B2 = -2.0 * sqrt(3) * R * C30 - 2.0 * R * S30 + 2.0 * (((2.0 * sqrt(3) * R * C30 + 2.0 * R * S30)	+ (-2 * sqrt(3) * (_Pfin.x + r * C30)	- 2.0 * (_Pfin.y + r * S30))) / (2 * _Pfin.z)) * ((-pow(R, 2) + pow(L1, 2) + pow((_Pfin.x + r * C30), 2) + pow((_Pfin.y + r * S30), 2) + pow(_Pfin.z, 2) - pow(L2, 2)) / (2 * _Pfin.z));
+	B3 = 2.0 * sqrt(3) * R * C150 - 2.0 * R * S150 + 2.0 * ((2.0 * sqrt(3) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2 * _Pfin.z)) * ((pow((_Pfin.x + r * C150), 2) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z));
 
-	C1 = (pow(((pow((Pyaux - r), 2) + pow(Pzaux, 2) - pow(L2, 2) + pow(Pxaux, 2) - pow(R, 2) + pow(L1, 2)) / (2 * Pzaux)), 2) - pow(L1, 2) + pow(R, 2));
-	C2 = pow(R, 2) - pow(L1, 2) + pow(((-pow(R, 2) + pow(L1, 2) + pow((Pxaux + r * c30), 2) + pow((Pyaux + r * s30), 2) + pow(Pzaux, 2) - pow(L2, 2)) / (2.0 * Pzaux)), 2.0);
-	C3 = pow(R, 2) - pow(L1, 2) + pow(((pow((Pxaux + r * c150), 2) + pow((Pyaux + r * s150), 2) + pow(Pzaux, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2.0 * Pzaux)), 2.0);
+	C1 = (pow(((pow((_Pfin.y - r), 2) + pow(_Pfin.z, 2) - pow(L2, 2) + pow(_Pfin.x, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z)), 2) - pow(L1, 2) + pow(R, 2));
+	C2 = pow(R, 2) - pow(L1, 2) + pow(((-pow(R, 2) + pow(L1, 2) + pow((_Pfin.x + r * C30), 2) + pow((_Pfin.y + r * S30), 2) + pow(_Pfin.z, 2) - pow(L2, 2)) / (2.0 * _Pfin.z)), 2.0);
+	C3 = pow(R, 2) - pow(L1, 2) + pow(((pow((_Pfin.x + r * C150), 2) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2.0 * _Pfin.z)), 2.0);
 
 	YJ1_1 = (-B1 - sqrt(pow(B1, 2) - 4 * A1 * C1)) / (2 * A1);
 	YJ1_2 = (-B1 + sqrt(pow(B1, 2) - 4 * A1 * C1)) / (2 * A1);
@@ -284,12 +287,12 @@ void cinematicaInversa(double Pxaux, double Pyaux, double Pzaux) {
 	XJ3_1 = -sqrt(3) * YJ3_1;
 	XJ3_2 = -sqrt(3) * YJ3_2;
 
-	ZJ1_1 = ((YJ1_1 * ((-2 * (R + (Pyaux - r))) / (2 * Pzaux))) + ((pow((Pyaux - r), 2) + pow(Pzaux, 2) - pow(L2, 2) + pow(Pxaux, 2) - pow(R, 2) + pow(L1, 2)) / (2 * Pzaux)));
-	ZJ1_2 = ((YJ1_2 * ((-2 * (R + (Pyaux - r))) / (2 * Pzaux))) + ((pow((Pyaux - r), 2) + pow(Pzaux, 2) - pow(L2, 2) + pow(Pxaux, 2) - pow(R, 2) + pow(L1, 2)) / (2 * Pzaux)));
-	ZJ2_1 = YJ2_1 * (((2 * sqrt(3.0) * R * c30 + 2.0 * R * s30) + (-2 * sqrt(3) * (Pxaux + r * c30) - 2.0 * (Pyaux + r * s30))) / (2 * Pzaux)) + ((-pow(R, 2) + pow(L1, 2) + pow((Pxaux + r * c30), 2) + pow((Pyaux + r * s30), 2) + pow(Pzaux, 2) - pow(L2, 2)) / (2 * Pzaux));
-	ZJ2_2 = YJ2_2 * (((2 * sqrt(3.0) * R * c30 + 2.0 * R * s30) + (-2 * sqrt(3) * (Pxaux + r * c30) - 2.0 * (Pyaux + r * s30))) / (2 * Pzaux)) + ((-pow(R, 2) + pow(L1, 2) + pow((Pxaux + r * c30), 2) + pow((Pyaux + r * s30), 2) + pow(Pzaux, 2) - pow(L2, 2)) / (2 * Pzaux));
-	ZJ3_1 = YJ3_1 * ((2 * sqrt(3.0) * (Pxaux + r * c150) - 2.0 * (Pyaux + r * s150) - 2.0 * sqrt(3) * R * c150 + 2.0 * R * s150) / (2.0 * Pzaux)) + ((pow((Pxaux + r * c150), 2.0) + pow((Pyaux + r * s150), 2) + pow(Pzaux, 2.0) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * Pzaux));
-	ZJ3_2 = YJ3_2 * ((2 * sqrt(3.0) * (Pxaux + r * c150) - 2.0 * (Pyaux + r * s150) - 2.0 * sqrt(3) * R * c150 + 2.0 * R * s150) / (2.0 * Pzaux)) + ((pow((Pxaux + r * c150), 2.0) + pow((Pyaux + r * s150), 2) + pow(Pzaux, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * Pzaux));
+	ZJ1_1 = ((YJ1_1 * ((-2 * (R + (_Pfin.y - r))) / (2 * _Pfin.z))) + ((pow((_Pfin.y - r), 2) + pow(_Pfin.z, 2) - pow(L2, 2) + pow(_Pfin.x, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z)));
+	ZJ1_2 = ((YJ1_2 * ((-2 * (R + (_Pfin.y - r))) / (2 * _Pfin.z))) + ((pow((_Pfin.y - r), 2) + pow(_Pfin.z, 2) - pow(L2, 2) + pow(_Pfin.x, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z)));
+	ZJ2_1 = YJ2_1 * (((2 * sqrt(3.0) * R * C30 + 2.0 * R * S30) + (-2 * sqrt(3) * (_Pfin.x + r * C30) - 2.0 * (_Pfin.y + r * S30))) / (2 * _Pfin.z)) + ((-pow(R, 2) + pow(L1, 2) + pow((_Pfin.x + r * C30), 2) + pow((_Pfin.y + r * S30), 2) + pow(_Pfin.z, 2) - pow(L2, 2)) / (2 * _Pfin.z));
+	ZJ2_2 = YJ2_2 * (((2 * sqrt(3.0) * R * C30 + 2.0 * R * S30) + (-2 * sqrt(3) * (_Pfin.x + r * C30) - 2.0 * (_Pfin.y + r * S30))) / (2 * _Pfin.z)) + ((-pow(R, 2) + pow(L1, 2) + pow((_Pfin.x + r * C30), 2) + pow((_Pfin.y + r * S30), 2) + pow(_Pfin.z, 2) - pow(L2, 2)) / (2 * _Pfin.z));
+	ZJ3_1 = YJ3_1 * ((2 * sqrt(3.0) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2.0 * _Pfin.z)) + ((pow((_Pfin.x + r * C150), 2.0) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2.0) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z));
+	ZJ3_2 = YJ3_2 * ((2 * sqrt(3.0) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2.0 * _Pfin.z)) + ((pow((_Pfin.x + r * C150), 2.0) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z));
 
 	titha1 = -1.0 * asin(ZJ1_1 / L1);
 	titha1 = titha1 * RAD_TO_DEG;
@@ -404,9 +407,9 @@ void SetPerfilTimers(double omeg1, double omeg2, double omeg3) {	// velAng en rp
 		}
 
 
-		periodoM[0] = (((Fcl * 60.00) / ((double)rpm1 * ((double)(TIM12->PSC) + 1.00) * 9600.00)) - 1.00);	//Fpwm = 64M / ((ARR+1)*(PSC+1)
-		periodoM[1] = (((Fcl * 60.00) / ((double)rpm2 * ((double)(TIM13->PSC) + 1.00) * 9600.00)) - 1.00);
-		periodoM[2] = (((Fcl * 60.00) / ((double)rpm3 * ((double)(TIM14->PSC) + 1.00) * 9600.00)) - 1.00);
+		periodoM[0] = (((FCL * 60.00) / ((double)rpm1 * ((double)(TIM12->PSC) + 1.00) * 9600.00)) - 1.00);	//Fpwm = 64M / ((ARR+1)*(PSC+1)
+		periodoM[1] = (((FCL * 60.00) / ((double)rpm2 * ((double)(TIM13->PSC) + 1.00) * 9600.00)) - 1.00);
+		periodoM[2] = (((FCL * 60.00) / ((double)rpm3 * ((double)(TIM14->PSC) + 1.00) * 9600.00)) - 1.00);
 
 
 		// Calculo el error por casteo a int, y cuando supero la unidad, lo compenzo --------------
@@ -426,9 +429,9 @@ void SetPerfilTimers(double omeg1, double omeg2, double omeg3) {	// velAng en rp
 			}
 		}
 
-			periodoM[0]=(uint32_t)(((Fcl * 60.0) / (rpm1 * ((double)(TIM12->PSC) + 1.0) * 9600.0)) - 1.0);
-			periodoM[1]=(uint32_t)(((Fcl * 60.0) / (rpm2 * ((double)(TIM13->PSC) + 1.0) * 9600.0)) - 1.0);
-			periodoM[2]=(uint32_t)(((Fcl * 60.0) / (rpm3 * ((double)(TIM14->PSC) + 1.0) * 9600.0)) - 1.0);
+			periodoM[0]=(uint32_t)(((FCL * 60.0) / (rpm1 * ((double)(TIM12->PSC) + 1.0) * 9600.0)) - 1.0);
+			periodoM[1]=(uint32_t)(((FCL * 60.0) / (rpm2 * ((double)(TIM13->PSC) + 1.0) * 9600.0)) - 1.0);
+			periodoM[2]=(uint32_t)(((FCL * 60.0) / (rpm3 * ((double)(TIM14->PSC) + 1.0) * 9600.0)) - 1.0);
 
 
 			if (TIM12->CNT > periodoM[0]) {

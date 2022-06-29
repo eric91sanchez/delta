@@ -6,7 +6,7 @@
  */
 
 #include "interpretaComando.h"
-
+#include "homing.h"
 
 float auxM;
 uint8_t auxString[10];
@@ -98,7 +98,7 @@ void interpretaComando(void){
 			}
 			i++;
 		}
-		cinematicaInversa(Pfin.x, Pfin.y, Pfin.z);
+		cinematicaInversa(Pfin);
 		break;
 	case 'H':
 	case 'h':
