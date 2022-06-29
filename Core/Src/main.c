@@ -64,12 +64,20 @@ double titha1;
 double titha2;
 double titha3;
 //double Fcl = 64000000;
+/*
 float_t Pxini;
 float_t Pyini;
 float_t Pzini;
+
 float_t Pxfin;
 float_t Pyfin;
 float_t Pzfin;
+*/
+
+Vec3D Pini;
+Vec3D Pfin;
+
+
 float_t distancia;
 float_t vDirector[3];
 double Recta3D[3];
@@ -176,10 +184,10 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		if (FlagButton == 1) {
 			FlagButton = 0;
-			distancia = sqrt(pow(Pxfin - Pxini, 2) + pow(Pyfin - Pyini, 2) + pow(Pzfin - Pzini, 2));
-			vDirector[0] = (Pxfin - Pxini) / distancia;	//Vector director en X
-			vDirector[1] = (Pyfin - Pyini) / distancia;	//Vector director en Y
-			vDirector[2] = (Pzfin - Pzini) / distancia;	//Vector director en Z
+			distancia = sqrt(pow(Pfin.x - Pini.x, 2) + pow(Pfin.y - Pini.y, 2) + pow(Pfin.z - Pini.z, 2));
+			vDirector[0] = (Pfin.x - Pini.x) / distancia;	//Vector director en X
+			vDirector[1] = (Pfin.y - Pini.y) / distancia;	//Vector director en Y
+			vDirector[2] = (Pfin.z - Pini.z) / distancia;	//Vector director en Z
 			configStepMotor1(titha1);
 			configStepMotor2(titha2);
 			configStepMotor3(titha3);
@@ -368,9 +376,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		if (FlagTrayectoM1 == 1 && FlagTrayectoM2 == 1 && FlagTrayectoM3 == 1) {
 			HAL_TIM_Base_Stop_IT(&htim15);
 			HAL_TIM_Base_Stop(&htim5);
-			Pxini = Pxfin;
-			Pyini = Pyfin;
-			Pzini = Pzfin;
+			Pini.x = Pfin.x;
+			Pini.y = Pfin.y;
+			Pini.z = Pfin.z;
 			mandalemecha = 0;
 		} else {
 			if (!FlagTiempo) {
@@ -379,9 +387,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			}
 			Tiempo = (((double) (TIM5->CNT)) * ((double)(TIM5->PSC + 1) / 64000000.0));
 			obtenerVelCurva(Tiempo);
-			Recta3D[0] = Pxini + X * vDirector[0];
-			Recta3D[1] = Pyini + X * vDirector[1];
-			Recta3D[2] = Pzini + X * vDirector[2];
+			Recta3D[0] = Pini.x + X * vDirector[0];
+			Recta3D[1] = Pini.y + X * vDirector[1];
+			Recta3D[2] = Pini.z + X * vDirector[2];
 			dRecta3D[0] = 0 + DX * vDirector[0];
 			dRecta3D[1] = 0 + DX * vDirector[1];
 			dRecta3D[2] = 0 + DX * vDirector[2];

@@ -38,6 +38,13 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
+//Estructura para definir el vector posicion
+typedef struct Vector3D{
+	float_t x;
+	float_t y;
+	float_t z;
+}Vec3D;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

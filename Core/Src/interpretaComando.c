@@ -8,8 +8,6 @@
 #include "interpretaComando.h"
 
 
-
-
 float auxM;
 uint8_t auxString[10];
 
@@ -65,7 +63,7 @@ void interpretaComando(void){
 					j++;
 					i++;
 				}
-				Pxfin = strtod(&auxString[0], NULL);
+				Pfin.x = strtod(&auxString[0], NULL);
 				for (int k = 0; k <= 10; k++) {
 					auxString[k] = 0;
 				}
@@ -78,7 +76,7 @@ void interpretaComando(void){
 					j++;
 					i++;
 				}
-				Pyfin = strtod(&auxString[0], NULL);
+				Pfin.y = strtod(&auxString[0], NULL);
 				for (int k = 0; k <= 10; k++) {
 					auxString[k] = 0;
 				}
@@ -91,7 +89,7 @@ void interpretaComando(void){
 					j++;
 					i++;
 				}
-				Pzfin = strtod(&auxString[0], NULL);
+				Pfin.z = strtod(&auxString[0], NULL);
 				for (int k = 0; k <= 10; k++) {
 					auxString[k] = 0;
 				}
@@ -100,21 +98,22 @@ void interpretaComando(void){
 			}
 			i++;
 		}
-		cinematicaInversa(Pxfin, Pyfin, Pzfin);
+		cinematicaInversa(Pfin.x, Pfin.y, Pfin.z);
 		break;
 	case 'H':
 	case 'h':
 		HAL_UART_Transmit(&huart3, "Homing\n\r", 8, 100);
-		HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET); //activo Enable
+		//PREGUNTA : se activan los enables en el homming para asegurarse de que el robot empiece a operar en una posicion segura  ?
+		HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);  //activo Enable
 		HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
 		homingAprox();
 		homingArm1();
 		homingArm2();
 		homingArm3();
-		Pxini=0;
-		Pyini=0;
-		Pzini = -0.334658034417224;
+		Pini.x=0;
+		Pini.y=0;
+		Pini.z = -0.334658034417224;
 		HAL_UART_Transmit(&huart3, "Fin_Homing\n\r", 12, 100);
 
 		break;
