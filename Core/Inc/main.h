@@ -58,63 +58,86 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+
+//GPIO's used for FC's and their interrups
+#define E_EndStop1_Sup_Pin GPIO_PIN_0
+#define E_EndStop1_Sup_GPIO_Port GPIOE
+#define E_EndStop1_Sup_EXTI_IRQn EXTI0_IRQn
+#define E_EndStop1_Inf_Pin GPIO_PIN_1
+
+#define E_EndStop1_Inf_GPIO_Port GPIOE
+#define E_EndStop1_Inf_EXTI_IRQn EXTI1_IRQn
+
 #define E_EndStop2_Sup_Pin GPIO_PIN_2
 #define E_EndStop2_Sup_GPIO_Port GPIOE
 #define E_EndStop2_Sup_EXTI_IRQn EXTI2_IRQn
 #define E_EndStop2_Inf_Pin GPIO_PIN_3
+
 #define E_EndStop2_Inf_GPIO_Port GPIOE
 #define E_EndStop2_Inf_EXTI_IRQn EXTI3_IRQn
+
 #define E_EndStop3_Sup_Pin GPIO_PIN_4
 #define E_EndStop3_Sup_GPIO_Port GPIOE
 #define E_EndStop3_Sup_EXTI_IRQn EXTI4_IRQn
 #define E_EndStop3_Inf_Pin GPIO_PIN_5
 #define E_EndStop3_Inf_GPIO_Port GPIOE
 #define E_EndStop3_Inf_EXTI_IRQn EXTI9_5_IRQn
+
+//User button (blue on board) + interrup
 #define BUTTON_Pin GPIO_PIN_13
 #define BUTTON_GPIO_Port GPIOC
 #define BUTTON_EXTI_IRQn EXTI15_10_IRQn
+
+//PWM signals
+#define S_PulsoPaP1_Pin GPIO_PIN_14
+#define S_PulsoPaP1_GPIO_Port GPIOB
 #define S_PulsoPaP2_Pin GPIO_PIN_8
 #define S_PulsoPaP2_GPIO_Port GPIOF
 #define S_PulsoPaP3_Pin GPIO_PIN_9
 #define S_PulsoPaP3_GPIO_Port GPIOF
+
+//UART'S in use
 #define NucleoF4_RX_Pin GPIO_PIN_2
 #define NucleoF4_RX_GPIO_Port GPIOA
 #define NucleoF4_TX_Pin GPIO_PIN_3
 #define NucleoF4_TX_GPIO_Port GPIOA
-#define E_CountPap1_Pin GPIO_PIN_5
-#define E_CountPap1_GPIO_Port GPIOA
-#define E_CountPaP2_Pin GPIO_PIN_6
-#define E_CountPaP2_GPIO_Port GPIOA
-#define S_PulsoPaP1_Pin GPIO_PIN_14
-#define S_PulsoPaP1_GPIO_Port GPIOB
+
 #define Jetson_RX_Pin GPIO_PIN_15
 #define Jetson_RX_GPIO_Port GPIOB
+#define Jetson_TX_Pin GPIO_PIN_9
+#define Jetson_TX_GPIO_Port GPIOA
+
 #define STLINK_TX_Pin GPIO_PIN_8
 #define STLINK_TX_GPIO_Port GPIOD
 #define STLINK_RX_Pin GPIO_PIN_9
 #define STLINK_RX_GPIO_Port GPIOD
+
+//GPIO's used for counting steps from encoder
+#define E_CountPap1_Pin GPIO_PIN_5
+#define E_CountPap1_GPIO_Port GPIOA
+#define E_CountPaP2_Pin GPIO_PIN_6
+#define E_CountPaP2_GPIO_Port GPIOA
 #define E_CountPaP3_Pin GPIO_PIN_12
 #define E_CountPaP3_GPIO_Port GPIOD
+
+//Motor turn direction
 #define S_DirPaP1_Pin GPIO_PIN_8
 #define S_DirPaP1_GPIO_Port GPIOC
 #define S_DirPaP2_Pin GPIO_PIN_9
 #define S_DirPaP2_GPIO_Port GPIOC
-#define Jetson_TX_Pin GPIO_PIN_9
-#define Jetson_TX_GPIO_Port GPIOA
 #define S_DirPaP3_Pin GPIO_PIN_10
 #define S_DirPaP3_GPIO_Port GPIOC
+
+//Enable PIN's
 #define S_Enable_1_Pin GPIO_PIN_4
 #define S_Enable_1_GPIO_Port GPIOD
 #define S_Enable_2_Pin GPIO_PIN_5
 #define S_Enable_2_GPIO_Port GPIOD
 #define S_Enable_3_Pin GPIO_PIN_6
 #define S_Enable_3_GPIO_Port GPIOD
-#define E_EndStop1_Sup_Pin GPIO_PIN_0
-#define E_EndStop1_Sup_GPIO_Port GPIOE
-#define E_EndStop1_Sup_EXTI_IRQn EXTI0_IRQn
-#define E_EndStop1_Inf_Pin GPIO_PIN_1
-#define E_EndStop1_Inf_GPIO_Port GPIOE
-#define E_EndStop1_Inf_EXTI_IRQn EXTI1_IRQn
+
+
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
