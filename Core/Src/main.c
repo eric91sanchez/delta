@@ -32,7 +32,7 @@
 #include "homing.h"
 #include "interpretaComando.h"
 #include "trayectoria.h"
-
+#include "cinematica.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -162,7 +162,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-	HAL_UART_Transmit(&huart3, data, sizeof(data), 100);
+	HAL_UART_Transmit(&huart3, data, sizeof(data), 100); //Enviamos el mensaje: Start
 	HAL_UART_Receive_IT(&huart3, &rx_data, 1);
 
 
@@ -173,7 +173,7 @@ int main(void)
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 1
 	HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 2
 	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 3
-	HAL_UART_Transmit(&huart3, "Ejemplo :px0 y0 z-0.8 \nr", 24, 100);
+	HAL_UART_Transmit(&huart3, (uint8_t *)"Ejemplo :px0 y0 z-0.8 \nr", 24, 100);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -394,6 +394,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			dRecta3D[1] = 0 + DX * vDirector[1];
 			dRecta3D[2] = 0 + DX * vDirector[2];
 			dRecta3DZ=dRecta3D[2];
+
 			jacobianoInverso(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
 			SetPerfilTimers(omega[0], omega[1], omega[2]);
 			if(Start==1){

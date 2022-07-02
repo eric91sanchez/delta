@@ -74,14 +74,14 @@ void homingAprox(void) {
 		}
 		if(hom==0){
 			hom=1;
-			HAL_UART_Transmit(&huart3, "hola k ace\n\r", 12, 100);
+			HAL_UART_Transmit(&huart3,(uint8_t *)"hola k ace\n\r", 12, 100);
 			HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
 			HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
 			HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
 		}
 		HAL_Delay(1);
 	}
-	HAL_UART_Transmit(&huart3, "Fin_Aprox\n\r", 11, 100);
+	HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_Aprox\n\r", 11, 100);
 }
 
 void homingArm1(void) {
@@ -104,7 +104,7 @@ void homingArm1(void) {
 		if (flagEndStop==0 && !(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))) {
 			HAL_Delay(30);		//Para filtrar transitorio
 			if (!(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port,E_EndStop1_Sup_Pin))) {
-				HAL_UART_Transmit(&huart3, "EndStop1_Pulsado\n\r", 18, 100);
+				HAL_UART_Transmit(&huart3,(uint8_t *)"EndStop1_Pulsado\n\r", 18, 100);
 				HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_SET);
 				flagEndStop = 1;
 			}
@@ -113,7 +113,7 @@ void homingArm1(void) {
 			HAL_Delay(30);		//Para filtrar transitorio
 			if (HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port,E_EndStop1_Sup_Pin)) {
 				HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
-				HAL_UART_Transmit(&huart3, "FinArm1\n\r", 9, 100);
+				HAL_UART_Transmit(&huart3,(uint8_t *)"FinArm1\n\r", 9, 100);
 				titha1 = 0;
 				homeOk = 1;
 			}
@@ -154,7 +154,7 @@ void homingArm2(void) {
 			HAL_Delay(30);		//Para filtrar transitorio
 			if (HAL_GPIO_ReadPin(E_EndStop2_Sup_GPIO_Port,E_EndStop2_Sup_Pin)) {
 				HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
-				HAL_UART_Transmit(&huart3, "FinArm2\n\r", 9, 100);
+				HAL_UART_Transmit(&huart3,(uint8_t *)"FinArm2\n\r", 9, 100);
 				titha2 = 0;
 				homeOk = 1;
 			}
@@ -190,7 +190,7 @@ void homingArm3(void) {
 			HAL_Delay(30);		//Para filtrar transitorio
 			if (HAL_GPIO_ReadPin(E_EndStop3_Sup_GPIO_Port, E_EndStop3_Sup_Pin)) {
 				HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
-				HAL_UART_Transmit(&huart3, "FinArm3\n\r", 9, 100);
+				HAL_UART_Transmit(&huart3,(uint8_t *)"FinArm3\n\r", 9, 100);
 				titha3 = 0;
 				homeOk = 1;
 			}

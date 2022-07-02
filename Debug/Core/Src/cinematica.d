@@ -1,5 +1,6 @@
-Core/Src/homing.o: ../Core/Src/homing.c ../Core/Inc/homing.h \
- ../Core/Inc/main.h ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
+Core/Src/cinematica.o: ../Core/Src/cinematica.c ../Core/Inc/cinematica.h \
+ ../Core/Inc/operaciones.h ../Core/Inc/main.h \
+ ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_def.h \
@@ -30,11 +31,9 @@ Core/Src/homing.o: ../Core/Src/homing.c ../Core/Inc/homing.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
- ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../Core/Inc/interpretaComando.h ../Core/Inc/trayectoria.h \
- ../Core/Inc/homing.h ../Core/Inc/cinematica.h ../Core/Inc/operaciones.h \
- ../Core/Inc/main.h
-../Core/Inc/homing.h:
+ ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
+../Core/Inc/cinematica.h:
+../Core/Inc/operaciones.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -68,9 +67,3 @@ Core/Src/homing.o: ../Core/Src/homing.c ../Core/Inc/homing.h \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
-../Core/Inc/interpretaComando.h:
-../Core/Inc/trayectoria.h:
-../Core/Inc/homing.h:
-../Core/Inc/cinematica.h:
-../Core/Inc/operaciones.h:
-../Core/Inc/main.h:

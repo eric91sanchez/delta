@@ -1,3 +1,4 @@
+"./Core/Src/cinematica.o"
 "./Core/Src/debug.o"
 "./Core/Src/gpio.o"
 "./Core/Src/homing.o"

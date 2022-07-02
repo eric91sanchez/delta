@@ -11,6 +11,8 @@
 #include "main.h"
 #include "stdlib.h"
 #include "trayectoria.h"
+#include "homing.h"
+#include "cinematica.h"
 
 extern Vec3D Pini;
 extern Vec3D Pfin;
