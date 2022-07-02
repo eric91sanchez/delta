@@ -10,20 +10,12 @@
 
 #include "main.h"
 
-extern double titha1;
-extern double titha2;
-extern double titha3;
+#define pi 3.14159265359
+#define RAD_TO_DEG 180.0 / pi
 
-/*
-extern float_t Pxini;
-extern float_t Pyini;
-extern float_t Pzini;
-extern float_t Pxfin;
-extern float_t Pyfin;
-extern float_t Pzfin;
-*/
-extern Vec3D Pini;
-extern Vec3D Pfin;
+extern double XJ1_1, YJ1_1, ZJ1_1;
+extern double XJ2_1, YJ2_1, ZJ2_1;
+extern double XJ3_1, YJ3_1, ZJ3_1;
 
 extern double TiempoTotal;
 extern double X;
@@ -52,7 +44,7 @@ extern UART_HandleTypeDef huart3;
 
 void inicializarTrayectoria(double XiHip1, double XfHip4, double V0Hip, double Vf, double Vmax, double Amax, double Jerk );
 void obtenerVelCurva(double t);
-void cinematicaInversa(Vec3D);
+
 
 void jacobianoInverso(double Vxaux, double Vyaux, double Vzaux, double Pxaux, double Pyaux, double Pzaux);
 void SetPerfilTimers(double omeg1, double omeg2, double omeg3);

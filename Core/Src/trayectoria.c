@@ -8,72 +8,48 @@
 #include <operaciones.h>
 #include "trayectoria.h"
 
-//Una constante a diferencia de una macro ocupa un espacio(memoria) durante la ejecución del programa.
-//Ya que son valores que nunca van a cambiar en el programa, es mejor definirlos como tal (constantes)
 
-#define C30 0.866025403784439
-#define S30 0.500000000000000
-#define C150 -0.866025403784439
-#define S150 0.500000000000000
-#define pi 3.14159265359
-#define RAD_TO_DEG 180.0 / pi
-
-
-
-#define fi1 270
-#define fi2 30
-#define fi3 150
-#define L1 0.4
-#define L2 0.6
-#define R 0.168
-#define r 0.070
-
-
-// Para tihta = 0, Pxaux=0 Pyaux=0 y Pzaux=0.334658034417224
-
-//double fi1 = 270;
-//double fi2 = 30;
-//double fi3 = 150;
-//double L1 = 0.4;
-//double L2 = 0.6;
-//double R = 0.168;
-//double r = 0.070;
-
-
-double A1, B1, C1, XJ1_1, XJ1_2, YJ1_1, YJ1_2, ZJ1_1, ZJ1_2, A11, A12, A13, A14, A15;
-double A2, B2, C2, XJ2_1, XJ2_2, YJ2_1, YJ2_2, ZJ2_1, ZJ2_2;
-double A3, B3, C3, XJ3_1, XJ3_2, YJ3_1, YJ3_2, ZJ3_1, ZJ3_2;
 double F1[3] = { 0, -0.1680, 0 };
 double F2[3] = { 0.145492267835786, 0.084, 0 };
 double F3[3] = { -0.145492267835786, 0.084, 0 };
+
 double SA1[3] = { 1, 0, 0 };
 double SA2[3] = { -0.5, 0.866025403784439, 0 };
 double SA3[3] = { -0.5, -0.866025403784439, 0 };
+
 double E1[3];
 double E2[3];
 double E3[3];
+
 double l1[3][3];
 double l2[3][3];
+
 array2D Jcd;
 double Jci[3][3];
 array2D Jci_inv;
 array2D Jinv;
+
 double cross_P1[3];
 double cross_P2[3];
 double cross_P3[3];
 double dot[3];
 
-//double C30 = 0.866025403784439;
-//double S30 = 0.500000000000000;
-//double C150 = -0.866025403784439;
-//double S150 = 0.500000000000000;
-//double pi = 3.14159265359;
 
-double Ai, Af, a0Hip1, a1Hip1, a2Hip1, a3Hip1, a0Hip2, a1Hip2, a2Hip2, a3Hip2,
-		a0Hip3, a1Hip3, a2Hip3, a3Hip3, a0Hip4, a1Hip4, a2Hip4, a3Hip4;
-double XfHip1, XfHip2, XfHip3, XiHip3;
+double Ai, Af, a0Hip1, a1Hip1, a2Hip1, a3Hip1,
+			   a0Hip2, a1Hip2, a2Hip2, a3Hip2,
+			   a0Hip3, a1Hip3, a2Hip3, a3Hip3,
+			   a0Hip4, a1Hip4, a2Hip4, a3Hip4;
+
+double XfHip1, XfHip2,
+	   XfHip3, XiHip3;
+
 double Vm, VfHip1, VfHip3;
-double tfHip1, tiHip2, tfHip2, tiHip3, tfHip3, tiHip4, TiempoTotX, tfHip4;
+
+double tfHip1, tiHip2,
+	   tfHip2, tiHip3,
+	   tfHip3, tiHip4,
+	   TiempoTotX, tfHip4;
+
 double DVHip, Aaux1, ViHip2, XiHip2, Aaux, XiHip3, ViHip4, XiHip4;
 
 //(Posinicio , Posfin , Vinicio , Vfin , Vmaxima, Amaxima, jerk)
@@ -218,39 +194,51 @@ void obtenerVelCurva(double t) {
 		X = a0Hip1 + a1Hip1 * t + a2Hip1 * pow(t, 2) + a3Hip1 * pow(t, 3);
 		DX = a1Hip1 + 2.0 * a2Hip1 * t + 3 * a3Hip1 * pow(t, 2);
 		DDX = 2.0 * a2Hip1 + 6 * a3Hip1 * t;
+
 	} else if (t <= (tiHip2)) {                              // Parabola 1
 		X = (Ai / 2) * pow((t - tfHip1), 2) + VfHip1 * (t - tfHip1) + XfHip1;
 		DX = Ai * (t - tfHip1) + VfHip1;
 		DDX = Ai;
+
 	} else if (t <= (tfHip2)) {                            // Hiperbola 2
 		X = a0Hip2 + a1Hip2 * (t - tiHip2) + a2Hip2 * pow((t - tiHip2), 2)
 				+ a3Hip2 * pow((t - tiHip2), 3);
 		DX = a1Hip2 + 2.0 * a2Hip2 * (t - tiHip2)
 				+ 3 * a3Hip2 * pow((t - tiHip2), 2);
 		DDX = 2.0 * a2Hip2 + 6 * a3Hip2 * (t - tiHip2);
+
+
 	} else if (t <= (tiHip3)) {                              // Recta
 		X = Vm * (t - tfHip2) + XfHip2;
 		DX = Vm;
 		DDX = 0;
+
 	} else if (t <= (tfHip3)) {                            // Hiperbola 3
 		X = a0Hip3 + a1Hip3 * (t - tiHip3) + a2Hip3 * pow((t - tiHip3), 2)
 				+ a3Hip3 * pow((t - tiHip3), 3);
 		DX = a1Hip3 + 2.0 * a2Hip3 * (t - tiHip3)
 				+ 3 * a3Hip3 * pow((t - tiHip3), 2);
 		DDX = 2.0 * a2Hip3 + 6 * a3Hip3 * (t - tiHip3);
+
+
 	} else if (t <= (tiHip4)) {                            // Parabola 2
 		X = (Af / 2) * pow((t - tfHip3), 2) + VfHip3 * (t - tfHip3) + XfHip3;
 		DX = Af * (t - tfHip3) + VfHip3;
 		DDX = Af;
+
+
 	} else if (t <= TiempoTotX) {                               // Hiperbola 4
 		X = a0Hip4 + a1Hip4 * (t - tiHip4) + a2Hip4 * pow((t - tiHip4), 2)
 				+ a3Hip4 * pow((t - tiHip4), 3);
 		DX = a1Hip4 + 2.0 * a2Hip4 * (t - tiHip4)
 				+ 3 * a3Hip4 * pow((t - tiHip4), 2);
 		DDX = 2.0 * a2Hip4 + 6.0 * a3Hip4 * (t - tiHip4);
+
+
 	} else if (t > TiempoTotX) {                               // Tiempo extra
 		DX = 0;
 		DDX = 0;
+
 	} else {												// Tiempo erroneo
 		X = 0;
 		DX = 0;
@@ -259,48 +247,6 @@ void obtenerVelCurva(double t) {
 
 }
 
-void cinematicaInversa(Vec3D _Pfin) {
-
-	A1 = 1.0 + pow(((-2.0  * (R + (_Pfin.y - r))) / (2 * _Pfin.z)), 2);
-	A2 = 4.0 + pow(((2.0 * sqrt(3.0) * R * C30 + 2.0 * R * S30 - 2.0 * sqrt(3) * (_Pfin.x + r * C30) - 2.0 * (_Pfin.y + r * S30)) / (2.0 * _Pfin.z)), 2.0);
-	A3 = 4.0 + pow(((2.0 * sqrt(3.0) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2.0 * _Pfin.z)), 2.0);
-
-	B1 = (2.0 * R) + (2.0 * ((-2.0  * (R + (_Pfin.y - r))) / (2.0 * _Pfin.z)) * ((-pow(R, 2.0) + pow(L1, 2.0) + pow((_Pfin.y - r), 2.0) + pow(_Pfin.z, 2.0) - pow(L2, 2.0) + pow(_Pfin.x, 2)) / (2 * _Pfin.z)));
-	B2 = -2.0 * sqrt(3) * R * C30 - 2.0 * R * S30 + 2.0 * (((2.0 * sqrt(3) * R * C30 + 2.0 * R * S30)	+ (-2 * sqrt(3) * (_Pfin.x + r * C30)	- 2.0 * (_Pfin.y + r * S30))) / (2 * _Pfin.z)) * ((-pow(R, 2) + pow(L1, 2) + pow((_Pfin.x + r * C30), 2) + pow((_Pfin.y + r * S30), 2) + pow(_Pfin.z, 2) - pow(L2, 2)) / (2 * _Pfin.z));
-	B3 = 2.0 * sqrt(3) * R * C150 - 2.0 * R * S150 + 2.0 * ((2.0 * sqrt(3) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2 * _Pfin.z)) * ((pow((_Pfin.x + r * C150), 2) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z));
-
-	C1 = (pow(((pow((_Pfin.y - r), 2) + pow(_Pfin.z, 2) - pow(L2, 2) + pow(_Pfin.x, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z)), 2) - pow(L1, 2) + pow(R, 2));
-	C2 = pow(R, 2) - pow(L1, 2) + pow(((-pow(R, 2) + pow(L1, 2) + pow((_Pfin.x + r * C30), 2) + pow((_Pfin.y + r * S30), 2) + pow(_Pfin.z, 2) - pow(L2, 2)) / (2.0 * _Pfin.z)), 2.0);
-	C3 = pow(R, 2) - pow(L1, 2) + pow(((pow((_Pfin.x + r * C150), 2) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2.0 * _Pfin.z)), 2.0);
-
-	YJ1_1 = (-B1 - sqrt(pow(B1, 2) - 4 * A1 * C1)) / (2 * A1);
-	YJ1_2 = (-B1 + sqrt(pow(B1, 2) - 4 * A1 * C1)) / (2 * A1);
-	YJ2_1 = (-B2 + sqrt(pow(B2, 2) - 4 * A2 * C2)) / (2 * A2);
-	YJ2_2 = (-B2 - sqrt(pow(B2, 2) - 4 * A2 * C2)) / (2 * A2);
-	YJ3_1 = (-B3 + sqrt(pow(B3, 2) - 4 * A3 * C3)) / (2 * A3);
-	YJ3_2 = (-B3 - sqrt(pow(B3, 2) - 4 * A3 * C3)) / (2 * A3);
-
-	XJ1_1 = 0;
-	XJ1_2 = 0;
-	XJ2_1 = sqrt(3) * YJ2_1;
-	XJ2_2 = sqrt(3) * YJ2_2;
-	XJ3_1 = -sqrt(3) * YJ3_1;
-	XJ3_2 = -sqrt(3) * YJ3_2;
-
-	ZJ1_1 = ((YJ1_1 * ((-2 * (R + (_Pfin.y - r))) / (2 * _Pfin.z))) + ((pow((_Pfin.y - r), 2) + pow(_Pfin.z, 2) - pow(L2, 2) + pow(_Pfin.x, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z)));
-	ZJ1_2 = ((YJ1_2 * ((-2 * (R + (_Pfin.y - r))) / (2 * _Pfin.z))) + ((pow((_Pfin.y - r), 2) + pow(_Pfin.z, 2) - pow(L2, 2) + pow(_Pfin.x, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z)));
-	ZJ2_1 = YJ2_1 * (((2 * sqrt(3.0) * R * C30 + 2.0 * R * S30) + (-2 * sqrt(3) * (_Pfin.x + r * C30) - 2.0 * (_Pfin.y + r * S30))) / (2 * _Pfin.z)) + ((-pow(R, 2) + pow(L1, 2) + pow((_Pfin.x + r * C30), 2) + pow((_Pfin.y + r * S30), 2) + pow(_Pfin.z, 2) - pow(L2, 2)) / (2 * _Pfin.z));
-	ZJ2_2 = YJ2_2 * (((2 * sqrt(3.0) * R * C30 + 2.0 * R * S30) + (-2 * sqrt(3) * (_Pfin.x + r * C30) - 2.0 * (_Pfin.y + r * S30))) / (2 * _Pfin.z)) + ((-pow(R, 2) + pow(L1, 2) + pow((_Pfin.x + r * C30), 2) + pow((_Pfin.y + r * S30), 2) + pow(_Pfin.z, 2) - pow(L2, 2)) / (2 * _Pfin.z));
-	ZJ3_1 = YJ3_1 * ((2 * sqrt(3.0) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2.0 * _Pfin.z)) + ((pow((_Pfin.x + r * C150), 2.0) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2.0) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z));
-	ZJ3_2 = YJ3_2 * ((2 * sqrt(3.0) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2.0 * _Pfin.z)) + ((pow((_Pfin.x + r * C150), 2.0) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z));
-
-	titha1 = -1.0 * asin(ZJ1_1 / L1);
-	titha1 = titha1 * RAD_TO_DEG;
-	titha2 = -1.0 * asin(ZJ2_1 / L1);
-	titha2 = titha2 * RAD_TO_DEG;
-	titha3 = -1.0 * asin(ZJ3_1 / L1);
-	titha3 = titha3 * RAD_TO_DEG;
-}
 
 
 void jacobianoInverso(double Vxaux, double Vyaux, double Vzaux, double Pxaux, double Pyaux, double Pzaux) {
