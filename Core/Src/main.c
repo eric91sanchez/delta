@@ -91,15 +91,20 @@ uint8_t data[] = "Start\n";		//Dato enviado al iniciar el programa
 uint16_t valor = 0;
 uint8_t cm0;				//Flag start transmit
 uint8_t FlagTiempo;
+
 double Tiempo;
+
 double X = 0;
 double DX = 0;
 double DDX = 0;
+
 double FlagTrayectoM1, FlagTrayectoM2, FlagTrayectoM3 = 1;
 double omega1, omega2, omega3;
 uint32_t periodoM1, periodoM2, periodoM3;
 double periodoM[3];
-double FlagButton = 0;
+
+int FlagButton = 0;
+
 double flagErrorEndStop = 0;
 double rpm1, rpm2, rpm3;
 double ErrorPeriodo[3];
@@ -322,6 +327,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 			}
 			break;
 		case '\r':
+
+			while (!(rx_index==30)){
+				rx_buffer[rx_index]= (uint8_t) 0;
+				rx_index++;
+			}
+
 			if (cm0 == 1) {
 				rx_buffer[rx_index] = 0;
 				interpretaComando();
