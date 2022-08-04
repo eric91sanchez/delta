@@ -8,20 +8,77 @@
 #include "interpretaComando.h"
 
 
-float auxM;
+volatile double aux;
 uint8_t auxString[10];
 
 void interpretaComando(void){
 
 	switch(rx_buffer[0]){
+
+	case 'v':                     //velocidad vi , vf , vmax
+		switch(rx_buffer[1]){
+		case 'i':
+			//HAL_UART_Transmit(&huart3,(uint8_t *)"vi\n", 4, 100);
+			aux =  strtod(&rx_buffer[2], NULL);
+			vi=aux;
+			break;
+		case 'f':
+			//HAL_UART_Transmit(&huart3,(uint8_t *)"vf\n", 4, 100);
+			aux =  strtod(&rx_buffer[2], NULL);
+			vf=aux;
+			break;
+		case 'm':
+			//HAL_UART_Transmit(&huart3,(uint8_t *)"vm\n", 4, 100);
+			aux =  strtod(&rx_buffer[2], NULL);
+			vmax=aux;
+
+			break;
+		default:
+			HAL_UART_Transmit(&huart3,(uint8_t *)"Error\n", 7, 100);
+			break;
+		}
+		break;
+
+	case 'a': 					//aceleracion amax
+		switch(rx_buffer[1]){
+		case 'm':
+			//HAL_UART_Transmit(&huart3,(uint8_t *)"am\n", 4, 100);
+			aux =  strtod(&rx_buffer[2], NULL);
+			amax=aux;
+			break;
+
+		default:
+			HAL_UART_Transmit(&huart3,(uint8_t *)"Error\n", 7, 100);
+			break;
+		}
+
+		break;
+
+	case 'j': 					//jerk jmax
+		switch(rx_buffer[1]){
+		case 'm':
+			//HAL_UART_Transmit(&huart3,(uint8_t *)"jm\n", 4, 100);
+			aux =  strtod(&rx_buffer[2], NULL);
+			jmax=aux;
+			break;
+
+		default:
+			HAL_UART_Transmit(&huart3,(uint8_t *)"Error\n", 7, 100);
+			break;
+		}
+		break;
+
+
+
+
 	case 'M':						//:M(motor) + numero de motor (1. 2. 3) + Angulo de 0 a 90
 	case 'm':
 		switch(rx_buffer[1]){
 		case '1':
 			HAL_UART_Transmit(&huart3,(uint8_t *)"Motor1\n\r", 8, 100);
-			auxM =  strtod(&rx_buffer[2], NULL);
-			if(auxM>=0 && auxM<=90){  // verificacion de limites articulares
-				titha1 = auxM;
+			aux =  strtod(&rx_buffer[2], NULL);
+			if(aux>=0 && aux<=90){  // verificacion de limites articulares
+				titha1 = aux;
 			}
 			else{
 				HAL_UART_Transmit(&huart3,(uint8_t *)"ErrorPos\n\r", 10, 100);
@@ -29,8 +86,8 @@ void interpretaComando(void){
 			break;
 		case '2':
 			HAL_UART_Transmit(&huart3,(uint8_t *)"Motor2\n\r", 8, 100);
-			if(auxM>=0 && auxM<=90){  // verificacion de limites articulares
-				titha2 = auxM;
+			if(aux>=0 && aux<=90){  // verificacion de limites articulares
+				titha2 = aux;
 			}
 			else{
 				HAL_UART_Transmit(&huart3,(uint8_t *)"ErrorPos\n\r", 10, 100);
@@ -38,18 +95,22 @@ void interpretaComando(void){
 			break;
 		case '3':
 			HAL_UART_Transmit(&huart3,(uint8_t *)"Motor3\n\r", 8, 100);
-			if(auxM>=0 && auxM<=90){   // verificacion de limites articulares
-				titha3 = auxM;
+			if(aux>=0 && aux<=90){   // verificacion de limites articulares
+				titha3 = aux;
 			}
 			else{
 				HAL_UART_Transmit(&huart3,(uint8_t *)"ErrorPos\n\r", 10, 100);
 			}
 			break;
+
 		default:
 			HAL_UART_Transmit(&huart3,(uint8_t *)"ErrorMotor\n\r", 12, 100);
 			break;
 		}
 		break;
+
+
+
 	case 'P':												//:Px0.1 y0.1 z-0.5 \0 (Eje, valor, espacio, Eje, valor, espacio, Eje, valor, espacio)
 	case 'p':
 		HAL_UART_Transmit(&huart3,(uint8_t *)"Punto\n\r", 7, 100);
@@ -116,13 +177,8 @@ void interpretaComando(void){
 		Pini.z = -0.334658034417224;
 		HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_Homing\n\r", 12, 100);
 
-		break;
-	case 'R':			//Set RPM
-	case 'r':
-		HAL_UART_Transmit(&huart3,(uint8_t *)"RPM\n\r", 5, 100);
-		break;
-	default:
-		HAL_UART_Transmit(&huart3, (uint8_t *)"Nada\n\r", 6, 100);
-		break;
+	break;
+
 	}
+
 }

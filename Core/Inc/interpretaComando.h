@@ -24,6 +24,12 @@ extern double titha1;
 extern double titha2;
 extern double titha3;
 
+extern double vmax;
+extern double amax;
+extern double jmax;
+extern double vi;
+extern double vf;
+
 /*
 extern float_t Pxini;
 extern float_t Pyini;

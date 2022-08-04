@@ -64,6 +64,16 @@ uint32_t numStep3;		//Numero de pasos PaP3 consigna
 double titha1;
 double titha2;
 double titha3;
+
+
+//Valores para crear el perfil de velocidad
+double vmax;
+double amax;
+double jmax;
+double vi;
+double vf;
+
+
 //double Fcl = 64000000;
 /*
 float_t Pxini;

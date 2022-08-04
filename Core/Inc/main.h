@@ -40,9 +40,9 @@ extern "C" {
 
 //Estructura para definir el vector posicion
 typedef struct Vector3D{
-	float_t x;
-	float_t y;
-	float_t z;
+	double x;
+	double y;
+	double z;
 }Vec3D;
 
 /* USER CODE END ET */
