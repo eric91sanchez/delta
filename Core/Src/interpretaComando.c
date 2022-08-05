@@ -15,59 +15,101 @@ void interpretaComando(void){
 
 	switch(rx_buffer[0]){
 
-	case 'v':                     //velocidad vi , vf , vmax
-		switch(rx_buffer[1]){
-		case 'i':
-			//HAL_UART_Transmit(&huart3,(uint8_t *)"vi\n", 4, 100);
-			aux =  strtod(&rx_buffer[2], NULL);
-			vi=aux;
-			break;
-		case 'f':
-			//HAL_UART_Transmit(&huart3,(uint8_t *)"vf\n", 4, 100);
-			aux =  strtod(&rx_buffer[2], NULL);
-			vf=aux;
-			break;
-		case 'm':
-			//HAL_UART_Transmit(&huart3,(uint8_t *)"vm\n", 4, 100);
-			aux =  strtod(&rx_buffer[2], NULL);
-			vmax=aux;
+	case 'v':
+		HAL_UART_Transmit(&huart3, (uint8_t *)"params\n",8, 100);
+		uint8_t i = 1;
+		uint8_t j = 0;
+		while(rx_buffer[i] != 0){
+			if(rx_buffer[i] == 'm'){
+				while(rx_buffer[i+1] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
+					auxString[j] = rx_buffer[i+1];
+					j++;
+					i++;
+				}
+				vmax = strtod(&auxString[0], NULL);
 
-			break;
-		default:
-			HAL_UART_Transmit(&huart3,(uint8_t *)"Error\n", 7, 100);
-			break;
+				for (int k = 0; k <= 10; k++) {
+					auxString[k] = 0;
+				}
+
+				j=0;
+				HAL_UART_Transmit(&huart3, (uint8_t *)"vm\n",4, 100);
+			}
+			else if(rx_buffer[i] == 'v'){
+				 if(rx_buffer[i+1] == 'f'){
+					while(rx_buffer[i+2] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
+						auxString[j] = rx_buffer[i+2];
+						j++;
+						i++;
+					}
+					vf = strtod(&auxString[0], NULL);
+
+					for (int k = 0; k <= 10; k++) {
+						auxString[k] = 0;
+					}
+
+					j=0;
+					HAL_UART_Transmit(&huart3,(uint8_t *)"vf\n", 4, 100);
+				}
+			}
+
+			else if(rx_buffer[i] == 'v'){
+				 if(rx_buffer[i+1] == 'i'){
+					while(rx_buffer[i+2] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
+						auxString[j] = rx_buffer[i+2];
+						j++;
+						i++;
+					}
+					vi = strtod(&auxString[0], NULL);
+
+					for (int k = 0; k <= 10; k++) {
+						auxString[k] = 0;
+					}
+
+					j=0;
+					HAL_UART_Transmit(&huart3,(uint8_t *)"vi\n", 4, 100);
+				}
+			}
+
+
+			else if(rx_buffer[i] == 'a'){
+				 if(rx_buffer[i+1] == 'm'){
+					while(rx_buffer[i+2] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
+						auxString[j] = rx_buffer[i+2];
+						j++;
+						i++;
+					}
+					amax = strtod(&auxString[0], NULL);
+
+					for (int k = 0; k <= 10; k++) {
+						auxString[k] = 0;
+					}
+
+					j=0;
+					HAL_UART_Transmit(&huart3,(uint8_t *)"am\n", 4, 100);
+				}
+			}
+			else if(rx_buffer[i] == 'j'){
+				 if(rx_buffer[i+1] == 'm'){
+					while(rx_buffer[i+2] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
+						auxString[j] = rx_buffer[i+2];
+						j++;
+						i++;
+					}
+					jmax = strtod(&auxString[0], NULL);
+
+					for (int k = 0; k <= 10; k++) {
+						auxString[k] = 0;
+					}
+					j=0;
+					HAL_UART_Transmit(&huart3,(uint8_t *)"jm\n", 4, 100);
+				}
+			}
+			i++;
 		}
-		break;
 
-	case 'a': 					//aceleracion amax
-		switch(rx_buffer[1]){
-		case 'm':
-			//HAL_UART_Transmit(&huart3,(uint8_t *)"am\n", 4, 100);
-			aux =  strtod(&rx_buffer[2], NULL);
-			amax=aux;
-			break;
-
-		default:
-			HAL_UART_Transmit(&huart3,(uint8_t *)"Error\n", 7, 100);
-			break;
-		}
 
 		break;
-
-	case 'j': 					//jerk jmax
-		switch(rx_buffer[1]){
-		case 'm':
-			//HAL_UART_Transmit(&huart3,(uint8_t *)"jm\n", 4, 100);
-			aux =  strtod(&rx_buffer[2], NULL);
-			jmax=aux;
-			break;
-
-		default:
-			HAL_UART_Transmit(&huart3,(uint8_t *)"Error\n", 7, 100);
-			break;
-		}
-		break;
-
 
 
 
@@ -115,8 +157,8 @@ void interpretaComando(void){
 	case 'p':
 		HAL_UART_Transmit(&huart3,(uint8_t *)"Punto\n\r", 7, 100);
 		flagErrorEndStop = 0;
-		uint8_t i = 1;
-		uint8_t j = 0;
+		i = 1;
+		j = 0;
 		while(rx_buffer[i] != 0){
 			if(rx_buffer[i] == 'x'){
 				while(rx_buffer[i+1] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
