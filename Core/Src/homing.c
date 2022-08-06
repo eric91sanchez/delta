@@ -44,7 +44,7 @@ void homingAprox(void) {
 		periodoM[1]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * 9600.0)) - 1.0);
 		periodoM[2]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * 9600.0)) - 1.0);
 
-
+//PREGUNTAR
 		if (TIM12->CNT > periodoM[0]) {
 					TIM12->CNT = periodoM[0] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
 		}
@@ -69,28 +69,30 @@ void homingAprox(void) {
 				HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 				HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
 				HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+				HAL_UART_Transmit(&huart3,homeOk, sizeof(homeOk), 100);
 				homeOk = 1;
+				HAL_UART_Transmit(&huart3,homeOk, sizeof(homeOk), 100);
 			}
 		}
 		if(hom==0){
 			hom=1;
-			HAL_UART_Transmit(&huart3,(uint8_t *)"hola k ace\n\r", 12, 100);
+			//HAL_UART_Transmit(&huart3,(uint8_t *)"hola k ace\n\r", 12, 100);
 			HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
 			HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
 			HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
 		}
 		HAL_Delay(1);
 	}
-	HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_Aprox\n\r", 11, 100);
+	HAL_UART_Transmit(&huart3,(uint8_t *)"F\n", 3, 100);
 }
 
 void homingArm1(void) {
 	double flagEndStop=0;
-	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);  //puede ser redundante
 	rpm = 0.5;
 	TIM12->ARR = ((FCL * 60) / (rpm * ((TIM12->PSC) + 1) * 9600)) - 1;
 	TIM12->CCR1 = (TIM12->ARR) / 2;
-	if (!(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))) {
+	if (!(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))) {  //puede ser redundante
 		while(!(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))){
 			HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_SET);
 			HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
