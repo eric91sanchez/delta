@@ -1,4 +1,4 @@
-../Core/Src/trayectoria.c:57:6:inicializarTrayectoria	88	static
-../Core/Src/trayectoria.c:187:6:obtenerVelCurva	32	static
-../Core/Src/trayectoria.c:252:6:jacobianoInverso	192	static
-../Core/Src/trayectoria.c:335:6:SetPerfilTimers	40	static
+../Core/Src/trayectoria.c:58:6:inicializarTrayectoria	88	static
+../Core/Src/trayectoria.c:188:6:obtenerVelCurva	32	static
+../Core/Src/trayectoria.c:253:6:jacobianoInverso	192	static
+../Core/Src/trayectoria.c:336:6:SetPerfilTimers	40	static

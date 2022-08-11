@@ -2,7 +2,8 @@
  * homing.c
  *
  *  Created on: Sep 10, 2020
- *      Author: Santiago
+ *      Author: Santiago River
+ *      Updated by: Elias Correa y Eliseo Elorga
  */
 #include "homing.h"
 
@@ -46,9 +47,9 @@ void homingAprox(void) {
 
 		//TIM12->CNT=0;
 
-		periodoM[0]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * 9600.0)) - 1.0);
-		periodoM[1]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * 9600.0)) - 1.0);
-		periodoM[2]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * 9600.0)) - 1.0);
+		periodoM[0]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
+		periodoM[1]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
+		periodoM[2]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
 
 		//PREGUNTAR
 		if (TIM12->CNT > periodoM[0]) {
@@ -99,7 +100,7 @@ void homingArm1(void) {
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);  //puede ser redundante
 
 	rpm = 0.5;
-	TIM12->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * 9600.0)) - 1.0);
+	TIM12->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
 	TIM12->CCR1 = (TIM12->ARR) / 2;
 
 	if (!(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))) {  //puede ser redundante
@@ -138,7 +139,7 @@ void homingArm2(void) {
 	double flagEndStop = 0;
 	HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
 	rpm = 0.5;
-	TIM13->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * 9600.0)) - 1.0);
+	TIM13->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
 	TIM13->CCR1 = (TIM13->ARR) / 2;
 
 	if (!(HAL_GPIO_ReadPin(E_EndStop2_Sup_GPIO_Port, E_EndStop2_Sup_Pin))) {
@@ -152,7 +153,7 @@ void homingArm2(void) {
 
 	HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
 	rpm = 0.5;
-	TIM13->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * 9600.0)) - 1.0);
+	TIM13->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
 	TIM13->CCR1 = (TIM13->ARR) / 2;
 	HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET);
 	HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
@@ -181,7 +182,7 @@ void homingArm3(void) {
 	double flagEndStop = 0;
 	HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
 	rpm = 0.5;
-	TIM14->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM1->PSC) + 1.0) * 9600.0)) - 1.0);
+	TIM14->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM1->PSC) + 1.0) * STEPREV)) - 1.0);
 	TIM14->CCR1 = (TIM14->ARR) / 2;
 	if (!(HAL_GPIO_ReadPin(E_EndStop3_Sup_GPIO_Port, E_EndStop3_Sup_Pin))) {
 		while(!(HAL_GPIO_ReadPin(E_EndStop3_Sup_GPIO_Port, E_EndStop3_Sup_Pin))){

@@ -2,16 +2,12 @@
  * motor.c
  *
  *  Created on: 6 sep. 2020
- *      Author: Santiago
+ *      Author: Santiago River
+ *      Updated by: Elias Correa y Eliseo Elorga
  */
 #include "motor.h"
 
-#define stepRev 1600			 //Numero de pasos por revolucion (Observar tabla de micropasos del Driver y verificar)
-#define reductor 1				 //Relacion de reduccion del reductor
 
-
-//double stepRev = 1600; //Numero de pasos por revolucion (Observar tabla de micropasos del Driver y verificar)
-//double reductor = 6;							//Relacion de reduccion del reductor
 
 double anguloActual1 = 0;
 double anguloActual2 = 0;
@@ -48,7 +44,7 @@ void configStepMotor1(double angulo) {
 
 	}
 	// Calculo el error de posicion por casteo a int, y cuando supera la unidad lo compenzo------
-	calculoStep1 = (anguloDif * stepRev * reductor) / 360; // Almaceno el remante de los numeros de pasos y
+	calculoStep1 = (anguloDif * STEPREV) / 360; // Almaceno el remante de los numeros de pasos y
 	numStep1 = (uint32_t) calculoStep1;	// cuando pasa la unidad lo sumo al numero de pasos para
 	remanente1 = remanente1 + (calculoStep1 - numStep1);// que el error no se amplifique.
 	if (remanente1 >= 1) {
@@ -79,7 +75,7 @@ void configStepMotor2(double angulo) {
 
 	}
 	// Calculo el error de posicion por casteo a int, y cuando supera la unidad lo compenzo------
-	calculoStep2 = (anguloDif * stepRev * reductor) / 360; // Almaceno el remante de los numeros de pasos y
+	calculoStep2 = (anguloDif * STEPREV) / 360; // Almaceno el remante de los numeros de pasos y
 	numStep2 = (uint32_t) calculoStep2;	// cuando pasa la unidad lo sumo al numero de pasos para
 	remanente2 = remanente2 + (calculoStep2 - numStep2);// que el error no se amplifique.
 	if (remanente2 >= 1) {
@@ -109,7 +105,7 @@ void configStepMotor3(double angulo) {
 		}
 	}
 	// Calculo el error de posicion por casteo a int, y cuando supera la unidad lo compenzo------
-	calculoStep3 = (anguloDif * stepRev * reductor) / 360; // Almaceno el remante de los numeros de pasos y
+	calculoStep3 = (anguloDif * STEPREV) / 360; // Almaceno el remante de los numeros de pasos y
 	numStep3 = (uint32_t) calculoStep3;	// cuando pasa la unidad lo sumo al numero de pasos para
 	remanente3 = remanente3 + (calculoStep3 - numStep3);// que el error no se amplifique.
 	if (remanente3 >= 1) {

@@ -2,14 +2,14 @@
  * motor.h
  *
  *  Created on: 6 sep. 2020
- *      Author: Santiago
+ *      Author: Santiago River
+ *      Updated by: Elias Correa y Eliseo Elorga
  */
 
 #ifndef INC_MOTOR_H_
 #define INC_MOTOR_H_
 
 #include "main.h"
-
 
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
@@ -24,7 +24,7 @@ extern uint32_t numStep3;		//Numero de pasos PaP3 consigna
 extern uint32_t pMotor1;		//Pasos de motor PaP1 actual
 extern uint32_t pMotor2;		//Pasos de motor PaP2 actual
 extern uint32_t pMotor3;		//Pasos de motor PaP3 actual
-extern double Fcl;
+//extern double Fcl;
 extern double flagErrorEndStop;
 
 

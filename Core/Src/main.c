@@ -288,9 +288,11 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	switch (GPIO_Pin) {
+
 	case BUTTON_Pin:
 		FlagButton = 1;
 		break;
+
 		/*case E_EndStop1_Inf_Pin:
 		 HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);	//Apago el PWM del motor 1
 		 HAL_UART_Transmit(&huart3, "EndStop1Inf\n\r", 13, 100);
@@ -315,6 +317,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		 HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);	//Apago el PWM del motor 3
 		 HAL_UART_Transmit(&huart3, "EndStop3Sup\n\r", 13, 100);
 		 break;*/
+
 	default:
 
 		break;
@@ -415,7 +418,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			dRecta3D[0] = 0 + DX * vDirector[0];
 			dRecta3D[1] = 0 + DX * vDirector[1];
 			dRecta3D[2] = 0 + DX * vDirector[2];
-			dRecta3DZ=dRecta3D[2];
+			dRecta3DZ=dRecta3D[2]; // NO HACE NADA ?
 
 			jacobianoInverso(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
 			SetPerfilTimers(omega[0], omega[1], omega[2]);

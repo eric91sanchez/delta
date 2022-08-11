@@ -2,7 +2,8 @@
  * cinematica_inversa.c
  *
  *  Created on: 12 sep. 2020
- *      Author: Santiago
+ *      Author: Santiago River
+ *      Updated by: Elias Correa y Eliseo Elorga
  */
 
 #include <operaciones.h>
