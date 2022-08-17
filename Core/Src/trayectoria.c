@@ -2,7 +2,7 @@
  * cinematica_inversa.c
  *
  *  Created on: 12 sep. 2020
- *      Author: Santiago River
+ *      Author: Santiago Rivier
  *      Updated by: Elias Correa y Eliseo Elorga
  */
 

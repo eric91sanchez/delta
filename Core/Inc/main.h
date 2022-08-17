@@ -45,6 +45,7 @@ typedef struct Vector3D{
 	double z;
 }Vec3D;
 
+typedef enum { false, true } bool;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
