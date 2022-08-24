@@ -206,19 +206,37 @@ void interpretaComando(void){
 		break;
 	case 'H':
 	case 'h':
-		HAL_UART_Transmit(&huart3,(uint8_t *)"Hmg\n", 5, 100);
-		//PREGUNTA : se activan los enables en el homming para asegurarse de que el robot empiece a operar en una posicion segura  ?
-		HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);  //activo Enable
+
+		HAL_UART_Transmit(&huart3,(uint8_t *)"Homing\n\r", 8, 100);
+
+		//Ponemos el enable en bajo para habilitar el driver
+
+		HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
+
+		HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
+
 		homingAprox();
 		homingArm1();
 		homingArm2();
 		homingArm3();
+
+		//Ponemos el enable en alto para dehabilitar el driver
+
+		HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_SET);
+
+		HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
+
+
 		Pini.x=0;
 		Pini.y=0;
 		Pini.z = -0.334658034417224;
+
 		HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_H\n", 7, 100);
+
 
 	break;
 
