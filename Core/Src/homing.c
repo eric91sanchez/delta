@@ -26,7 +26,7 @@ void homingAprox(void) {
 
 	// homeOk = 0;
 
-	rpm = 5.0; //Valor a confirmar
+	rpm = 10.0; //Valor a confirmar
 	homAprox = true;
 	homStart = true;
 
@@ -85,16 +85,16 @@ void homingAprox(void) {
 				HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 				HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
 				HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
-				// HAL_UART_Transmit(&huart3,homeOk, sizeof(homeOk), 100);
+
 				homAprox = false;
-				// HAL_UART_Transmit(&huart3,homeOk, sizeof(homeOk), 100);
+
 			}
 		}
 
 		if(homStart){
 
 			homStart = false;
-			//HAL_UART_Transmit(&huart3,(uint8_t *)"StartHomAprox\n", 15, 100);
+
 			HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
 			HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
 			HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
@@ -108,7 +108,7 @@ void homingAprox(void) {
 
 void homingArm1(void) {
 
-	rpm = 5.0;
+	rpm = 10.0;
 	TIM12->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
 	TIM12->CCR1 = (TIM12->ARR) / 2;
 
@@ -135,7 +135,7 @@ void homingArm1(void) {
 
         HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 
-        rpm = 5.0;
+        rpm = 10.0;
         TIM12->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
         TIM12->CCR1 = (TIM12->ARR) / 2;
 
@@ -168,7 +168,7 @@ void homingArm1(void) {
 
 void homingArm2(void) {
 
-	rpm = 5.0;
+	rpm = 10.0;
 	TIM13->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
 	TIM13->CCR1 = (TIM13->ARR) / 2;
 
@@ -195,7 +195,7 @@ void homingArm2(void) {
 
         HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
 
-        rpm = 5.0;
+        rpm = 10.0;
         TIM13->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
         TIM13->CCR1 = (TIM13->ARR) / 2;
 
@@ -226,7 +226,7 @@ void homingArm2(void) {
 
 void homingArm3(void) {
 
-	rpm = 5.0;
+	rpm = 10.0;
 	TIM14->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
 	TIM14->CCR1 = (TIM14->ARR) / 2;
 
@@ -253,7 +253,7 @@ void homingArm3(void) {
 
         HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
 
-        rpm = 5.0;
+        rpm = 10.0;
         TIM14->ARR = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
         TIM14->CCR1 = (TIM14->ARR) / 2;
 

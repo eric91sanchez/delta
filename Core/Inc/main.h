@@ -149,7 +149,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 #define FCL 64000000
 
-#define MICROSTEPRESOLUTION 1600			   //Micropasos por revolucion. Corresponde a la configuracion de los Swithces del Driver
+#define MICROSTEPRESOLUTION 8000			   //Micropasos por revolucion. Corresponde a la configuracion de los Swithces del Driver
 #define REDUCTOR 1				 			   //Relacion de reduccion (Se la esablece a 1 ya que hemos quitado los reductores del robot)
 #define STEPREV MICROSTEPRESOLUTION*REDUCTOR   //Paso por revolucion considerando la reduccion.
 

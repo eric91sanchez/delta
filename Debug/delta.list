@@ -2093,7 +2093,7 @@ void homingAprox(void) {
 
 	// homeOk = 0;
 
-	rpm = 5.0; //Valor a confirmar
+	rpm = 10.0; //Valor a confirmar
  8001b94:	4982      	ldr	r1, [pc, #520]	; (8001da0 <homingAprox+0x210>)
  8001b96:	f04f 0200 	mov.w	r2, #0
  8001b9a:	4b82      	ldr	r3, [pc, #520]	; (8001da4 <homingAprox+0x214>)
@@ -2293,11 +2293,11 @@ void homingAprox(void) {
  8001d8c:	e0c9      	b.n	8001f22 <homingAprox+0x392>
  8001d8e:	bf00      	nop
  8001d90:	00000000 	.word	0x00000000
- 8001d94:	40990000 	.word	0x40990000
+ 8001d94:	40bf4000 	.word	0x40bf4000
  8001d98:	00000000 	.word	0x00000000
  8001d9c:	41ec9c38 	.word	0x41ec9c38
  8001da0:	24000380 	.word	0x24000380
- 8001da4:	40140000 	.word	0x40140000
+ 8001da4:	40240000 	.word	0x40240000
  8001da8:	24000388 	.word	0x24000388
  8001dac:	24000389 	.word	0x24000389
  8001db0:	240005d4 	.word	0x240005d4
@@ -2430,12 +2430,12 @@ void homingAprox(void) {
  8001ee8:	2100      	movs	r1, #0
  8001eea:	481b      	ldr	r0, [pc, #108]	; (8001f58 <homingAprox+0x3c8>)
  8001eec:	f008 ffb4 	bl	800ae58 <HAL_TIM_PWM_Stop>
-				// HAL_UART_Transmit(&huart3,homeOk, sizeof(homeOk), 100);
+
 				homAprox = false;
  8001ef0:	4b1a      	ldr	r3, [pc, #104]	; (8001f5c <homingAprox+0x3cc>)
  8001ef2:	2200      	movs	r2, #0
  8001ef4:	701a      	strb	r2, [r3, #0]
-				// HAL_UART_Transmit(&huart3,homeOk, sizeof(homeOk), 100);
+
 			}
 		}
 
@@ -2449,7 +2449,7 @@ void homingAprox(void) {
  8001efe:	4b18      	ldr	r3, [pc, #96]	; (8001f60 <homingAprox+0x3d0>)
  8001f00:	2200      	movs	r2, #0
  8001f02:	701a      	strb	r2, [r3, #0]
-			//HAL_UART_Transmit(&huart3,(uint8_t *)"StartHomAprox\n", 15, 100);
+
 			HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
  8001f04:	2100      	movs	r1, #0
  8001f06:	4812      	ldr	r0, [pc, #72]	; (8001f50 <homingAprox+0x3c0>)
@@ -2503,7 +2503,7 @@ void homingArm1(void) {
  8001f70:	b580      	push	{r7, lr}
  8001f72:	af00      	add	r7, sp, #0
 
-	rpm = 5.0;
+	rpm = 10.0;
  8001f74:	4972      	ldr	r1, [pc, #456]	; (8002140 <homingArm1+0x1d0>)
  8001f76:	f04f 0200 	mov.w	r2, #0
  8001f7a:	4b72      	ldr	r3, [pc, #456]	; (8002144 <homingArm1+0x1d4>)
@@ -2613,7 +2613,7 @@ void homingArm1(void) {
  800204c:	4843      	ldr	r0, [pc, #268]	; (800215c <homingArm1+0x1ec>)
  800204e:	f008 ff03 	bl	800ae58 <HAL_TIM_PWM_Stop>
 
-        rpm = 5.0;
+        rpm = 10.0;
  8002052:	493b      	ldr	r1, [pc, #236]	; (8002140 <homingArm1+0x1d0>)
  8002054:	f04f 0200 	mov.w	r2, #0
  8002058:	4b3a      	ldr	r3, [pc, #232]	; (8002144 <homingArm1+0x1d4>)
@@ -2725,11 +2725,11 @@ void homingArm1(void) {
  800212c:	bf00      	nop
  800212e:	bd80      	pop	{r7, pc}
  8002130:	00000000 	.word	0x00000000
- 8002134:	40990000 	.word	0x40990000
+ 8002134:	40bf4000 	.word	0x40bf4000
  8002138:	00000000 	.word	0x00000000
  800213c:	41ec9c38 	.word	0x41ec9c38
  8002140:	24000380 	.word	0x24000380
- 8002144:	40140000 	.word	0x40140000
+ 8002144:	40240000 	.word	0x40240000
  8002148:	40001800 	.word	0x40001800
  800214c:	58021000 	.word	0x58021000
  8002150:	08012514 	.word	0x08012514
@@ -2747,7 +2747,7 @@ void homingArm2(void) {
  8002170:	b580      	push	{r7, lr}
  8002172:	af00      	add	r7, sp, #0
 
-	rpm = 5.0;
+	rpm = 10.0;
  8002174:	4972      	ldr	r1, [pc, #456]	; (8002340 <homingArm2+0x1d0>)
  8002176:	f04f 0200 	mov.w	r2, #0
  800217a:	4b72      	ldr	r3, [pc, #456]	; (8002344 <homingArm2+0x1d4>)
@@ -2857,7 +2857,7 @@ void homingArm2(void) {
  800224c:	4843      	ldr	r0, [pc, #268]	; (800235c <homingArm2+0x1ec>)
  800224e:	f008 fe03 	bl	800ae58 <HAL_TIM_PWM_Stop>
 
-        rpm = 5.0;
+        rpm = 10.0;
  8002252:	493b      	ldr	r1, [pc, #236]	; (8002340 <homingArm2+0x1d0>)
  8002254:	f04f 0200 	mov.w	r2, #0
  8002258:	4b3a      	ldr	r3, [pc, #232]	; (8002344 <homingArm2+0x1d4>)
@@ -2967,11 +2967,11 @@ void homingArm2(void) {
  800232c:	bf00      	nop
  800232e:	bd80      	pop	{r7, pc}
  8002330:	00000000 	.word	0x00000000
- 8002334:	40990000 	.word	0x40990000
+ 8002334:	40bf4000 	.word	0x40bf4000
  8002338:	00000000 	.word	0x00000000
  800233c:	41ec9c38 	.word	0x41ec9c38
  8002340:	24000380 	.word	0x24000380
- 8002344:	40140000 	.word	0x40140000
+ 8002344:	40240000 	.word	0x40240000
  8002348:	40001c00 	.word	0x40001c00
  800234c:	58021000 	.word	0x58021000
  8002350:	08012540 	.word	0x08012540
@@ -2989,7 +2989,7 @@ void homingArm3(void) {
  8002370:	b580      	push	{r7, lr}
  8002372:	af00      	add	r7, sp, #0
 
-	rpm = 5.0;
+	rpm = 10.0;
  8002374:	4972      	ldr	r1, [pc, #456]	; (8002540 <homingArm3+0x1d0>)
  8002376:	f04f 0200 	mov.w	r2, #0
  800237a:	4b72      	ldr	r3, [pc, #456]	; (8002544 <homingArm3+0x1d4>)
@@ -3099,7 +3099,7 @@ void homingArm3(void) {
  800244c:	4843      	ldr	r0, [pc, #268]	; (800255c <homingArm3+0x1ec>)
  800244e:	f008 fd03 	bl	800ae58 <HAL_TIM_PWM_Stop>
 
-        rpm = 5.0;
+        rpm = 10.0;
  8002452:	493b      	ldr	r1, [pc, #236]	; (8002540 <homingArm3+0x1d0>)
  8002454:	f04f 0200 	mov.w	r2, #0
  8002458:	4b3a      	ldr	r3, [pc, #232]	; (8002544 <homingArm3+0x1d4>)
@@ -3213,11 +3213,11 @@ void homingArm3(void) {
  800252c:	bf00      	nop
  800252e:	bd80      	pop	{r7, pc}
  8002530:	00000000 	.word	0x00000000
- 8002534:	40990000 	.word	0x40990000
+ 8002534:	40bf4000 	.word	0x40bf4000
  8002538:	00000000 	.word	0x00000000
  800253c:	41ec9c38 	.word	0x41ec9c38
  8002540:	24000380 	.word	0x24000380
- 8002544:	40140000 	.word	0x40140000
+ 8002544:	40240000 	.word	0x40240000
  8002548:	40002000 	.word	0x40002000
  800254c:	58021000 	.word	0x58021000
  8002550:	0801256c 	.word	0x0801256c
@@ -5441,7 +5441,7 @@ void configStepMotor1(double angulo) {
  800377a:	bd80      	pop	{r7, pc}
  800377c:	f3af 8000 	nop.w
  8003780:	00000000 	.word	0x00000000
- 8003784:	40990000 	.word	0x40990000
+ 8003784:	40bf4000 	.word	0x40bf4000
  8003788:	00000000 	.word	0x00000000
  800378c:	40768000 	.word	0x40768000
  8003790:	240003a4 	.word	0x240003a4
@@ -5599,7 +5599,7 @@ void configStepMotor2(double angulo) {
  80038f2:	bd80      	pop	{r7, pc}
  80038f4:	f3af 8000 	nop.w
  80038f8:	00000000 	.word	0x00000000
- 80038fc:	40990000 	.word	0x40990000
+ 80038fc:	40bf4000 	.word	0x40bf4000
  8003900:	00000000 	.word	0x00000000
  8003904:	40768000 	.word	0x40768000
  8003908:	240003a8 	.word	0x240003a8
@@ -5756,7 +5756,7 @@ void configStepMotor3(double angulo) {
  8003a6a:	bd80      	pop	{r7, pc}
  8003a6c:	f3af 8000 	nop.w
  8003a70:	00000000 	.word	0x00000000
- 8003a74:	40990000 	.word	0x40990000
+ 8003a74:	40bf4000 	.word	0x40bf4000
  8003a78:	00000000 	.word	0x00000000
  8003a7c:	40768000 	.word	0x40768000
  8003a80:	240003ac 	.word	0x240003ac
