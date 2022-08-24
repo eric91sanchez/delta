@@ -123,6 +123,7 @@ void homingArm1(void) {
 		while(ES1s_PRESSED){
 
 			HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_SET);
+			HAL_Delay(0.5);
 			HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
 			HAL_Delay(30);
 		}
@@ -132,6 +133,7 @@ void homingArm1(void) {
 
         while(ES1s_UNPRESSED){
             HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_RESET);
+            HAL_Delay(0.5);
             HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
             HAL_Delay(30);
         }
@@ -149,6 +151,7 @@ void homingArm1(void) {
             while(ES1s_PRESSED){
 
                 HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_SET);
+                HAL_Delay(0.5);
                 HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
                 HAL_Delay(30);
             }
@@ -182,6 +185,7 @@ void homingArm2(void) {
 		while(ES2s_PRESSED){
 
 			HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_SET);
+			HAL_Delay(0.5);
 			HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
 			HAL_Delay(30);
 		}
@@ -191,6 +195,7 @@ void homingArm2(void) {
 
         while(ES2s_UNPRESSED){
             HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET);
+            HAL_Delay(0.5);
             HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
             HAL_Delay(30);
         }
@@ -208,6 +213,7 @@ void homingArm2(void) {
             while(ES2s_PRESSED){
 
                 HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_SET);
+                HAL_Delay(0.5);
                 HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
                 HAL_Delay(30);
             }
@@ -239,6 +245,7 @@ void homingArm3(void) {
 		while(ES3s_PRESSED){
 
 			HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_SET);
+			HAL_Delay(0.5);
 			HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
 			HAL_Delay(30);
 		}
@@ -248,6 +255,7 @@ void homingArm3(void) {
 
         while(ES3s_UNPRESSED){
             HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_RESET);
+            HAL_Delay(0.5);
             HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
             HAL_Delay(30);
         }
@@ -265,6 +273,7 @@ void homingArm3(void) {
             while(ES3s_PRESSED){
 
                 HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_SET);
+                HAL_Delay(0.5);
                 HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
                 HAL_Delay(30);
             }
