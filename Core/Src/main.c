@@ -189,7 +189,7 @@ int main(void)
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 1
 	HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 2
 	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 3
-	HAL_UART_Transmit(&huart3, (uint8_t *)"Ejemplo :px0 y0 z-0.8 \nr", 24, 100);
+	HAL_UART_Transmit(&huart3, (uint8_t *)"Ej:px0 y0 z-0.8 \n", 18, 100);
   /* USER CODE END 2 */
 
   /* Infinite loop */

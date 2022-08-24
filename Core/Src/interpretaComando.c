@@ -235,7 +235,8 @@ void interpretaComando(void){
 		Pini.y=0;
 		Pini.z = -0.334658034417224;
 
-		HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_Homing\n\r", 12, 100);
+		HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_H\n", 7, 100);
+
 
 	break;
 
