@@ -224,11 +224,11 @@ void interpretaComando(void){
 
 		//Ponemos el enable en alto para dehabilitar el driver
 
-		HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_SET);
+		//HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_SET);
+		//HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_SET);
+		//HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_SET);
 
-		HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
+		//HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
 
 
 		Pini.x=0;
