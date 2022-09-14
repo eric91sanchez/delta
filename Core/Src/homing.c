@@ -9,7 +9,6 @@
 #include "homing.h"
 
 
-// uint8_t homeOk;			//Flag de aproximacion de homing
 double rpm;
 bool homAprox, homStart;
 
@@ -24,7 +23,6 @@ bool homAprox, homStart;
 
 void homingAprox(void) {
 
-	// homeOk = 0;
 
 	rpm = 5.0; //Valor a confirmar
 	homAprox = true;
@@ -41,19 +39,20 @@ void homingAprox(void) {
 	HAL_NVIC_DisableIRQ(EXTI4_IRQn);	//Apago interrupcion EndStop 3 Superior
 	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);	//Apago interrupcion EndStop 3 Inferior
 
-	//Las tres piernas se mueven hacia arriba
-	HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_RESET);//Set direccion con la misma convencion que motor.c
-	HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_RESET);
-	HAL_Delay(20);
+	//Las tres piernas se mueven hacia arriba ...... ESTA OPERACION YA SE HACE EN EL ARCHIVO INTERPRETA COMANDO
+	//HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_RESET);//Set direccion con la misma convencion que motor.c
+	//HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_RESET);
+
+	//HAL_Delay(50); //50ms para el cambio de estado de DIR
 
 	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
 
-	periodoM[0]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
-	periodoM[1]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
-	periodoM[2]=(uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
+	periodoM[0] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
+	periodoM[1] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
+	periodoM[2] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
 
 	TIM12->ARR = periodoM[0];
 	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
@@ -85,9 +84,9 @@ void homingAprox(void) {
 				HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
 				HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
 				HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
-				// HAL_UART_Transmit(&huart3,homeOk, sizeof(homeOk), 100);
+
 				homAprox = false;
-				// HAL_UART_Transmit(&huart3,homeOk, sizeof(homeOk), 100);
+
 			}
 		}
 
