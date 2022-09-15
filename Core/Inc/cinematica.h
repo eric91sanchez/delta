@@ -8,7 +8,7 @@
 #ifndef INC_CINEMATICA_H_
 #define INC_CINEMATICA_H_
 
-#include <operaciones.h>
+#include <GlobalFunc.h>
 #include <main.h>
 
 extern double titha1;

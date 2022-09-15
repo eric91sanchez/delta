@@ -13,23 +13,21 @@
 #define pi 3.14159265359
 #define RAD_TO_DEG 180.0 / pi
 
-extern double XJ1_1, YJ1_1, ZJ1_1;
-extern double XJ2_1, YJ2_1, ZJ2_1;
-extern double XJ3_1, YJ3_1, ZJ3_1;
 
-extern double TiempoTotal;
-extern double X;
-extern double DX;
-extern double DDX;
+
+
+extern float q,qd,qdd,qddd;
+extern float amax,jmax,vmax,vi,vf;
+extern float vmin,jmin,amin;
+
 extern double omega[3];
-extern double FlagTrayecto;
 extern double omega1, omega2, omega3;
 extern uint32_t periodoM1, periodoM2, periodoM3;
 extern double periodoM[3];
 extern double rpm1, rpm2, rpm3;
 extern double ErrorPeriodo[3];
 extern double ErrorAcumuladoPeriodo[3];
-extern double FlagTrayectoM1, FlagTrayectoM2, FlagTrayectoM3;
+
 //extern double Fcl;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
@@ -42,11 +40,11 @@ extern TIM_HandleTypeDef htim15;
 extern UART_HandleTypeDef huart3;
 
 
-void inicializarTrayectoria(double XiHip1, double XfHip4, double V0Hip, double Vf, double Vmax, double Amax, double Jerk );
-void obtenerVelCurva(double t);
+void update_ScurveTraj(float _qi ,float _qf, float vi,float vf ,float vmax,float amax,float jmax);
+void get_Straj(float t);
 
 
-void jacobianoInverso(double Vxaux, double Vyaux, double Vzaux, double Pxaux, double Pyaux, double Pzaux);
+
 void SetPerfilTimers(double omeg1, double omeg2, double omeg3);
 
 

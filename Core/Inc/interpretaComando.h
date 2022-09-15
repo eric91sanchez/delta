@@ -24,20 +24,8 @@ extern double titha1;
 extern double titha2;
 extern double titha3;
 
-extern double vmax;
-extern double amax;
-extern double jmax;
-extern double vi;
-extern double vf;
+extern float vmax,amax,jmax,vi,vf;
 
-/*
-extern float_t Pxini;
-extern float_t Pyini;
-extern float_t Pzini;
-extern float_t Pxfin;
-extern float_t Pyfin;
-extern float_t Pzfin;
-*/
 
 extern double flagErrorEndStop;
 

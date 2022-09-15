@@ -5,7 +5,7 @@
  *      Author: EliasC
  */
 
-#include <operaciones.h>
+#include <GlobalFunc.h>
 
 array2D transpuesta(double Maux[3][3]) {
 	array2D MTaux;

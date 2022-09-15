@@ -5,8 +5,11 @@
  *      Author: EliasC
  */
 
-#ifndef INC_OPERACIONES_H_
-#define INC_OPERACIONES_H_
+#ifndef INC_GLOBALFUNC_H_
+#define INC_GLOBALFUNC_H_
+
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
 
 typedef struct{
 	double m[3][3];
@@ -20,4 +23,4 @@ array2D inversa (double A[3][3]);
 array2D productMatriz (double MatrizA[3][3], double MatrizB[3][3]);
 
 
-#endif /* INC_OPERACIONES_H_ */
+#endif /* INC_GLOBALFUNC_H_ */

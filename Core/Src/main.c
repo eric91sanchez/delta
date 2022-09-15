@@ -34,6 +34,7 @@
 #include "interpretaComando.h"
 #include "trayectoria.h"
 #include "cinematica.h"
+#include "inverseJacobian.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,25 +66,21 @@ double titha1;
 double titha2;
 double titha3;
 
-
+//--------------------------------------------
 //Valores para crear el perfil de velocidad
-double vmax;
-double amax;
-double jmax;
-double vi;
-double vf;
+float q=0,qd=0,qdd=0,qddd=0;
+float jmax = 1;
+float jmin;
 
+float vmax = 0.4;
+float vmin;
 
-//double Fcl = 64000000;
-/*
-float_t Pxini;
-float_t Pyini;
-float_t Pzini;
+float vi = 0;
+float vf = 0;
 
-float_t Pxfin;
-float_t Pyfin;
-float_t Pzfin;
-*/
+float amax = 4;
+float amin;
+//--------------------------------------------
 
 Vec3D Pini;
 Vec3D Pfin;
@@ -94,7 +91,7 @@ float_t vDirector[3];
 double Recta3D[3];
 double dRecta3D[3];
 double omega[3];
-double TiempoTotal;
+
 uint8_t rx_index = 0;
 uint8_t rx_buffer[30];
 uint8_t rx_data;
@@ -104,10 +101,6 @@ uint8_t cm0;				//Flag start transmit
 uint8_t FlagTiempo;
 
 double Tiempo;
-
-double X = 0;
-double DX = 0;
-double DDX = 0;
 
 double FlagTrayectoM1, FlagTrayectoM2, FlagTrayectoM3 = 1;
 double omega1, omega2, omega3;
@@ -207,7 +200,8 @@ int main(void)
 			configStepMotor1(titha1);
 			configStepMotor2(titha2);
 			configStepMotor3(titha3);
-			inicializarTrayectoria(0, distancia, 0, 0, 0.4, 4, 1); //(Posinicio , Posfin , Vinicio , Vfin , Vmaxima, Amaxima, jerk)
+
+			update_ScurveTraj(0, distancia, vi, vf, vmax, amax, jmax);
 			FlagTiempo = 0;
 			FlagTrayectoM1 = 0;
 			FlagTrayectoM2 = 0;
@@ -411,14 +405,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 				TIM5->CNT = 0;	// comienzo a contabilizar el tiempo recien acá
 			}
 			Tiempo = (((double) (TIM5->CNT)) * ((double)(TIM5->PSC + 1) / 64000000.0));
-			obtenerVelCurva(Tiempo);
-			Recta3D[0] = Pini.x + X * vDirector[0];
-			Recta3D[1] = Pini.y + X * vDirector[1];
-			Recta3D[2] = Pini.z + X * vDirector[2];
-			dRecta3D[0] = 0 + DX * vDirector[0];
-			dRecta3D[1] = 0 + DX * vDirector[1];
-			dRecta3D[2] = 0 + DX * vDirector[2];
-			dRecta3DZ=dRecta3D[2]; // NO HACE NADA ?
+
+			get_Straj(Tiempo);
+
+			Recta3D[0] = Pini.x + q * vDirector[0];
+			Recta3D[1] = Pini.y + q * vDirector[1];
+			Recta3D[2] = Pini.z + q * vDirector[2];
+			dRecta3D[0] = 0 + qd * vDirector[0];
+			dRecta3D[1] = 0 + qd * vDirector[1];
+			dRecta3D[2] = 0 + qd * vDirector[2];
+
 
 			jacobianoInverso(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
 			SetPerfilTimers(omega[0], omega[1], omega[2]);
