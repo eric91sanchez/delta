@@ -9,6 +9,8 @@
 #include "interpretaComando.h"
 
 
+//FALTA COMENTAR FUNCIONAMIENTO INTERPRETE DE COMANDO
+
 volatile double aux;
 uint8_t auxString[10];
 
