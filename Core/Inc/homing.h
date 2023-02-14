@@ -25,10 +25,11 @@ extern double mandalemecha;
 extern double periodoM[3];
 
 
-void homingAprox(void);
-void homingArm1(void);
-void homingArm2(void);
-void homingArm3(void);
+//void homingAprox(void);
+//void homingArm1(void);
+//void homingArm2(void);
+//void homingArm3(void);
+void homing(void);
 
 
 

@@ -16,6 +16,8 @@ void interpretaComando(void){
 
 	switch(rx_buffer[0]){
 
+	/*
+
 	case 'v':
 		HAL_UART_Transmit(&huart3, (uint8_t *)"params\n",8, 100);
 		uint8_t i = 1;
@@ -204,10 +206,11 @@ void interpretaComando(void){
 		}
 		cinematicaInversa(Pfin);
 		break;
+	*/
 	case 'H':
 	case 'h':
 
-		HAL_UART_Transmit(&huart3,(uint8_t *)"Homing\n\r", 8, 100);
+		//HAL_UART_Transmit(&huart3,(uint8_t *)"Homing\n\r", 8, 100);
 
 		//Ponemos el enable en bajo para habilitar el driver
 
@@ -216,11 +219,11 @@ void interpretaComando(void){
 		HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
 
 		HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
-
-		homingAprox();
-		homingArm1();
-		homingArm2();
-		homingArm3();
+		homing();
+		//homingAprox();
+		//homingArm1();
+		//homingArm2();
+		//homingArm3();
 
 		//Ponemos el enable en alto para dehabilitar el driver
 
@@ -233,9 +236,9 @@ void interpretaComando(void){
 
 		Pini.x=0;
 		Pini.y=0;
-		Pini.z = -0.334658034417224;
+		Pini.z = -0.334658034417224; // CAMBIAR !!!!!!!!!!!
 
-		HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_H\n", 7, 100);
+		//HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_H\n", 7, 100);
 
 
 	break;

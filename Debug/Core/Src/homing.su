@@ -1,4 +1,1 @@
-../Core/Src/homing.c:24:6:homingAprox	8	static
-../Core/Src/homing.c:108:6:homingArm1	8	static
-../Core/Src/homing.c:171:6:homingArm2	8	static
-../Core/Src/homing.c:232:6:homingArm3	8	static
+../Core/Src/homing.c:27:6:homing	8	static
