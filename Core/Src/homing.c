@@ -9,10 +9,8 @@
 #include "homing.h"
 
 
-double rpm;
-bool homAprox, homStart;
-bool homFin;
-
+double rpm = 2.0;  //Valor experimental.
+bool homAprox, homStart,homFin;
 bool hom1,hom2,hom3;
 
 #define ES1s_PRESSED !(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))
@@ -26,14 +24,12 @@ bool hom1,hom2,hom3;
 
 void homing(void) {
 
-
-	rpm = 2.0; //Valor a confirmar
 	homAprox = true;
 	homStart = true;
     homFin = false;
     hom1=false;
     hom2=false;
-    hom3=false;
+    hom3=true;
 
     HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
     HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
@@ -180,12 +176,12 @@ void homing(void) {
         	//HAL_TIM_IC_Stop_IT(&htim3, TIM_CHANNEL_1);//Apago interrupcion input capture motor 2
         	//HAL_TIM_IC_Stop_IT(&htim4, TIM_CHANNEL_1);//Apago interrupcion input capture motor 3
 
-        	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Apago interrupcion EndStop 1 Superior
-        	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Apago interrupcion EndStop 1 Inferior
-        	HAL_NVIC_EnableIRQ(EXTI2_IRQn);		//Apago interrupcion EndStop 2 Superior
-        	HAL_NVIC_EnableIRQ(EXTI3_IRQn);		//Apago interrupcion EndStop 2 Inferior
-        	HAL_NVIC_EnableIRQ(EXTI4_IRQn);		//Apago interrupcion EndStop 3 Superior
-        	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Apago interrupcion EndStop 3 Inferior
+        	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
+        	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior
+        	HAL_NVIC_EnableIRQ(EXTI2_IRQn);		//Enciendo interrupcion EndStop 2 Superior
+        	HAL_NVIC_EnableIRQ(EXTI3_IRQn);		//Enciendo interrupcion EndStop 2 Inferior
+        	HAL_NVIC_EnableIRQ(EXTI4_IRQn);		//Enciendo interrupcion EndStop 3 Superior
+        	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Enciendo interrupcion EndStop 3 Inferior
 
 
         	HAL_UART_Transmit(&huart3,(uint8_t *)"FH\n", 4, 100);
