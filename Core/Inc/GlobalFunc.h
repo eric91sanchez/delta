@@ -2,7 +2,7 @@
  * operaciones.h
  *
  *  Created on: Jun 22, 2022
- *      Author: EliasC
+ *      Author: Elias Correa y Eliseo Elorga
  */
 
 #ifndef INC_GLOBALFUNC_H_

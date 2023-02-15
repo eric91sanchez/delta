@@ -2,7 +2,7 @@
  * operaciones.c
  *
  *  Created on: Jun 22, 2022
- *      Author: EliasC
+ *      Author: Elias Correa y Eliseo Elorga
  */
 
 #include <GlobalFunc.h>
