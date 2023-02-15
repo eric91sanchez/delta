@@ -95,7 +95,8 @@ double omega[3];
 uint8_t rx_index = 0;
 uint8_t rx_buffer[30];
 uint8_t rx_data;
-uint8_t data[] = "Start\n";		//Dato enviado al iniciar el programa
+uint8_t message[] = "Inicializacion en curso...\n";		//Mensaje enviado al iniciar el programa
+uint8_t message1[] = "El robot ya se encuentra operacional.\n";
 uint16_t valor = 0;
 uint8_t cm0;				//Flag start transmit
 uint8_t FlagTiempo;
@@ -129,6 +130,57 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void robotInitialization(void){
+
+	/* En esta rutina se procederá a inicializar perifericos vinculados al robot asi como la definicion
+	* de un estado seguro y no referenciado del robot al momento de energizarlo, esto quiere decir que
+	* habilatamos los drivers al momento de lanzar el programa para que los motores se bloqueen. Se procedera
+	* a darles una consigna pequeña de posicion en direccion horario para que los eslabones no entren en la
+	* singularidad de los 90º */
+
+
+	double rpm = 2.0;
+
+	HAL_TIM_Base_Start(&htim12);
+	HAL_TIM_Base_Start(&htim13);
+	HAL_TIM_Base_Start(&htim14);
+
+	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 1
+	HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 2
+	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 3
+
+	HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
+
+	HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
+
+	HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
+	HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
+	HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
+
+	periodoM[0] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
+	periodoM[1] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
+	periodoM[2] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
+
+	TIM12->ARR = periodoM[0];
+	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
+	TIM13->ARR =periodoM[1];
+	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
+	TIM14->ARR =periodoM[2];
+	TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
+
+    HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+
+    HAL_Delay(1000);
+
+	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+
+}
 /* USER CODE END 0 */
 
 /**
@@ -170,19 +222,17 @@ int main(void)
   MX_TIM15_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+
   /* USER CODE BEGIN 2 */
-	HAL_UART_Transmit(&huart3, data, sizeof(data), 100); //Enviamos el mensaje: Start
-	HAL_UART_Receive_IT(&huart3, &rx_data, 1);
+
+  HAL_UART_Transmit(&huart3, message, sizeof(message), 100); //Mensaje de inicializacion en curso.
+  HAL_UART_Receive_IT(&huart3, &rx_data, 1);
+
+  robotInitialization();
+
+  HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100); //Mensaje inidicando que el Robot esta listo para su uso
 
 
-	HAL_TIM_Base_Start(&htim12);
-	HAL_TIM_Base_Start(&htim13);
-	HAL_TIM_Base_Start(&htim14);
-
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 1
-	HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 2
-	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 3
-	HAL_UART_Transmit(&huart3, (uint8_t *)"Ej:px0 y0 z-0.8 \n", 18, 100);
   /* USER CODE END 2 */
 
   /* Infinite loop */
