@@ -2,7 +2,8 @@
  * homing.h
  *
  *  Created on: Sep 10, 2020
- *      Author: Santiago
+ *      Author: Santiago Rivier
+ *      Updated by: Elias Correa y Eliseo Elorga
  */
 
 #ifndef INC_HOMING_H_

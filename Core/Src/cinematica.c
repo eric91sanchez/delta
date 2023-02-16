@@ -1,6 +1,11 @@
+/*
+ * cinematica.c
+ *
+ *  Created on: Jun 22, 2022
+ *      Author: Elias Correa y Eliseo Elorga
+ */
 
 #include <cinematica.h>
-
 
 
 //Una constante a diferencia de una macro ocupa un espacio(memoria) durante la ejecución del programa.
@@ -19,7 +24,7 @@
 #define fi1 270
 #define fi2 30
 #define fi3 150
-#define L1 0.4
+#define L1 0.2  //Se redujo a la mitad el eslabon1 (inicialmente 0.4)
 #define L2 0.6
 #define R 0.168
 #define r 0.070

@@ -11,6 +11,7 @@
 
 #include "main.h"
 
+
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
@@ -26,6 +27,8 @@ extern uint32_t pMotor2;		//Pasos de motor PaP2 actual
 extern uint32_t pMotor3;		//Pasos de motor PaP3 actual
 //extern double Fcl;
 extern double flagErrorEndStop;
+
+
 
 
 void configStepMotor1(double angulo);

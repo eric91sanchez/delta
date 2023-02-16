@@ -109,13 +109,14 @@ uint32_t periodoM1, periodoM2, periodoM3;
 double periodoM[3];
 
 int FlagButton = 0;
-
+int test =0;
+int test2 =0;
 double flagErrorEndStop = 0;
 double rpm1, rpm2, rpm3;
 double ErrorPeriodo[3];
 double ErrorAcumuladoPeriodo[3];
 uint8_t Start=0;
-double  mandalemecha = 0;
+
 double dRecta3DZ=0; // para debugear
 
 
@@ -180,6 +181,8 @@ void robotInitialization(void){
 	HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
 
+
+
 }
 /* USER CODE END 0 */
 
@@ -242,6 +245,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		if (FlagButton == 1) {
+
+
+			test2=1;
 			FlagButton = 0;
 			distancia = sqrt(pow(Pfin.x - Pini.x, 2) + pow(Pfin.y - Pini.y, 2) + pow(Pfin.z - Pini.z, 2));
 			vDirector[0] = (Pfin.x - Pini.x) / distancia;	//Vector director en X
@@ -252,6 +258,7 @@ int main(void)
 			configStepMotor3(titha3);
 
 			update_ScurveTraj(0, distancia, vi, vf, vmax, amax, jmax);
+
 			FlagTiempo = 0;
 			FlagTrayectoM1 = 0;
 			FlagTrayectoM2 = 0;
@@ -260,7 +267,7 @@ int main(void)
 			rpm1 = 0;
 			rpm2 = 0;
 			rpm3 = 0;
-			mandalemecha = 1;
+
 			HAL_TIM_Base_Start(&htim5);
 			HAL_TIM_Base_Start_IT(&htim15);
 		}
@@ -331,11 +338,17 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	switch (GPIO_Pin) {
 
-	case BUTTON_Pin:
-		FlagButton = 1;
-		break;
+	  if(GPIO_Pin == BUTTON_Pin) {
+		  FlagButton=1;
+		  test=1;
+	  } else {
+	      __NOP();
+	  }
+
+
+
+		//PREGUNTAR: COMO SERIA LA LOGICA DE INTERRUPCION CUANDO UNA PATA TOCA UN FINAL DE CARRERA
 
 		/*case E_EndStop1_Inf_Pin:
 		 HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);	//Apago el PWM del motor 1
@@ -362,10 +375,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		 HAL_UART_Transmit(&huart3, "EndStop3Sup\n\r", 13, 100);
 		 break;*/
 
-	default:
-
-		break;
-	}
 
 }
 
@@ -395,6 +404,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 				rx_buffer[rx_index] = 0;
 				interpretaComando();
 				cm0 = 0;
+
 			}
 			break;
 		default:
@@ -441,14 +451,16 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+
 	if (htim == &htim15) {  //Timer que actualiza curva de velocidad
+
 		if (FlagTrayectoM1 == 1 && FlagTrayectoM2 == 1 && FlagTrayectoM3 == 1) {
 			HAL_TIM_Base_Stop_IT(&htim15);
 			HAL_TIM_Base_Stop(&htim5);
 			Pini.x = Pfin.x;
 			Pini.y = Pfin.y;
 			Pini.z = Pfin.z;
-			mandalemecha = 0;
+
 		} else {
 			if (!FlagTiempo) {
 				FlagTiempo = 1;

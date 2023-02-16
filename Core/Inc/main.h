@@ -145,6 +145,24 @@ void Error_Handler(void);
 #define S_Enable_3_GPIO_Port GPIOD
 
 
+//Macros de la lectura de los finales de carrera
+#define ES1s_PRESSED !(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))
+#define ES2s_PRESSED !(HAL_GPIO_ReadPin(E_EndStop2_Sup_GPIO_Port, E_EndStop2_Sup_Pin))
+#define ES3s_PRESSED !(HAL_GPIO_ReadPin(E_EndStop3_Sup_GPIO_Port, E_EndStop3_Sup_Pin))
+
+#define ES1s_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))
+#define ES2s_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop2_Sup_GPIO_Port, E_EndStop2_Sup_Pin))
+#define ES3s_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop3_Sup_GPIO_Port, E_EndStop3_Sup_Pin))
+
+
+#define ES1i_PRESSED !(HAL_GPIO_ReadPin(E_EndStop1_Inf_GPIO_Port, E_EndStop1_Inf_Pin))
+#define ES2i_PRESSED !(HAL_GPIO_ReadPin(E_EndStop2_Inf_GPIO_Port, E_EndStop2_Inf_Pin))
+#define ES3i_PRESSED !(HAL_GPIO_ReadPin(E_EndStop3_Inf_GPIO_Port, E_EndStop3_Inf_Pin))
+
+#define ES1i_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop1_Inf_GPIO_Port, E_EndStop1_Inf_Pin))
+#define ES2i_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop2_Inf_GPIO_Port, E_EndStop2_Inf_Pin))
+#define ES3i_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop3_Inf_GPIO_Port, E_EndStop3_Inf_Pin))
+
 
 /* USER CODE BEGIN Private defines */
 #define FCL 64000000

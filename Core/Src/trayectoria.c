@@ -145,8 +145,8 @@ void update_ScurveTraj(float _qi ,float _qf, float vi,float vf ,float vmax,float
 jmin = -jmax;
 amin = -amax;
 vmin = -vmax;
-qi=qi;
-qf=qf;
+qi=_qi;
+qf=_qf;
 
 if (qf < qi){
 
@@ -268,6 +268,7 @@ void SetPerfilTimers(double omeg1, double omeg2, double omeg3) {	// velAng en rp
 		rpm1 = (omeg1*((60.00)/(2.00*pi)));
 		rpm2 = (omeg2*((60.00)/(2.00*pi)));
 		rpm3 = (omeg3*((60.00)/(2.00*pi)));
+
 		if(rpm1<=0.1){
 			rpm1=0.1;
 		}
@@ -277,6 +278,10 @@ void SetPerfilTimers(double omeg1, double omeg2, double omeg3) {	// velAng en rp
 		if(rpm3<=0.1){
 			rpm3=0.1;
 		}
+
+		rpm1 = 1 ;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+		rpm2 = 1 ;
+		rpm3 = 1 ;
 
 
 		periodoM[0] = (((FCL * 60.00) / ((double)rpm1 * ((double)(TIM12->PSC) + 1.00) * STEPREV)) - 1.00);	//Fpwm = 64M / ((ARR+1)*(PSC+1)

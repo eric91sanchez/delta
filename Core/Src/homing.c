@@ -13,14 +13,6 @@ double rpm = 2.0;  //Valor experimental.
 bool homAprox, homStart,homFin;
 bool hom1,hom2,hom3;
 
-#define ES1s_PRESSED !(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))
-#define ES2s_PRESSED !(HAL_GPIO_ReadPin(E_EndStop2_Sup_GPIO_Port, E_EndStop2_Sup_Pin))
-#define ES3s_PRESSED !(HAL_GPIO_ReadPin(E_EndStop3_Sup_GPIO_Port, E_EndStop3_Sup_Pin))
-
-#define ES1s_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))
-#define ES2s_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop2_Sup_GPIO_Port, E_EndStop2_Sup_Pin))
-#define ES3s_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop3_Sup_GPIO_Port, E_EndStop3_Sup_Pin))
-
 
 void homing(void) {
 
@@ -142,7 +134,7 @@ void homing(void) {
 
         }// ES2s_UNPRESSED : Se dejó de presionar el FC2 sup
 
-        /*
+
         if (ES3s_PRESSED){
 
             HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
@@ -167,14 +159,14 @@ void homing(void) {
             if (ES2s_UNPRESSED && !hom2)HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
         }// ES3s_UNPRESSED : Se dejó de presionar el FC3 sup
 
-        */
+
 
         if (hom1 &&hom2 && hom3){
         	homFin=true;
 
-        	//HAL_TIM_IC_Stop_IT(&htim2, TIM_CHANNEL_1);//Apago interrupcion input capture motor 1
-        	//HAL_TIM_IC_Stop_IT(&htim3, TIM_CHANNEL_1);//Apago interrupcion input capture motor 2
-        	//HAL_TIM_IC_Stop_IT(&htim4, TIM_CHANNEL_1);//Apago interrupcion input capture motor 3
+        	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);//Enciendo interrupcion input capture motor 1
+        	HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);//Enciendo interrupcion input capture motor 2
+        	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);//Enciendo interrupcion input capture motor 3
 
         	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
         	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior

@@ -2,7 +2,7 @@
  * inverseJacbian.c
  *
  *  Created on: 15 sep. 2022
- *      Author: EliasC
+ *      Author: Elias Correa y Eliseo Elorga
  */
 
 
@@ -47,9 +47,11 @@ void jacobianoInverso(double Vxaux, double Vyaux, double Vzaux, double Pxaux, do
 	E1[0] = Pxaux + 0;
 	E1[1] = Pyaux - 0.07;
 	E1[2] = Pzaux;
+
 	E2[0] = Pxaux + 0.060621778264911;
 	E2[1] = Pyaux + 0.035;
 	E2[2] = Pzaux;
+
 	E3[0] = Pxaux - 0.060621778264911;
 	E3[1] = Pyaux + 0.035;
 	E3[2] = Pzaux;

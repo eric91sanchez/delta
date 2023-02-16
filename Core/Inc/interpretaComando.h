@@ -2,7 +2,8 @@
  * interpretaComando.h
  *
  *  Created on: 12 sep. 2020
- *      Author: Santiago
+ *      Author: Santiago Rivier
+ *      Updated by: Elias Correa y Eliseo Elorga
  */
 
 #ifndef INC_INTERPRETACOMANDO_H_
