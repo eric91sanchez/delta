@@ -1,9 +1,8 @@
 /*
- * cinematica_inversa.c
+ * trayectoria.c
  *
- *  Created on: 12 sep. 2020
- *      Author: Santiago Rivier
- *      Updated by: Elias Correa y Eliseo Elorga
+ *  Created on: Jun 22, 2022
+ *      Authors: Elias Correa y Eliseo Elorga
  */
 
 #include <GlobalFunc.h>
@@ -279,9 +278,9 @@ void SetPerfilTimers(double omeg1, double omeg2, double omeg3) {	// velAng en rp
 			rpm3=0.1;
 		}
 
-		rpm1 = 1 ;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-		rpm2 = 1 ;
-		rpm3 = 1 ;
+		rpm1 = 0.5 ;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+		rpm2 = 0.5 ;
+		rpm3 = 0.5 ;
 
 
 		periodoM[0] = (((FCL * 60.00) / ((double)rpm1 * ((double)(TIM12->PSC) + 1.00) * STEPREV)) - 1.00);	//Fpwm = 64M / ((ARR+1)*(PSC+1)

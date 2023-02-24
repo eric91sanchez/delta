@@ -18,14 +18,16 @@ void homing(void) {
 
 	homAprox = true;
 	homStart = true;
+
     homFin = false;
     hom1=false;
     hom2=false;
-    hom3=true;
+    hom3=false;
 
-    HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
-    HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
-    HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
+    //Establecemos la direccion en sentido horario (VISTA FRONTAL DEL MOTOR)
+    positive_Dir_MOTOR_1;
+	positive_Dir_MOTOR_2;
+	positive_Dir_MOTOR_3;
 
 	HAL_TIM_IC_Stop_IT(&htim2, TIM_CHANNEL_1);//Apago interrupcion input capture motor 1
 	HAL_TIM_IC_Stop_IT(&htim3, TIM_CHANNEL_1);//Apago interrupcion input capture motor 2
@@ -40,9 +42,9 @@ void homing(void) {
 
     //Me aseguro que los motores esten detenidos
 
-	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+	Stop_PWM_MOTOR_1;
+	Stop_PWM_MOTOR_2;
+	Stop_PWM_MOTOR_3;
 
 	periodoM[0] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
 	periodoM[1] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
@@ -58,17 +60,17 @@ void homing(void) {
 
     while(homAprox){
 
-        HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
-        HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+        Start_PWM_MOTOR_1;
+        Start_PWM_MOTOR_2;
+        Start_PWM_MOTOR_3;
 
         if (ES1s_PRESSED || ES2s_PRESSED || ES3s_PRESSED){
             HAL_Delay(30);
             if (ES1s_PRESSED || ES2s_PRESSED || ES3s_PRESSED){
 
-                HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
-                HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
-                HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+                Stop_PWM_MOTOR_1;
+                Stop_PWM_MOTOR_2;
+                Stop_PWM_MOTOR_3;
 
                 homAprox = false;
             }
@@ -81,82 +83,82 @@ void homing(void) {
 
         if (ES1s_PRESSED && !hom1) {
 
-            HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
-            HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+            Stop_PWM_MOTOR_2;
+            Stop_PWM_MOTOR_3;
 
             HAL_Delay(30);//Delay necesario para consultar el estado del pin vinculado al ES1s
 
             while(ES1s_PRESSED){
 
-                HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_SET);
+                negative_Dir_MOTOR_1;
                 HAL_Delay(0.5); 							//delay cambio de dir
-                HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
+                Start_PWM_MOTOR_1;
                 HAL_Delay(500); //Lo dejamos que se mueva medio segundo en la direccion descreciente
 
             }
 
-            HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
+            Stop_PWM_MOTOR_1;
             titha1 = 0;
             hom1=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F1\n", 4, 100);
             HAL_Delay(30);
 
-            if (ES2s_UNPRESSED && !hom2)HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
-            //if (ES3s_UNPRESSED && !hom3)HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+            if (ES2s_UNPRESSED && !hom2)Start_PWM_MOTOR_2;
+            //if (ES3s_UNPRESSED && !hom3)Start_PWM_MOTOR_3;
 
 
         } // ES1s_UNPRESSED : Se dejó de presionar el FC1 sup
 
         if (ES2s_PRESSED && !hom2){
 
-            HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
-            HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+            Stop_PWM_MOTOR_1;
+            Stop_PWM_MOTOR_3;
 
             HAL_Delay(30);//Delay necesario para consultar el estado del pin vinculado al ES2s
 
             while(ES2s_PRESSED){
 
-                HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_SET);
+                negative_Dir_MOTOR_2;
                 HAL_Delay(0.5);
-                HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
+                Start_PWM_MOTOR_2;
                 HAL_Delay(500);
 
             }
 
-            HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
+            Stop_PWM_MOTOR_2;
             titha2 = 0;
             hom2=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F2\n", 4, 100);
             HAL_Delay(30);
 
-            if (ES1s_UNPRESSED && !hom1)HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
-            //if (ES3s_UNPRESSED && !hom3)HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+            if (ES1s_UNPRESSED && !hom1)Start_PWM_MOTOR_1;
+            //if (ES3s_UNPRESSED && !hom3)Start_PWM_MOTOR_3;
 
         }// ES2s_UNPRESSED : Se dejó de presionar el FC2 sup
 
 
         if (ES3s_PRESSED){
 
-            HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
-            HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
+            Stop_PWM_MOTOR_1;
+            Stop_PWM_MOTOR_2;
 
             HAL_Delay(30);//Delay necesario para consultar el estado del pin vinculado al ES3s
 
             while(ES3s_PRESSED){
 
-                HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_SET);
+                negative_Dir_MOTOR_3;
                 HAL_Delay(0.5);
-                HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+                Start_PWM_MOTOR_3;
                 HAL_Delay(500);
             }
 
-            HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+            Stop_PWM_MOTOR_3;
             titha3 = 0;
             hom3=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F3\n", 4, 100);
 			HAL_Delay(30);
-            if (ES1s_UNPRESSED && !hom1)HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
-            if (ES2s_UNPRESSED && !hom2)HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
+            if (ES1s_UNPRESSED && !hom1)Start_PWM_MOTOR_1;
+            if (ES2s_UNPRESSED && !hom2)Start_PWM_MOTOR_2;
         }// ES3s_UNPRESSED : Se dejó de presionar el FC3 sup
 
 

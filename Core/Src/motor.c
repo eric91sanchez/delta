@@ -7,19 +7,21 @@
  */
 #include "motor.h"
 
+
 double anguloActual1 = 0.0;
 double anguloActual2 = 0.0;
 double anguloActual3 = 0.0;
-double calculoStep1 = 0.0;;
-double calculoStep2 = 0.0;;
-double calculoStep3 = 0.0;;
-double remanente1 = 0.0;;
-double remanente2 = 0.0;;
-double remanente3 = 0.0;;
+double calculoStep1 = 0.0;
+double calculoStep2 = 0.0;
+double calculoStep3 = 0.0;
+double remanente1 = 0.0;
+double remanente2 = 0.0;
+double remanente3 = 0.0;
 
 //double Periodo;		//periodo de timer PWM
 //double ErrorPeriodo;
 //double ErrorAcumuladoPeriodo[3];
+
 
 
 void configStepMotor1(double angulo) {
@@ -113,3 +115,4 @@ void configStepMotor3(double angulo) {
 		numStep3 = numStep3 + 1;
 	}
 }
+

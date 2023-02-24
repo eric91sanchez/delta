@@ -23,7 +23,6 @@
 #include "usart.h"
 #include "gpio.h"
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
@@ -109,8 +108,7 @@ uint32_t periodoM1, periodoM2, periodoM3;
 double periodoM[3];
 
 int FlagButton = 0;
-int test =0;
-int test2 =0;
+int test = 0 , test1= 0;
 double flagErrorEndStop = 0;
 double rpm1, rpm2, rpm3;
 double ErrorPeriodo[3];
@@ -146,9 +144,12 @@ void robotInitialization(void){
 	HAL_TIM_Base_Start(&htim13);
 	HAL_TIM_Base_Start(&htim14);
 
+	/*
+
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 1
 	HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 2
 	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 3
+	*/
 
 	HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
@@ -156,9 +157,10 @@ void robotInitialization(void){
 
 	HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
 
-	HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
-	HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
-	HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_RESET); // Se estable la direccion antihorario por defecto
+	// Se estable la direccion horario por defecto
+	positive_Dir_MOTOR_1;
+	positive_Dir_MOTOR_2;
+	positive_Dir_MOTOR_3;
 
 	periodoM[0] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
 	periodoM[1] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
@@ -171,15 +173,15 @@ void robotInitialization(void){
 	TIM14->ARR =periodoM[2];
 	TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
 
-    HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);
+	Start_PWM_MOTOR_1;
+	Start_PWM_MOTOR_2;
+	Start_PWM_MOTOR_3;
 
-    HAL_Delay(1000);
+    HAL_Delay(1000); //offset experimental
 
-	HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);
+    Stop_PWM_MOTOR_1;
+    Stop_PWM_MOTOR_2;
+    Stop_PWM_MOTOR_3;
 
 
 
@@ -225,7 +227,6 @@ int main(void)
   MX_TIM15_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-
   /* USER CODE BEGIN 2 */
 
   HAL_UART_Transmit(&huart3, message, sizeof(message), 100); //Mensaje de inicializacion en curso.
@@ -247,7 +248,7 @@ int main(void)
 		if (FlagButton == 1) {
 
 
-			test2=1;
+
 			FlagButton = 0;
 			distancia = sqrt(pow(Pfin.x - Pini.x, 2) + pow(Pfin.y - Pini.y, 2) + pow(Pfin.z - Pini.z, 2));
 			vDirector[0] = (Pfin.x - Pini.x) / distancia;	//Vector director en X
@@ -270,6 +271,7 @@ int main(void)
 
 			HAL_TIM_Base_Start(&htim5);
 			HAL_TIM_Base_Start_IT(&htim15);
+
 		}
 
 	}
@@ -341,7 +343,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	  if(GPIO_Pin == BUTTON_Pin) {
 		  FlagButton=1;
-		  test=1;
+
 	  } else {
 	      __NOP();
 	  }
@@ -423,17 +425,23 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 
+	test++;
+
 	if (htim->Instance == TIM2) {
+		test1++;
 		if (pMotor1 == numStep1) {
-			HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1); //Apago el PWM del motor 1
+			Stop_PWM_MOTOR_1; //Apago el PWM del motor 1
 			FlagTrayectoM1 = 1;
+
 		} else {
 			pMotor1++;
 		}
 
-	} else if (htim->Instance == TIM3) {
+	}
+
+	/* else if (htim->Instance == TIM3) {
 		if (pMotor2 == numStep2) {
-			HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1);//Apago el PWM del motor 1
+			Stop_PWM_MOTOR_2;//Apago el PWM del motor 1
 			FlagTrayectoM2 = 1;
 		} else {
 			pMotor2++;
@@ -441,13 +449,13 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 
 	} else if (htim->Instance == TIM4) {
 		if (pMotor3 == numStep3) {
-			HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1);//Apago el PWM del motor 1
+			Stop_PWM_MOTOR_3;//Apago el PWM del motor 1
 			FlagTrayectoM3 = 1;
 		} else {
 			pMotor3++;
 		}
 
-	}
+	}*/
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
@@ -482,9 +490,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			SetPerfilTimers(omega[0], omega[1], omega[2]);
 			if(Start==1){
 				Start=0;
-				HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);	// Activar generacion de pwm
-				HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1);	// Activar generacion de pwm
-				HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1);	// Activar generacion de pwm
+
+				Start_PWM_MOTOR_1;	// Activar generacion de pwm
+				Start_PWM_MOTOR_2;	// Activar generacion de pwm
+				Start_PWM_MOTOR_3;	// Activar generacion de pwm
 			}
 		}
 	}

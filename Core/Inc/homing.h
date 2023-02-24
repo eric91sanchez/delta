@@ -22,7 +22,7 @@ extern double titha1;
 extern double titha2;
 extern double titha3;
 //extern double Fcl;
-extern double mandalemecha;
+
 extern double periodoM[3];
 
 void homing(void);

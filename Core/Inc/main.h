@@ -46,6 +46,8 @@ typedef struct Vector3D{
 }Vec3D;
 
 typedef enum { false, true } bool;
+
+//enum {READY,HOME,WAIT,ERROR,STOP} State;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -55,18 +57,6 @@ typedef enum { false, true } bool;
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
-/* USER CODE END EM */
-
-/* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
-
-/* USER CODE BEGIN EFP */
-
-/* USER CODE END EFP */
-
-/* Private defines -----------------------------------------------------------*/
-
 //GPIO's used for FC's and their interrups
 #define E_EndStop1_Sup_Pin GPIO_PIN_0
 #define E_EndStop1_Sup_GPIO_Port GPIOE
@@ -162,6 +152,41 @@ void Error_Handler(void);
 #define ES1i_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop1_Inf_GPIO_Port, E_EndStop1_Inf_Pin))
 #define ES2i_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop2_Inf_GPIO_Port, E_EndStop2_Inf_Pin))
 #define ES3i_UNPRESSED (HAL_GPIO_ReadPin(E_EndStop3_Inf_GPIO_Port, E_EndStop3_Inf_Pin))
+
+//Macros para encender o apargar el pwm de los motores
+
+#define Start_PWM_MOTOR_1 (HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1))
+#define Start_PWM_MOTOR_2 (HAL_TIM_PWM_Start(&htim13, TIM_CHANNEL_1))
+#define Start_PWM_MOTOR_3 (HAL_TIM_PWM_Start(&htim14, TIM_CHANNEL_1))
+
+#define Stop_PWM_MOTOR_1 (HAL_TIM_PWM_Stop(&htim12, TIM_CHANNEL_1))
+#define Stop_PWM_MOTOR_2 (HAL_TIM_PWM_Stop(&htim13, TIM_CHANNEL_1))
+#define Stop_PWM_MOTOR_3 (HAL_TIM_PWM_Stop(&htim14, TIM_CHANNEL_1))
+
+//Macros para definir el sentido de giro de los motores.  POSITIVO SENTIDO HORARIO (VISTA FRONTAL DEL MOTOR)
+// 														  NEGATIVO SENTIDO ANTIHORARIO (VISTA FRONTAL DEL MOTOR)
+
+#define positive_Dir_MOTOR_1 (HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_RESET))
+#define positive_Dir_MOTOR_2 (HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_RESET))
+#define positive_Dir_MOTOR_3 (HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_RESET))
+
+#define negative_Dir_MOTOR_1 (HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_SET))
+#define negative_Dir_MOTOR_2 (HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_SET))
+#define negative_Dir_MOTOR_3 (HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_SET))
+
+
+/* USER CODE END EM */
+
+/* Exported functions prototypes ---------------------------------------------*/
+void Error_Handler(void);
+
+/* USER CODE BEGIN EFP */
+
+
+/* USER CODE END EFP */
+
+/* Private defines -----------------------------------------------------------*/
+
 
 
 /* USER CODE BEGIN Private defines */
