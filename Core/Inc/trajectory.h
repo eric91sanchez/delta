@@ -1,34 +1,34 @@
 /*
- * cinematica_inversa.h
+ * trajectory.h
  *
- *  Created on: 12 sep. 2020
- *      Author: Santiago
+ *  Created on: Jun 22, 2022
+ *      Authors: Elias Correa y Eliseo Elorga
  */
 
-#ifndef INC_TRAYECTORIA_H_
-#define INC_TRAYECTORIA_H_
+
+#ifndef INC_TRAJECTORY_H_
+#define INC_TRAJECTORY_H_
 
 #include "main.h"
 
 #define pi 3.14159265359
 #define RAD_TO_DEG 180.0 / pi
-
-
-
+#define RADs_TO_RPM (60.00/(2.0*pi))
 
 extern float q,qd,qdd,qddd;
 extern float amax,jmax,vmax,vi,vf;
 extern float vmin,jmin,amin;
 
+
+extern Motor motor1,motor2,motor3;
 extern double omega[3];
-extern double omega1, omega2, omega3;
 extern uint32_t periodoM1, periodoM2, periodoM3;
 extern double periodoM[3];
 extern double rpm1, rpm2, rpm3;
 extern double ErrorPeriodo[3];
 extern double ErrorAcumuladoPeriodo[3];
 
-//extern double Fcl;
+
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
@@ -45,8 +45,8 @@ void get_Straj(float t);
 
 
 
-void SetPerfilTimers(double omeg1, double omeg2, double omeg3);
+void setProfilTimer(void);
 
 
 
-#endif /* INC_TRAYECTORIA_H_ */
+#endif /* INC_TRAJECTORY_H_ */

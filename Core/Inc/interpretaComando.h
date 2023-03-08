@@ -9,18 +9,18 @@
 #ifndef INC_INTERPRETACOMANDO_H_
 #define INC_INTERPRETACOMANDO_H_
 
+#include <kinematic.h>
 #include "main.h"
 #include "stdlib.h"
-#include "trayectoria.h"
+#include "trajectory.h"
 #include "homing.h"
-#include "cinematica.h"
 
 extern Vec3D Pini;
 extern Vec3D Pfin;
 
 extern UART_HandleTypeDef huart3;
 extern uint8_t rx_buffer[30];
-extern uint16_t valor;
+
 extern double titha1;
 extern double titha2;
 extern double titha3;

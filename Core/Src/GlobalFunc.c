@@ -45,13 +45,14 @@ array2D adjunta(double Maux[3][3]) {
 	return adj;
 }
 
-array2D inversa(double A[3][3]) {
+array2D inv(double A[3][3]) {
 	array2D Minv;
 	array2D Maux;
 	double det;
 	Maux = adjunta(A);
 	Maux = transpuesta(Maux.m);
 	det = determinante(A);
+
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 3; ++j) {
 			Minv.m[i][j] = (1 / det) * Maux.m[i][j];

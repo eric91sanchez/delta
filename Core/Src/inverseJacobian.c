@@ -35,7 +35,7 @@ double cross_P3[3];
 double dot[3];
 
 
-void jacobianoInverso(double Vxaux, double Vyaux, double Vzaux, double Pxaux, double Pyaux, double Pzaux) {
+void inverseJacobian(double Vxaux, double Vyaux, double Vzaux, double Pxaux, double Pyaux, double Pzaux) {
 	/*   -----------------------------------------------------------------------
 	 * 	 Funcion que devuelve la velocidad angular de cada motor
 	 *	 Entrada: Velocidad en (x,y,z) y Posicion en (x,y,z)
@@ -104,7 +104,7 @@ void jacobianoInverso(double Vxaux, double Vyaux, double Vzaux, double Pxaux, do
 		}
 	}
 
-	Jci_inv = inversa(Jci);
+	Jci_inv = inv(Jci);
 	Jinv = productMatriz(Jcd.m,Jci_inv.m);	//Jacobiano Inverso
 
 	for (int i = 0; i < 3; ++i) {
@@ -114,8 +114,8 @@ void jacobianoInverso(double Vxaux, double Vyaux, double Vzaux, double Pxaux, do
 		}
 		omega[i] = sum;
 	}
-	omega1 = omega[0];
-	omega2 = omega[1];
-	omega3 = omega[2];
+	motor1.omega = omega[0];
+	motor2.omega = omega[1];
+	motor3.omega = omega[2];
 
 }

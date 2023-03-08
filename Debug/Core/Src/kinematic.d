@@ -1,4 +1,4 @@
-Core/Src/cinematica.o: ../Core/Src/cinematica.c ../Core/Inc/cinematica.h \
+Core/Src/kinematic.o: ../Core/Src/kinematic.c ../Core/Inc/kinematic.h \
  ../Core/Inc/GlobalFunc.h ../Core/Inc/main.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
@@ -32,7 +32,7 @@ Core/Src/cinematica.o: ../Core/Src/cinematica.c ../Core/Inc/cinematica.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
-../Core/Inc/cinematica.h:
+../Core/Inc/kinematic.h:
 ../Core/Inc/GlobalFunc.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:

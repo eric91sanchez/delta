@@ -137,7 +137,7 @@ void interpretaComando(void){
 		}
 
 
-		cinematicaInversa(Pfin);
+		inverseKinematic(Pfin);
 
 
 		break;

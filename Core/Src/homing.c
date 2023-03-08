@@ -9,9 +9,8 @@
 #include "homing.h"
 
 
-double rpm = 2.0;  //Valor experimental.
+double rpm = 1.0;  //Valor experimental.
 bool homAprox, homStart,homFin;
-bool hom1,hom2,hom3;
 
 
 void homing(void) {
@@ -20,18 +19,18 @@ void homing(void) {
 	homStart = true;
 
     homFin = false;
-    hom1=false;
-    hom2=false;
-    hom3=false;
+    motor1.hom = false;
+    motor2.hom = false;
+    motor3.hom = false;
 
     //Establecemos la direccion en sentido horario (VISTA FRONTAL DEL MOTOR)
     positive_Dir_MOTOR_1;
 	positive_Dir_MOTOR_2;
 	positive_Dir_MOTOR_3;
 
-	HAL_TIM_IC_Stop_IT(&htim2, TIM_CHANNEL_1);//Apago interrupcion input capture motor 1
-	HAL_TIM_IC_Stop_IT(&htim3, TIM_CHANNEL_1);//Apago interrupcion input capture motor 2
-	HAL_TIM_IC_Stop_IT(&htim4, TIM_CHANNEL_1);//Apago interrupcion input capture motor 3
+	HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_1);
+	HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_2);
+	HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_3);
 
 	HAL_NVIC_DisableIRQ(EXTI0_IRQn);	//Apago interrupcion EndStop 1 Superior
 	HAL_NVIC_DisableIRQ(EXTI1_IRQn);	//Apago interrupcion EndStop 1 Inferior
@@ -46,15 +45,21 @@ void homing(void) {
 	Stop_PWM_MOTOR_2;
 	Stop_PWM_MOTOR_3;
 
-	periodoM[0] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
-	periodoM[1] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
-	periodoM[2] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
+	/*
+	motor1.counterPeriod =  COUNTERPERIOD(rpm);
+	motor2.counterPeriod =  COUNTERPERIOD(rpm);
+	motor3.counterPeriod =  COUNTERPERIOD(rpm);
+	*/
 
-	TIM12->ARR = periodoM[0];
+
+	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm)); //Escritura del registro ARR
+	__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm));
+	__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(rpm));
+
+	__HAL_TIM_SET_AUTORELOAD(&htim2,3000); //Escritura del registro ARR
+
 	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
-	TIM13->ARR =periodoM[1];
 	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
-	TIM14->ARR =periodoM[2];
 	TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
 
 
@@ -81,7 +86,7 @@ void homing(void) {
 
     while (!homFin){
 
-        if (ES1s_PRESSED && !hom1) {
+        if (ES1s_PRESSED && !motor1.hom) {
 
             Stop_PWM_MOTOR_2;
             Stop_PWM_MOTOR_3;
@@ -98,18 +103,18 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_1;
-            titha1 = 0;
-            hom1=true;
+            motor1.theta = 0.0;
+            motor1.hom=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F1\n", 4, 100);
             HAL_Delay(30);
 
-            if (ES2s_UNPRESSED && !hom2)Start_PWM_MOTOR_2;
-            //if (ES3s_UNPRESSED && !hom3)Start_PWM_MOTOR_3;
+            if (ES2s_UNPRESSED && !motor2.hom)Start_PWM_MOTOR_2;
+            if (ES3s_UNPRESSED && !motor3.hom)Start_PWM_MOTOR_3;
 
 
         } // ES1s_UNPRESSED : Se dejó de presionar el FC1 sup
 
-        if (ES2s_PRESSED && !hom2){
+        if (ES2s_PRESSED && !motor2.hom){
 
             Stop_PWM_MOTOR_1;
             Stop_PWM_MOTOR_3;
@@ -126,13 +131,13 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_2;
-            titha2 = 0;
-            hom2=true;
+            motor2.theta = 0.0;
+            motor2.hom=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F2\n", 4, 100);
             HAL_Delay(30);
 
-            if (ES1s_UNPRESSED && !hom1)Start_PWM_MOTOR_1;
-            //if (ES3s_UNPRESSED && !hom3)Start_PWM_MOTOR_3;
+            if (ES1s_UNPRESSED && !motor1.hom)Start_PWM_MOTOR_1;
+            if (ES3s_UNPRESSED && !motor3.hom)Start_PWM_MOTOR_3;
 
         }// ES2s_UNPRESSED : Se dejó de presionar el FC2 sup
 
@@ -153,22 +158,28 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_3;
-            titha3 = 0;
-            hom3=true;
+            motor3.theta = 0.0;
+            motor3.hom = true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F3\n", 4, 100);
 			HAL_Delay(30);
-            if (ES1s_UNPRESSED && !hom1)Start_PWM_MOTOR_1;
-            if (ES2s_UNPRESSED && !hom2)Start_PWM_MOTOR_2;
+            if (ES1s_UNPRESSED && !motor1.hom)Start_PWM_MOTOR_1;
+            if (ES2s_UNPRESSED && !motor2.hom)Start_PWM_MOTOR_2;
         }// ES3s_UNPRESSED : Se dejó de presionar el FC3 sup
 
 
 
-        if (hom1 &&hom2 && hom3){
+        if (motor1.hom && motor2.hom && motor3.hom){
         	homFin=true;
 
-        	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);//Enciendo interrupcion input capture motor 1
-        	HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);//Enciendo interrupcion input capture motor 2
-        	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);//Enciendo interrupcion input capture motor 3
+
+        	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, fallData, numval);
+        	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_2, fallData, numval);
+        	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_3, fallData, numval);
+
+        	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_ALL);	//Enciendo interrupcion input capture motor 1
+        	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_2);	//Enciendo interrupcion input capture motor 2
+        	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_3);	//Enciendo interrupcion input capture motor 3
+
 
         	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
         	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior

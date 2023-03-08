@@ -2,5 +2,5 @@
 ../Core/Src/GlobalFunc.c:20:8:productDot	32	static
 ../Core/Src/GlobalFunc.c:28:8:determinante	24	static
 ../Core/Src/GlobalFunc.c:34:9:adjunta	88	static
-../Core/Src/GlobalFunc.c:48:9:inversa	248	static
-../Core/Src/GlobalFunc.c:63:9:productMatriz	120	static
+../Core/Src/GlobalFunc.c:48:9:inv	248	static
+../Core/Src/GlobalFunc.c:64:9:productMatriz	120	static

@@ -6,12 +6,13 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Core/Src/GlobalFunc.c \
-../Core/Src/cinematica.c \
 ../Core/Src/debug.c \
+../Core/Src/dma.c \
 ../Core/Src/gpio.c \
 ../Core/Src/homing.c \
 ../Core/Src/interpretaComando.c \
 ../Core/Src/inverseJacobian.c \
+../Core/Src/kinematic.c \
 ../Core/Src/main.c \
 ../Core/Src/motor.c \
 ../Core/Src/stm32h7xx_hal_msp.c \
@@ -20,17 +21,18 @@ C_SRCS += \
 ../Core/Src/sysmem.c \
 ../Core/Src/system_stm32h7xx.c \
 ../Core/Src/tim.c \
-../Core/Src/trayectoria.c \
+../Core/Src/trajectory.c \
 ../Core/Src/usart.c 
 
 OBJS += \
 ./Core/Src/GlobalFunc.o \
-./Core/Src/cinematica.o \
 ./Core/Src/debug.o \
+./Core/Src/dma.o \
 ./Core/Src/gpio.o \
 ./Core/Src/homing.o \
 ./Core/Src/interpretaComando.o \
 ./Core/Src/inverseJacobian.o \
+./Core/Src/kinematic.o \
 ./Core/Src/main.o \
 ./Core/Src/motor.o \
 ./Core/Src/stm32h7xx_hal_msp.o \
@@ -39,17 +41,18 @@ OBJS += \
 ./Core/Src/sysmem.o \
 ./Core/Src/system_stm32h7xx.o \
 ./Core/Src/tim.o \
-./Core/Src/trayectoria.o \
+./Core/Src/trajectory.o \
 ./Core/Src/usart.o 
 
 C_DEPS += \
 ./Core/Src/GlobalFunc.d \
-./Core/Src/cinematica.d \
 ./Core/Src/debug.d \
+./Core/Src/dma.d \
 ./Core/Src/gpio.d \
 ./Core/Src/homing.d \
 ./Core/Src/interpretaComando.d \
 ./Core/Src/inverseJacobian.d \
+./Core/Src/kinematic.d \
 ./Core/Src/main.d \
 ./Core/Src/motor.d \
 ./Core/Src/stm32h7xx_hal_msp.d \
@@ -58,7 +61,7 @@ C_DEPS += \
 ./Core/Src/sysmem.d \
 ./Core/Src/system_stm32h7xx.d \
 ./Core/Src/tim.d \
-./Core/Src/trayectoria.d \
+./Core/Src/trajectory.d \
 ./Core/Src/usart.d 
 
 
@@ -69,7 +72,7 @@ Core/Src/%.o Core/Src/%.su: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/GlobalFunc.d ./Core/Src/GlobalFunc.o ./Core/Src/GlobalFunc.su ./Core/Src/cinematica.d ./Core/Src/cinematica.o ./Core/Src/cinematica.su ./Core/Src/debug.d ./Core/Src/debug.o ./Core/Src/debug.su ./Core/Src/gpio.d ./Core/Src/gpio.o ./Core/Src/gpio.su ./Core/Src/homing.d ./Core/Src/homing.o ./Core/Src/homing.su ./Core/Src/interpretaComando.d ./Core/Src/interpretaComando.o ./Core/Src/interpretaComando.su ./Core/Src/inverseJacobian.d ./Core/Src/inverseJacobian.o ./Core/Src/inverseJacobian.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/motor.d ./Core/Src/motor.o ./Core/Src/motor.su ./Core/Src/stm32h7xx_hal_msp.d ./Core/Src/stm32h7xx_hal_msp.o ./Core/Src/stm32h7xx_hal_msp.su ./Core/Src/stm32h7xx_it.d ./Core/Src/stm32h7xx_it.o ./Core/Src/stm32h7xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32h7xx.d ./Core/Src/system_stm32h7xx.o ./Core/Src/system_stm32h7xx.su ./Core/Src/tim.d ./Core/Src/tim.o ./Core/Src/tim.su ./Core/Src/trayectoria.d ./Core/Src/trayectoria.o ./Core/Src/trayectoria.su ./Core/Src/usart.d ./Core/Src/usart.o ./Core/Src/usart.su
+	-$(RM) ./Core/Src/GlobalFunc.d ./Core/Src/GlobalFunc.o ./Core/Src/GlobalFunc.su ./Core/Src/debug.d ./Core/Src/debug.o ./Core/Src/debug.su ./Core/Src/dma.d ./Core/Src/dma.o ./Core/Src/dma.su ./Core/Src/gpio.d ./Core/Src/gpio.o ./Core/Src/gpio.su ./Core/Src/homing.d ./Core/Src/homing.o ./Core/Src/homing.su ./Core/Src/interpretaComando.d ./Core/Src/interpretaComando.o ./Core/Src/interpretaComando.su ./Core/Src/inverseJacobian.d ./Core/Src/inverseJacobian.o ./Core/Src/inverseJacobian.su ./Core/Src/kinematic.d ./Core/Src/kinematic.o ./Core/Src/kinematic.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/motor.d ./Core/Src/motor.o ./Core/Src/motor.su ./Core/Src/stm32h7xx_hal_msp.d ./Core/Src/stm32h7xx_hal_msp.o ./Core/Src/stm32h7xx_hal_msp.su ./Core/Src/stm32h7xx_it.d ./Core/Src/stm32h7xx_it.o ./Core/Src/stm32h7xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32h7xx.d ./Core/Src/system_stm32h7xx.o ./Core/Src/system_stm32h7xx.su ./Core/Src/tim.d ./Core/Src/tim.o ./Core/Src/tim.su ./Core/Src/trajectory.d ./Core/Src/trajectory.o ./Core/Src/trajectory.su ./Core/Src/usart.d ./Core/Src/usart.o ./Core/Src/usart.su
 
 .PHONY: clean-Core-2f-Src
 

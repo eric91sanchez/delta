@@ -1,7 +1,9 @@
-main.c:133:6:SystemClock_Config	320	static
-main.c:73:5:main	8	static
-main.c:183:6:HAL_GPIO_EXTI_Callback	8	static
-main.c:194:6:HAL_UART_RxCpltCallback	0	static
-main.c:215:6:HAL_UART_TxCpltCallback	0	static,ignoring_inline_asm
-main.c:219:6:HAL_TIM_IC_CaptureCallback	16	static
-main.c:247:6:Error_Handler	0	static
+../Core/Src/main.c:147:6:robotInitialization	8	static
+../Core/Src/main.c:313:6:SystemClock_Config	128	static
+../Core/Src/main.c:224:5:main	16	static
+../Core/Src/main.c:369:6:HAL_GPIO_EXTI_Callback	0	static,ignoring_inline_asm
+../Core/Src/main.c:410:6:HAL_UART_RxCpltCallback	16	static
+../Core/Src/main.c:449:6:HAL_UART_TxCpltCallback	0	static,ignoring_inline_asm
+../Core/Src/main.c:453:6:HAL_TIM_IC_CaptureCallback	0	static
+../Core/Src/main.c:492:6:HAL_TIM_PeriodElapsedCallback	24	static
+../Core/Src/main.c:551:6:Error_Handler	0	static

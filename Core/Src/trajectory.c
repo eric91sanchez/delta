@@ -1,12 +1,12 @@
 /*
- * trayectoria.c
+ * trajectory.c
  *
  *  Created on: Jun 22, 2022
  *      Authors: Elias Correa y Eliseo Elorga
  */
 
 #include <GlobalFunc.h>
-#include "trayectoria.h"
+#include "trajectory.h"
 
 
 bool flagInv = false;
@@ -15,6 +15,9 @@ float alimd;
 float vlim;
 float T,Ta,Td,Tv,Tj1,Tj2,Tj,delta;
 float qi,qf;
+
+double _rpm1,_rpm2,_rpm3;
+uint32_t _peri1,_peri2,_peri3;
 
 void get_Straj(float t){
 
@@ -257,17 +260,17 @@ else{
 }
 
 
-void SetPerfilTimers(double omeg1, double omeg2, double omeg3) {	// velAng en rpm
+void setProfilTimer(void) {	// velAng en rpm
 	/*   -----------------------------------------------------------------------
 	 *   Funcion que configura el PWM del timer 12,13 14, para que el motor vaya a la
 	 *   velocidad deseada.
 	 *   Entrada: velocidad Angular de cada eslabon, en rad/s.
 	 ----------------------------------------------------------------------- */
 
-		rpm1 = (omeg1*((60.00)/(2.00*pi)));
-		rpm2 = (omeg2*((60.00)/(2.00*pi)));
-		rpm3 = (omeg3*((60.00)/(2.00*pi)));
-
+		_rpm1 = motor1.omega * RADs_TO_RPM;
+		_rpm2 = motor2.omega * RADs_TO_RPM;
+		_rpm3 = motor3.omega * RADs_TO_RPM;
+		/*
 		if(rpm1<=0.1){
 			rpm1=0.1;
 		}
@@ -277,18 +280,33 @@ void SetPerfilTimers(double omeg1, double omeg2, double omeg3) {	// velAng en rp
 		if(rpm3<=0.1){
 			rpm3=0.1;
 		}
+		*/
 
-		rpm1 = 0.5 ;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-		rpm2 = 0.5 ;
-		rpm3 = 0.5 ;
+		rpm1 = 2.0 ;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+		rpm2 = 2.0 ;
+		rpm3 = 2.0 ;
 
 
-		periodoM[0] = (((FCL * 60.00) / ((double)rpm1 * ((double)(TIM12->PSC) + 1.00) * STEPREV)) - 1.00);	//Fpwm = 64M / ((ARR+1)*(PSC+1)
-		periodoM[1] = (((FCL * 60.00) / ((double)rpm2 * ((double)(TIM13->PSC) + 1.00) * STEPREV)) - 1.00);
-		periodoM[2] = (((FCL * 60.00) / ((double)rpm3 * ((double)(TIM14->PSC) + 1.00) * STEPREV)) - 1.00);
+		_peri1= COUNTERPERIOD(rpm1);
+		_peri1= COUNTERPERIOD(rpm2);
+		_peri1= COUNTERPERIOD(rpm3);
+
+
+		TIM12->ARR = _peri1;
+		TIM13->ARR = _peri2;
+		TIM14->ARR = _peri3;
+
+
+
+		TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
+		TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
+		TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
 
 
 		// Calculo el error por casteo a int, y cuando supero la unidad, lo compenzo --------------
+
+		/*
+
 		for (int i = 0; i < 3; ++i) {
 			ErrorPeriodo[i] = periodoM[i] - (double) ((int32_t) periodoM[i]);
 			ErrorAcumuladoPeriodo[i] = ErrorAcumuladoPeriodo[i] + ErrorPeriodo[i];
@@ -319,30 +337,8 @@ void SetPerfilTimers(double omeg1, double omeg2, double omeg3) {	// velAng en rp
 			if (TIM14->CNT > periodoM[2]) {
 						TIM14->CNT = periodoM[2] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
 			}
+			*/
 
-			TIM12->ARR =periodoM[0];
-			TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
-			TIM13->ARR =periodoM[1];
-			TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
-			TIM14->ARR =periodoM[2];
-			TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
-		//------------------------------------------------------------------------------------------
 
-		//TIM12->ARR = periodoM1;
-		//TIM12->CCR1 = (TIM12->ARR) / 2;							//Duty Cycle %50
-		//TIM13->ARR = periodoM2;
-		//TIM13->CCR1 = (TIM13->ARR) / 2;
-		//TIM14->ARR = periodoM3;
-		//TIM14->CCR1 = (TIM14->ARR) / 2;
-
-		/*if (TIM12->CNT > Periodo[0]) {
-			TIM12->CNT = Periodo[0] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-		}
-		if (TIM13->CNT > Periodo[1]) {
-			TIM13->CNT = Periodo[1] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-		}
-		if (TIM14->CNT > Periodo[2]) {
-			TIM14->CNT = Periodo[2] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-		}*/
 }
 

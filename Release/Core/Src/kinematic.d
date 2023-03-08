@@ -1,5 +1,5 @@
-Core/Src/trayectoria.o: ../Core/Src/trayectoria.c \
- ../Core/Inc/GlobalFunc.h ../Core/Inc/trayectoria.h ../Core/Inc/main.h \
+Core/Src/kinematic.o: ../Core/Src/kinematic.c ../Core/Inc/kinematic.h \
+ ../Core/Inc/GlobalFunc.h ../Core/Inc/main.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h \
  ../Core/Inc/stm32h7xx_hal_conf.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_rcc.h \
@@ -32,8 +32,8 @@ Core/Src/trayectoria.o: ../Core/Src/trayectoria.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h
+../Core/Inc/kinematic.h:
 ../Core/Inc/GlobalFunc.h:
-../Core/Inc/trayectoria.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:

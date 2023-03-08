@@ -1,3 +1,1 @@
-../Core/Src/motor.c:27:6:configStepMotor1	24	static
-../Core/Src/motor.c:58:6:configStepMotor2	24	static
-../Core/Src/motor.c:89:6:configStepMotor3	24	static
+../Core/Src/motor.c:10:6:configMotor	24	static

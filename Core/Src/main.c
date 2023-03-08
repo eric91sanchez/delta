@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -31,8 +32,6 @@
 #include "motor.h"
 #include "homing.h"
 #include "interpretaComando.h"
-#include "trayectoria.h"
-#include "cinematica.h"
 #include "inverseJacobian.h"
 /* USER CODE END Includes */
 
@@ -54,16 +53,34 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-								//Frecuencia clock
+
+
+Motor motor1, motor2,motor3;
+/*
 uint32_t pMotor1;		//Pasos de motor PaP1 actual
 uint32_t pMotor2;		//Pasos de motor PaP2 actual
 uint32_t pMotor3;		//Pasos de motor PaP3 actual
 uint32_t numStep1;		//Numero de pasos PaP1 consigna
 uint32_t numStep2;		//Numero de pasos PaP2 consigna
 uint32_t numStep3;		//Numero de pasos PaP3 consigna
+
 double titha1;
 double titha2;
 double titha3;
+double omega1, omega2, omega3;
+*/
+
+double rpm1, rpm2, rpm3;
+double ErrorPeriodo[3];
+double ErrorAcumuladoPeriodo[3];
+double omega[3];
+statesMachine state = READY;
+
+
+
+uint32_t fallData1[numval];
+uint32_t fallData2[numval];
+uint32_t fallData3[numval];
 
 //--------------------------------------------
 //Valores para crear el perfil de velocidad
@@ -83,39 +100,42 @@ float amin;
 
 Vec3D Pini;
 Vec3D Pfin;
+float_t euclideanDistance;
 
 
-float_t distancia;
 float_t vDirector[3];
 double Recta3D[3];
 double dRecta3D[3];
-double omega[3];
+double dRecta3DZ=0; // para debugear
+double Tiempo;
 
 uint8_t rx_index = 0;
 uint8_t rx_buffer[30];
 uint8_t rx_data;
 uint8_t message[] = "Inicializacion en curso...\n";		//Mensaje enviado al iniciar el programa
 uint8_t message1[] = "El robot ya se encuentra operacional.\n";
-uint16_t valor = 0;
+
+
+
+
+
+
+double periodoM[3];
+uint32_t periodoM1, periodoM2, periodoM3;
+
+
+//double FlagTrayectoM1=0, FlagTrayectoM2=0, FlagTrayectoM3=0;
+double flagErrorEndStop = 0;
 uint8_t cm0;				//Flag start transmit
 uint8_t FlagTiempo;
-
-double Tiempo;
-
-double FlagTrayectoM1, FlagTrayectoM2, FlagTrayectoM3 = 1;
-double omega1, omega2, omega3;
-uint32_t periodoM1, periodoM2, periodoM3;
-double periodoM[3];
-
 int FlagButton = 0;
-int test = 0 , test1= 0;
-double flagErrorEndStop = 0;
-double rpm1, rpm2, rpm3;
-double ErrorPeriodo[3];
-double ErrorAcumuladoPeriodo[3];
+int test = 0 , test1= 0 , test2 =0, testinMain=0;
+
+
+
 uint8_t Start=0;
 
-double dRecta3DZ=0; // para debugear
+
 
 
 /* USER CODE END PV */
@@ -138,18 +158,24 @@ void robotInitialization(void){
 	* singularidad de los 90º */
 
 
-	double rpm = 2.0;
+	//double rpm = 1.0;
+
+
 
 	HAL_TIM_Base_Start(&htim12);
 	HAL_TIM_Base_Start(&htim13);
 	HAL_TIM_Base_Start(&htim14);
 
-	/*
+	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, fallData1, numval);
+	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_2, fallData2, numval);
+	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_3, fallData3, numval);
 
-	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 1
-	HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 2
-	HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);	//Enciendo interrupcion input capture motor 3
-	*/
+
+
+	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_ALL);	//Enciendo interrupcion input capture motor 1
+	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_2);	//Enciendo interrupcion input capture motor 2
+	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_3);	//Enciendo interrupcion input capture motor 3
+
 
 	HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
@@ -162,17 +188,26 @@ void robotInitialization(void){
 	positive_Dir_MOTOR_2;
 	positive_Dir_MOTOR_3;
 
+	/*
+
 	periodoM[0] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
 	periodoM[1] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
 	periodoM[2] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
 
+
+
+
 	TIM12->ARR = periodoM[0];
-	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
+	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);  //pulse
 	TIM13->ARR =periodoM[1];
 	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
 	TIM14->ARR =periodoM[2];
 	TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
+	*/
 
+
+
+	/*
 	Start_PWM_MOTOR_1;
 	Start_PWM_MOTOR_2;
 	Start_PWM_MOTOR_3;
@@ -183,6 +218,10 @@ void robotInitialization(void){
     Stop_PWM_MOTOR_2;
     Stop_PWM_MOTOR_3;
 
+    */
+	motor1.stepReached = false;
+	motor2.stepReached = false;
+	motor3.stepReached = false;
 
 
 }
@@ -217,16 +256,15 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
-  MX_TIM3_Init();
-  MX_TIM4_Init();
   MX_USART3_UART_Init();
   MX_TIM12_Init();
   MX_TIM13_Init();
   MX_TIM14_Init();
   MX_TIM5_Init();
   MX_TIM15_Init();
-  MX_USART1_UART_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   HAL_UART_Transmit(&huart3, message, sizeof(message), 100); //Mensaje de inicializacion en curso.
@@ -247,23 +285,25 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		if (FlagButton == 1) {
 
-
+			HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_1);
+			HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_2);
+			HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_3);
 
 			FlagButton = 0;
-			distancia = sqrt(pow(Pfin.x - Pini.x, 2) + pow(Pfin.y - Pini.y, 2) + pow(Pfin.z - Pini.z, 2));
-			vDirector[0] = (Pfin.x - Pini.x) / distancia;	//Vector director en X
-			vDirector[1] = (Pfin.y - Pini.y) / distancia;	//Vector director en Y
-			vDirector[2] = (Pfin.z - Pini.z) / distancia;	//Vector director en Z
-			configStepMotor1(titha1);
-			configStepMotor2(titha2);
-			configStepMotor3(titha3);
+			euclideanDistance = sqrt(pow(Pfin.x - Pini.x, 2) + pow(Pfin.y - Pini.y, 2) + pow(Pfin.z - Pini.z, 2));
+			vDirector[0] = (Pfin.x - Pini.x) / euclideanDistance;	//Vector director en X
+			vDirector[1] = (Pfin.y - Pini.y) / euclideanDistance;	//Vector director en Y
+			vDirector[2] = (Pfin.z - Pini.z) / euclideanDistance;	//Vector director en Z
 
-			update_ScurveTraj(0, distancia, vi, vf, vmax, amax, jmax);
+			configMotor(&motor1,1);
+			configMotor(&motor2,2);
+			configMotor(&motor3,3);
+
+			update_ScurveTraj(0, euclideanDistance, vi, vf, vmax, amax, jmax);
 
 			FlagTiempo = 0;
-			FlagTrayectoM1 = 0;
-			FlagTrayectoM2 = 0;
-			FlagTrayectoM3 = 0;
+
+
 			Start=1;
 			rpm1 = 0;
 			rpm2 = 0;
@@ -271,8 +311,34 @@ int main(void)
 
 			HAL_TIM_Base_Start(&htim5);
 			HAL_TIM_Base_Start_IT(&htim15);
+			testinMain++;
+		}
+		//--------------------------------------------------
+		if (motor1.stepReached){
+			Stop_PWM_MOTOR_1; 		//Apago el PWM del motor 1
+			//HAL_Delay(1);
+		}else if(motor2.stepReached){
+			Stop_PWM_MOTOR_2; 		//Apago el PWM del motor 1
+			//HAL_Delay(1);
+		}else if(motor3.stepReached){
+			Stop_PWM_MOTOR_3; 		//Apago el PWM del motor 1
+			//HAL_Delay(1);
+		}
+		//---------------------------------------------------
+		if(Start==1){
+
+			HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, fallData1, numval);
+			HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_2, fallData2, numval);
+			HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_3, fallData3, numval);
+
+			setProfilTimer();
+
+			Start_PWM_MOTOR_1;	// Activar generacion de pwm
+			Start_PWM_MOTOR_2;	// Activar generacion de pwm
+			Start_PWM_MOTOR_3;	// Activar generacion de pwm
 
 		}
+		//---------------------------------------------------
 
 	}
 
@@ -426,55 +492,80 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 
 	test++;
-
 	if (htim->Instance == TIM2) {
-		test1++;
-		if (pMotor1 == numStep1) {
-			Stop_PWM_MOTOR_1; //Apago el PWM del motor 1
-			FlagTrayectoM1 = 1;
+		//test1++;
 
-		} else {
-			pMotor1++;
+		if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1){
+			//test2++;
+			if (motor1.pMotor == motor1.numStep) {
+				//Stop_PWM_MOTOR_1; 		//Apago el PWM del motor 1
+				//HAL_Delay(1);
+				motor1.stepReached = true;
+			} else {
+				motor1.pMotor++;
+			}
 		}
 
+
+		else if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2){
+			if (motor2.pMotor == motor2.numStep) {
+				//Stop_PWM_MOTOR_2; 		//Apago el PWM del motor 1
+				//HAL_Delay(1);
+				motor2.stepReached = true;
+			} else {
+				motor2.pMotor++;
+			}
+		}
+
+		else if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3){
+			if (motor3.pMotor == motor3.numStep) {
+				//Stop_PWM_MOTOR_3; 		//Apago el PWM del motor 1
+				//HAL_Delay(1);
+				motor3.stepReached = true;
+			} else {
+				motor3.pMotor++;
+			}
+		}
+		else{}
 	}
 
-	/* else if (htim->Instance == TIM3) {
-		if (pMotor2 == numStep2) {
-			Stop_PWM_MOTOR_2;//Apago el PWM del motor 1
-			FlagTrayectoM2 = 1;
-		} else {
-			pMotor2++;
-		}
 
-	} else if (htim->Instance == TIM4) {
-		if (pMotor3 == numStep3) {
-			Stop_PWM_MOTOR_3;//Apago el PWM del motor 1
-			FlagTrayectoM3 = 1;
-		} else {
-			pMotor3++;
-		}
-
-	}*/
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 	if (htim == &htim15) {  //Timer que actualiza curva de velocidad
 
-		if (FlagTrayectoM1 == 1 && FlagTrayectoM2 == 1 && FlagTrayectoM3 == 1) {
-			HAL_TIM_Base_Stop_IT(&htim15);
-			HAL_TIM_Base_Stop(&htim5);
+
+		if (motor1.stepReached && motor2.stepReached  && motor3.stepReached) {
+
+			Start = 0;
+
+			motor1.pMotor = 0;
+			motor2.pMotor = 0;
+			motor3.pMotor = 0;
+
+			motor1.stepReached = false;
+			motor2.stepReached = false;
+			motor3.stepReached = false;
+
 			Pini.x = Pfin.x;
 			Pini.y = Pfin.y;
 			Pini.z = Pfin.z;
+
+			HAL_TIM_Base_Stop_IT(&htim15);
+			HAL_TIM_Base_Stop(&htim5);
+
+
+
 
 		} else {
 			if (!FlagTiempo) {
 				FlagTiempo = 1;
 				TIM5->CNT = 0;	// comienzo a contabilizar el tiempo recien acá
 			}
-			Tiempo = (((double) (TIM5->CNT)) * ((double)(TIM5->PSC + 1) / 64000000.0));
+
+			Tiempo = (((double) (TIM5->CNT)) * ((double)(TIM5->PSC + 1) / FCL));
 
 			get_Straj(Tiempo);
 
@@ -486,15 +577,29 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			dRecta3D[2] = 0 + qd * vDirector[2];
 
 
-			jacobianoInverso(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
-			SetPerfilTimers(omega[0], omega[1], omega[2]);
+			inverseJacobian(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
+
+
+
+			/*
+			setProfilTimer();
+
+			Start_PWM_MOTOR_1;	// Activar generacion de pwm
+			HAL_Delay(1);
+			Start_PWM_MOTOR_2;	// Activar generacion de pwm
+			HAL_Delay(1);
+			Start_PWM_MOTOR_3;	// Activar generacion de pwm
+			HAL_Delay(1);
+
 			if(Start==1){
 				Start=0;
+
 
 				Start_PWM_MOTOR_1;	// Activar generacion de pwm
 				Start_PWM_MOTOR_2;	// Activar generacion de pwm
 				Start_PWM_MOTOR_3;	// Activar generacion de pwm
 			}
+			*/
 		}
 	}
 }

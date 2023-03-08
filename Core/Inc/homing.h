@@ -13,17 +13,15 @@
 #include "interpretaComando.h"
 
 extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim3;
-extern TIM_HandleTypeDef htim4;
+//extern TIM_HandleTypeDef htim3;
+//extern TIM_HandleTypeDef htim4;
+
 extern TIM_HandleTypeDef htim12;
 extern TIM_HandleTypeDef htim13;
 extern TIM_HandleTypeDef htim14;
-extern double titha1;
-extern double titha2;
-extern double titha3;
-//extern double Fcl;
 
-extern double periodoM[3];
+extern uint32_t fallData[numval];
+extern Motor motor1,motor2,motor3;
 
 void homing(void);
 

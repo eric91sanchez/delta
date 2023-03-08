@@ -31,12 +31,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../Core/Inc/tim.h ../Core/Inc/main.h ../Core/Inc/usart.h \
- ../Core/Inc/gpio.h ../Core/Inc/motor.h ../Core/Inc/homing.h \
- ../Core/Inc/interpretaComando.h ../Core/Inc/trayectoria.h \
- ../Core/Inc/homing.h ../Core/Inc/cinematica.h ../Core/Inc/GlobalFunc.h \
- ../Core/Inc/interpretaComando.h ../Core/Inc/trayectoria.h \
- ../Core/Inc/cinematica.h ../Core/Inc/inverseJacobian.h
+ ../Core/Inc/dma.h ../Core/Inc/main.h ../Core/Inc/tim.h \
+ ../Core/Inc/usart.h ../Core/Inc/gpio.h ../Core/Inc/motor.h \
+ ../Core/Inc/homing.h ../Core/Inc/interpretaComando.h \
+ ../Core/Inc/kinematic.h ../Core/Inc/GlobalFunc.h \
+ ../Core/Inc/trajectory.h ../Core/Inc/homing.h \
+ ../Core/Inc/interpretaComando.h ../Core/Inc/inverseJacobian.h
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -70,18 +70,17 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
-../Core/Inc/tim.h:
+../Core/Inc/dma.h:
 ../Core/Inc/main.h:
+../Core/Inc/tim.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/gpio.h:
 ../Core/Inc/motor.h:
 ../Core/Inc/homing.h:
 ../Core/Inc/interpretaComando.h:
-../Core/Inc/trayectoria.h:
-../Core/Inc/homing.h:
-../Core/Inc/cinematica.h:
+../Core/Inc/kinematic.h:
 ../Core/Inc/GlobalFunc.h:
+../Core/Inc/trajectory.h:
+../Core/Inc/homing.h:
 ../Core/Inc/interpretaComando.h:
-../Core/Inc/trayectoria.h:
-../Core/Inc/cinematica.h:
 ../Core/Inc/inverseJacobian.h:

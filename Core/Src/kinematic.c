@@ -5,7 +5,7 @@
  *      Author: Elias Correa y Eliseo Elorga
  */
 
-#include <cinematica.h>
+#include <kinematic.h>
 
 
 //Una constante a diferencia de una macro ocupa un espacio(memoria) durante la ejecución del programa.
@@ -35,7 +35,7 @@ double A2, B2, C2, XJ2_1, XJ2_2, YJ2_1, YJ2_2, ZJ2_1, ZJ2_2;
 double A3, B3, C3, XJ3_1, XJ3_2, YJ3_1, YJ3_2, ZJ3_1, ZJ3_2;
 
 
-void cinematicaInversa(Vec3D _Pfin) {
+void inverseKinematic(Vec3D _Pfin) {
 
 	A1 = 1.0 + pow(((-2.0  * (R + (_Pfin.y - r))) / (2 * _Pfin.z)), 2);
 	A2 = 4.0 + pow(((2.0 * sqrt(3.0) * R * C30 + 2.0 * R * S30 - 2.0 * sqrt(3) * (_Pfin.x + r * C30) - 2.0 * (_Pfin.y + r * S30)) / (2.0 * _Pfin.z)), 2.0);
@@ -70,10 +70,10 @@ void cinematicaInversa(Vec3D _Pfin) {
 	ZJ3_1 = YJ3_1 * ((2 * sqrt(3.0) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2.0 * _Pfin.z)) + ((pow((_Pfin.x + r * C150), 2.0) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2.0) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z));
 	ZJ3_2 = YJ3_2 * ((2 * sqrt(3.0) * (_Pfin.x + r * C150) - 2.0 * (_Pfin.y + r * S150) - 2.0 * sqrt(3) * R * C150 + 2.0 * R * S150) / (2.0 * _Pfin.z)) + ((pow((_Pfin.x + r * C150), 2.0) + pow((_Pfin.y + r * S150), 2) + pow(_Pfin.z, 2) - pow(L2, 2) - pow(R, 2) + pow(L1, 2)) / (2 * _Pfin.z));
 
-	titha1 = -1.0 * asin(ZJ1_1 / L1);
-	titha1 = titha1 * RAD_TO_DEG;
-	titha2 = -1.0 * asin(ZJ2_1 / L1);
-	titha2 = titha2 * RAD_TO_DEG;
-	titha3 = -1.0 * asin(ZJ3_1 / L1);
-	titha3 = titha3 * RAD_TO_DEG;
+	motor1.theta = -1.0 * asin(ZJ1_1 / L1);
+	motor1.theta = motor1.theta * RAD_TO_DEG;
+	motor2.theta = -1.0 * asin(ZJ2_1 / L1);
+	motor2.theta = motor2.theta * RAD_TO_DEG;
+	motor3.theta = -1.0 * asin(ZJ3_1 / L1);
+	motor3.theta = motor3.theta * RAD_TO_DEG;
 }

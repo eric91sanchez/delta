@@ -1,0 +1,3 @@
+../Core/Src/trajectory.c:22:6:get_Straj	64	static
+../Core/Src/trajectory.c:145:6:update_ScurveTraj	144	static
+../Core/Src/trajectory.c:263:6:setProfilTimer	8	static
