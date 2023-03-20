@@ -17,14 +17,10 @@
 
 extern Vec3D Pini;
 extern Vec3D Pfin;
-
+extern statesMachine state;
 extern UART_HandleTypeDef huart3;
 extern uint8_t rx_buffer[30];
-
-extern double titha1;
-extern double titha2;
-extern double titha3;
-
+extern bool receptionFlag;
 extern float vmax,amax,jmax,vi,vf;
 
 

@@ -10,7 +10,7 @@
 
 
 double rpm = 1.0;  //Valor experimental.
-bool homAprox, homStart,homFin;
+bool homAprox, homStart;
 
 
 void homing(void) {
@@ -18,7 +18,6 @@ void homing(void) {
 	homAprox = true;
 	homStart = true;
 
-    homFin = false;
     motor1.hom = false;
     motor2.hom = false;
     motor3.hom = false;
@@ -103,7 +102,7 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_1;
-            motor1.theta = 0.0;
+            //motor1.theta = 0.0;
             motor1.hom=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F1\n", 4, 100);
             HAL_Delay(30);
@@ -131,7 +130,7 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_2;
-            motor2.theta = 0.0;
+            //motor2.theta = 0.0;
             motor2.hom=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F2\n", 4, 100);
             HAL_Delay(30);
@@ -158,7 +157,7 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_3;
-            motor3.theta = 0.0;
+            //motor3.theta = 0.0;
             motor3.hom = true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F3\n", 4, 100);
 			HAL_Delay(30);
@@ -170,25 +169,6 @@ void homing(void) {
 
         if (motor1.hom && motor2.hom && motor3.hom){
         	homFin=true;
-
-
-        	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, fallData, numval);
-        	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_2, fallData, numval);
-        	//HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_3, fallData, numval);
-
-        	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_ALL);	//Enciendo interrupcion input capture motor 1
-        	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_2);	//Enciendo interrupcion input capture motor 2
-        	//HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_3);	//Enciendo interrupcion input capture motor 3
-
-
-        	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
-        	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior
-        	HAL_NVIC_EnableIRQ(EXTI2_IRQn);		//Enciendo interrupcion EndStop 2 Superior
-        	HAL_NVIC_EnableIRQ(EXTI3_IRQn);		//Enciendo interrupcion EndStop 2 Inferior
-        	HAL_NVIC_EnableIRQ(EXTI4_IRQn);		//Enciendo interrupcion EndStop 3 Superior
-        	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Enciendo interrupcion EndStop 3 Inferior
-
-
         	HAL_UART_Transmit(&huart3,(uint8_t *)"FH\n", 4, 100);
         }
        }

@@ -282,14 +282,14 @@ void setProfilTimer(void) {	// velAng en rpm
 		}
 		*/
 
-		rpm1 = 2.0 ;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-		rpm2 = 2.0 ;
-		rpm3 = 2.0 ;
+		rpm1 = 0.5 ;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+		rpm2 = 0.5 ;
+		rpm3 = 0.5 ;
 
 
 		_peri1= COUNTERPERIOD(rpm1);
-		_peri1= COUNTERPERIOD(rpm2);
-		_peri1= COUNTERPERIOD(rpm3);
+		_peri2= COUNTERPERIOD(rpm2);
+		_peri3= COUNTERPERIOD(rpm3);
 
 
 		TIM12->ARR = _peri1;

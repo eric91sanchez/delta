@@ -47,7 +47,7 @@ typedef struct Vector3D{
 }Vec3D;
 
 typedef enum { false, true } bool;
-typedef enum {READY,WORKING,HOME,FAULT} statesMachine;
+typedef enum {INIT,READY,WORKING,HOME,FAULT} statesMachine;
 
 typedef struct Motor{
 
@@ -61,7 +61,6 @@ typedef struct Motor{
 	double currentAngle;
 	double calcStep;
 	double remanente;
-
 
 }Motor;
 

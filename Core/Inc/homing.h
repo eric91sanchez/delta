@@ -22,7 +22,7 @@ extern TIM_HandleTypeDef htim14;
 
 extern uint32_t fallData[numval];
 extern Motor motor1,motor2,motor3;
-
+extern bool homFin;
 void homing(void);
 
 

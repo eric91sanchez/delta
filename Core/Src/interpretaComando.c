@@ -20,7 +20,8 @@ void interpretaComando(void){
 	case 'H':
 	case 'h':
 
-		//HAL_UART_Transmit(&huart3,(uint8_t *)"Homing\n\r", 8, 100); //Comentario enviado por UART para debuguear
+		state = HOME;
+
 
 		//Ponemos el enable en bajo para habilitar el driver
 
@@ -32,11 +33,6 @@ void interpretaComando(void){
 
 		homing();
 
-		Pini.x=0;
-		Pini.y=0;
-		Pini.z =-0.5208; //antes era -0.33
-
-		//HAL_UART_Transmit(&huart3,(uint8_t *)"Fin_H\n", 7, 100);
 
 
 	break;
@@ -89,7 +85,7 @@ void interpretaComando(void){
 
 	case 'P':												//:Px0.1 y0.1 z-0.5 \0 (Eje, valor, espacio, Eje, valor, espacio, Eje, valor, espacio)
 	case 'p':
-		//HAL_UART_Transmit(&huart3,(uint8_t *)"P\n", 3, 100);
+		receptionFlag = true;
 		flagErrorEndStop = 0;
 		uint8_t i = 1;
 		uint8_t j = 0;
