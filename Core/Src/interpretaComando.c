@@ -19,21 +19,8 @@ void interpretaComando(void){
 
 	case 'H':
 	case 'h':
-
+		//receptionFlag = true;
 		state = HOME;
-
-
-		//Ponemos el enable en bajo para habilitar el driver
-
-		HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
-
-		HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
-
-		homing();
-
-
 
 	break;
 	/*
@@ -85,7 +72,7 @@ void interpretaComando(void){
 
 	case 'P':												//:Px0.1 y0.1 z-0.5 \0 (Eje, valor, espacio, Eje, valor, espacio, Eje, valor, espacio)
 	case 'p':
-		receptionFlag = true;
+
 		flagErrorEndStop = 0;
 		uint8_t i = 1;
 		uint8_t j = 0;
@@ -131,9 +118,7 @@ void interpretaComando(void){
 			}
 			i++;
 		}
-
-
-		inverseKinematic(Pfin);
+		receptionFlag = true;
 
 
 		break;

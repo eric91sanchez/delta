@@ -53,8 +53,9 @@ typedef struct Motor{
 
 	uint32_t pMotor;
 	uint32_t numStep;
-	double theta;     		//Posicion angular
-	double omega;     		//Velocidad angular
+	double theta;     		//Posicion angular[degrees]
+	double omega;     		//Velocidad angular[rad/s]
+	double rpm;				//Velocidad angular[rev/min]
 	bool hom;
 	bool stepReached;
 
@@ -106,16 +107,10 @@ void Error_Handler(void);
 #define S_PulsoPaP2_GPIO_Port GPIOF
 #define S_PulsoPaP3_Pin GPIO_PIN_9
 #define S_PulsoPaP3_GPIO_Port GPIOF
-#define StepFeedback_motor1_Pin GPIO_PIN_0
-#define StepFeedback_motor1_GPIO_Port GPIOA
-#define StepFeedback_motor2_Pin GPIO_PIN_1
-#define StepFeedback_motor2_GPIO_Port GPIOA
 #define NucleoF4_RX_Pin GPIO_PIN_2
 #define NucleoF4_RX_GPIO_Port GPIOA
 #define NucleoF4_TX_Pin GPIO_PIN_3
 #define NucleoF4_TX_GPIO_Port GPIOA
-#define StepFeedback_motor3_Pin GPIO_PIN_10
-#define StepFeedback_motor3_GPIO_Port GPIOB
 #define S_PulsoPaP1_Pin GPIO_PIN_14
 #define S_PulsoPaP1_GPIO_Port GPIOB
 #define Jetson_RX_Pin GPIO_PIN_15

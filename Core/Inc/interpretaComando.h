@@ -13,7 +13,7 @@
 #include "main.h"
 #include "stdlib.h"
 #include "trajectory.h"
-#include "homing.h"
+
 
 extern Vec3D Pini;
 extern Vec3D Pfin;

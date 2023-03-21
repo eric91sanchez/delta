@@ -282,9 +282,9 @@ void setProfilTimer(void) {	// velAng en rpm
 		}
 		*/
 
-		rpm1 = 0.5 ;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-		rpm2 = 0.5 ;
-		rpm3 = 0.5 ;
+		rpm1 = 1;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+		rpm2 = 1 ;
+		rpm3 = 1;
 
 
 		_peri1= COUNTERPERIOD(rpm1);

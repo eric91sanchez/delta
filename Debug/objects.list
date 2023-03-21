@@ -1,6 +1,5 @@
 "./Core/Src/GlobalFunc.o"
 "./Core/Src/debug.o"
-"./Core/Src/dma.o"
 "./Core/Src/gpio.o"
 "./Core/Src/homing.o"
 "./Core/Src/interpretaComando.o"

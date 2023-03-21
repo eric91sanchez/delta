@@ -1,5 +1,5 @@
 /*
- * operaciones.c
+ *  GlobalFunc.c
  *
  *  Created on: Jun 22, 2022
  *      Author: Elias Correa y Eliseo Elorga
@@ -7,73 +7,65 @@
 
 #include <GlobalFunc.h>
 
-array2D transpuesta(double Maux[3][3]) {
-	array2D MTaux;
-	for (int i = 0; i < 3; ++i) {
-		for (int j = 0; j < 3; ++j) {
-			MTaux.m[j][i] = Maux[i][j];	//transpuesta de la matriz l2 JP=[l21';l22';l23'];
+
+double dotProduct(double VectA[], double VectB[],int n) {
+	double product = 0;
+	for (int i = 0; i < n; i++) {				//Producto punto entre vectores
+		product += VectA[i] * VectB[i];
+	}
+	return product;
+}
+
+void matrixTranspose(double A[3][3], double result[3][3]) {
+    int i, j;
+
+    for(i = 0; i < 3; i++) {
+        for(j = 0; j < 3; j++) {
+            result[j][i] = A[i][j];
+        }
+    }
+}
+
+void inv(double A[3][3], double A_inv[3][3]) {
+
+	// Calculamos el determinante de la matriz
+
+	double det = 0;
+	for (int i = 0; i < 3; i++) {
+		det += A[0][i] * (A[1][(i+1)%3]*A[2][(i+2)%3] - A[1][(i+2)%3]*A[2][(i+1)%3]);
+	}
+
+	// Verificamos si la matriz es invertible
+	if (det == 0) {
+		return;
+	}
+
+	// Calculamos la matriz adjunta
+	double adj[3][3];
+
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			adj[i][j] = ((A[(j+1)%3][(i+1)%3] * A[(j+2)%3][(i+2)%3]) - (A[(j+1)%3][(i+2)%3] * A[(j+2)%3][(i+1)%3]));
 		}
 	}
-	return MTaux;
-}
 
-double productDot(double VectA[], double VectB[]) {
-	double dotaux = 0;
-	for (int i = 0; i < 3; ++i) {				//Producto punto entre vectores
-		dotaux = dotaux + VectA[i] * VectB[i];
-	}
-	return dotaux;
-}
-
-double determinante(double Maux[3][3]) {
-	double det;
-	det = Maux[0][0] * Maux[1][1] * Maux[2][2]; // + Maux[0][1] * Maux[1][2] * Maux[2][0] + Maux[1][0] * Maux[2][1] * Maux[0][2] - Maux[2][0] * Maux[1][1] * Maux[0][2] - Maux[1][0] * Maux[0][1] * Maux[2][2] - Maux[2][1] * Maux[1][2] * Maux[0][0];
-	return det;
-}
-
-array2D adjunta(double Maux[3][3]) {
-	array2D adj;
-	adj.m[0][0] = Maux[1][1] * Maux[2][2] - Maux[2][1] * Maux[1][2];
-	adj.m[0][1] = Maux[1][0] * Maux[2][2] - Maux[2][0] * Maux[1][2];
-	adj.m[0][2] = Maux[1][0] * Maux[2][1] - Maux[2][0] * Maux[1][1];
-	adj.m[1][0] = Maux[0][1] * Maux[2][2] - Maux[2][1] * Maux[0][2];
-	adj.m[1][1] = Maux[0][0] * Maux[2][2] - Maux[2][0] * Maux[0][2];
-	adj.m[1][2] = Maux[0][0] * Maux[2][1] - Maux[2][0] * Maux[0][1];
-	adj.m[2][0] = Maux[0][1] * Maux[1][2] - Maux[1][1] * Maux[0][2];
-	adj.m[2][1] = Maux[0][0] * Maux[1][2] - Maux[1][0] * Maux[0][2];
-	adj.m[2][2] = Maux[0][0] * Maux[1][1] - Maux[1][0] * Maux[0][1];
-	return adj;
-}
-
-array2D inv(double A[3][3]) {
-	array2D Minv;
-	array2D Maux;
-	double det;
-	Maux = adjunta(A);
-	Maux = transpuesta(Maux.m);
-	det = determinante(A);
-
-	for (int i = 0; i < 3; ++i) {
-		for (int j = 0; j < 3; ++j) {
-			Minv.m[i][j] = (1 / det) * Maux.m[i][j];
+	// Calculamos la matriz inversa
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			A_inv[i][j] = adj[i][j] / det;
 		}
 	}
-	return Minv;
 }
 
-array2D productMatriz(double MatrizA[3][3], double MatrizB[3][3]) {
-	array2D producto;
+void matrixProduct(double A[3][3], double B[3][3], double product[3][3]) {
+    int i, j, k;
 
-	for (int k = 0; k < 3; ++k) {
-		for (int i = 0; i < 3; ++i) {
-			double suma = 0;
-			for (int j = 0; j < 3; ++j) {
-				suma += MatrizA[i][j] * MatrizB[j][k];
-			}
-			producto.m[i][k] = suma;
-		}
-	}
-	return producto;
+    for(i = 0; i < 3; i++) {
+        for(j = 0; j < 3; j++) {
+        	product[i][j] = 0;
+            for(k = 0; k < 3; k++) {
+            	product[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
 }
-
-

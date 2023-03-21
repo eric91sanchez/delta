@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "dma.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -56,19 +55,6 @@
 
 
 Motor motor1, motor2,motor3;
-/*
-uint32_t pMotor1;		//Pasos de motor PaP1 actual
-uint32_t pMotor2;		//Pasos de motor PaP2 actual
-uint32_t pMotor3;		//Pasos de motor PaP3 actual
-uint32_t numStep1;		//Numero de pasos PaP1 consigna
-uint32_t numStep2;		//Numero de pasos PaP2 consigna
-uint32_t numStep3;		//Numero de pasos PaP3 consigna
-
-double titha1;
-double titha2;
-double titha3;
-double omega1, omega2, omega3;
-*/
 
 double rpm1, rpm2, rpm3;
 double ErrorPeriodo[3];
@@ -109,7 +95,7 @@ float_t vDirector[3];
 double Recta3D[3];
 double dRecta3D[3];
 double dRecta3DZ=0; // para debugear
-double Tiempo;
+double time;
 
 uint8_t rx_index = 0;
 uint8_t rx_buffer[30];
@@ -250,9 +236,10 @@ int main(void)
   MX_TIM14_Init();
   MX_TIM5_Init();
   MX_TIM15_Init();
-  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
+  MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
 
@@ -274,13 +261,23 @@ int main(void)
 			  robotInitialization();
 			  HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100); //Mensaje inidicando que el Robot esta listo para su uso
 
-			  state=READY;
+			  state = READY;
 
 			break;
 
 		case HOME:
 
-			receptionFlag = false;
+			receptionFlag = false; //Solo para asegurarse de no saltar al estado ready con esta bandera en true
+
+			//Ponemos el enable en bajo para habilitar el driver
+
+			HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
+
+			HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
+
+			homing();
 
 	        if(homFin){
 
@@ -301,9 +298,15 @@ int main(void)
 				motor2.theta = 0.0;
 				motor3.theta = 0.0;
 
+				motor1.currentAngle = 0.0;
+				motor2.currentAngle = 0.0;
+				motor3.currentAngle = 0.0;
+
 				state = READY;
 
 	        }
+
+
 			break;
 
 		case WORKING:
@@ -312,15 +315,30 @@ int main(void)
 
 			while (!(motor1.stepReached && motor2.stepReached  && motor3.stepReached)){
 
+				if (motor1.stepReached) {
+					Stop_PWM_MOTOR_1;
+					HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+				}else if (motor2.stepReached) {
+					Stop_PWM_MOTOR_2;
+					HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+				}else if (motor3.stepReached){
+					Stop_PWM_MOTOR_3;
+					HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+				}
+
+				get_Straj(time);
+
+				Recta3D[0] = Pini.x + q * vDirector[0];
+				Recta3D[1] = Pini.y + q * vDirector[1];
+				Recta3D[2] = Pini.z + q * vDirector[2];
+				dRecta3D[0] = 0 + qd * vDirector[0];
+				dRecta3D[1] = 0 + qd * vDirector[1];
+				dRecta3D[2] = 0 + qd * vDirector[2];
+
+				inverseJacobian(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
+
+
 				setProfilTimer();
-
-				HAL_Delay(1);
-
-				HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_1, fallData1, numval);
-				HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_2, fallData2, numval);
-				HAL_TIM_IC_Start_DMA(&htim2, TIM_CHANNEL_3, fallData3, numval);
-
-				HAL_Delay(1);
 
 				if(startMotors){
 					startMotors = false;
@@ -334,7 +352,13 @@ int main(void)
 
 
 			if (stopMotors){   //If steps goals for each motor were reached, we stop motors
+
 				startMotors = false;
+
+				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+
 				if (motor1.stepReached) Stop_PWM_MOTOR_1;
 				if (motor2.stepReached) Stop_PWM_MOTOR_2;
 				if (motor3.stepReached)	Stop_PWM_MOTOR_3;
@@ -348,6 +372,7 @@ int main(void)
 			HAL_TIM_Base_Stop_IT(&htim15);
 			HAL_TIM_Base_Stop(&htim5);
 
+
 			state = READY;
 
 			break;
@@ -357,17 +382,19 @@ int main(void)
 			if (receptionFlag){
 
 				receptionFlag = false;
+
 				startMotors = true;
 
-				HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_1);
-				HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_2);
-				HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_3);
+				HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+				HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);
+				HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);
 
-				//FlagButton = 0;
 				euclideanDistance = sqrt(pow(Pfin.x - Pini.x, 2) + pow(Pfin.y - Pini.y, 2) + pow(Pfin.z - Pini.z, 2));
 				vDirector[0] = (Pfin.x - Pini.x) / euclideanDistance;	//Vector director en X
 				vDirector[1] = (Pfin.y - Pini.y) / euclideanDistance;	//Vector director en Y
 				vDirector[2] = (Pfin.z - Pini.z) / euclideanDistance;	//Vector director en Z
+
+				inverseKinematic(Pfin);
 
 				configMotor(&motor1,1);
 				configMotor(&motor2,2);
@@ -385,9 +412,9 @@ int main(void)
 				motor2.stepReached = false;
 				motor3.stepReached = false;
 
-				rpm1 = 0;
-				rpm2 = 0;
-				rpm3 = 0;
+				motor1.rpm = 0;
+				motor2.rpm = 0;
+				motor3.rpm = 0;
 
 				HAL_TIM_Base_Start(&htim5);
 				HAL_TIM_Base_Start_IT(&htim15);
@@ -398,9 +425,6 @@ int main(void)
 			break;
 
 		case FAULT:
-
-
-
 
 
 			break;
@@ -541,7 +565,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 			if (cm0 == 1) {
 				rx_buffer[rx_index] = 0;
 				interpretaComando();
-				receptionFlag = true;
 				cm0 = 0;
 
 			}
@@ -563,13 +586,40 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 
 	if (htim->Instance == TIM2) {
+		if (motor1.pMotor == motor1.numStep) {
+			motor1.stepReached = true;
+		} else {
+			motor1.pMotor++;
+		}
+	}else if (htim->Instance == TIM3){
+		if (motor2.pMotor == motor2.numStep) {
+			motor2.stepReached = true;
+		} else {
+			motor2.pMotor++;
+		}
+
+	}else if (htim->Instance == TIM4){
+		if (motor3.pMotor == motor3.numStep) {
+			motor3.stepReached = true;
+		} else {
+			motor3.pMotor++;
+		}
+
+	}
+
+
+
+	/* IMPLEMENTACION CON DMA Y UN SOLO TIMER
+	if (htim->Instance == TIM2) {
 		if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1){
+
 			if (motor1.pMotor == motor1.numStep) {
 				motor1.stepReached = true;
 			} else {
 				motor1.pMotor++;
 			}
 		}
+
 		else if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2){
 			if (motor2.pMotor == motor2.numStep) {
 				motor2.stepReached = true;
@@ -586,6 +636,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 		}
 		else{}
 	}
+	*/
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
@@ -597,8 +648,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			TIM5->CNT = 0;	//We start counting from here
 		}
 
-		Tiempo = (((double) (TIM5->CNT)) * ((double)(TIM5->PSC + 1) / FCL));
-		get_Straj(Tiempo);
+		time = (((double) (TIM5->CNT)) * ((double)(TIM5->PSC + 1) / FCL));
+		/*
+		get_Straj(time);
 
 		Recta3D[0] = Pini.x + q * vDirector[0];
 		Recta3D[1] = Pini.y + q * vDirector[1];
@@ -608,7 +660,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		dRecta3D[2] = 0 + qd * vDirector[2];
 
 		inverseJacobian(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
-
+	*/
 	}
 }
 /* USER CODE END 4 */

@@ -24,10 +24,8 @@ double E3[3];
 double l1[3][3];
 double l2[3][3];
 
-array2D Jcd;
-double Jci[3][3];
-array2D Jci_inv;
-array2D Jinv;
+
+double Jcd[3][3], Jci[3][3], Jci_inv[3][3], Jinv[3][3];
 
 double cross_P1[3];
 double cross_P2[3];
@@ -76,7 +74,8 @@ void inverseJacobian(double Vxaux, double Vyaux, double Vzaux, double Pxaux, dou
 	l2[1][2] = E3[1] - YJ3_1;
 	l2[2][2] = E3[2] - ZJ3_1;
 
-	Jcd = transpuesta(l2);				//Jacobiano de la cinematica directa
+	matrixTranspose(l2, Jcd);//Jacobiano de la cinematica directa
+
 
 	cross_P1[0] = SA1[1] * l1[0][2] - SA1[2] * l1[0][1];//Producto Cruz entre vectores
 	cross_P1[1] = SA1[2] * l1[0][0] - SA1[0] * l1[0][2];
@@ -90,9 +89,9 @@ void inverseJacobian(double Vxaux, double Vyaux, double Vzaux, double Pxaux, dou
 	cross_P3[1] = SA3[2] * l1[2][0] - SA3[0] * l1[2][2];
 	cross_P3[2] = SA3[0] * l1[2][1] - SA3[1] * l1[2][0];
 
-	dot[0] = productDot(cross_P1, Jcd.m[0]);			//Producto Punto
-	dot[1] = productDot(cross_P2, Jcd.m[1]);
-	dot[2] = productDot(cross_P3, Jcd.m[2]);
+	dot[0] = dotProduct(cross_P1, Jcd[0],3);			//Producto Punto
+	dot[1] = dotProduct(cross_P2, Jcd[1],3);
+	dot[2] = dotProduct(cross_P3, Jcd[2],3);
 
 	for (int i = 0; i < 3; ++i) {			//Jacobiano de la cinematica inversa
 		for (int j = 0; j < 3; ++j) {
@@ -104,13 +103,14 @@ void inverseJacobian(double Vxaux, double Vyaux, double Vzaux, double Pxaux, dou
 		}
 	}
 
-	Jci_inv = inv(Jci);
-	Jinv = productMatriz(Jcd.m,Jci_inv.m);	//Jacobiano Inverso
+	inv(Jci,Jci_inv);
+	matrixProduct(Jcd,Jci_inv,Jinv); //Jacobiano Inverso
+
 
 	for (int i = 0; i < 3; ++i) {
 		double sum = 0;
 		for (int j = 0; j < 3; ++j) {
-			sum += sum + Jinv.m[i][j] * Vaux[j];
+			sum += Jinv[i][j] * Vaux[j];
 		}
 		omega[i] = sum;
 	}

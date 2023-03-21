@@ -9,7 +9,7 @@
 #include "homing.h"
 
 
-double rpm = 1.0;  //Valor experimental.
+double rpm = 1.0;  //Valor experimental. Se encontro que es una buena velocidad para la tarea de homing
 bool homAprox, homStart;
 
 
@@ -49,7 +49,6 @@ void homing(void) {
 	motor2.counterPeriod =  COUNTERPERIOD(rpm);
 	motor3.counterPeriod =  COUNTERPERIOD(rpm);
 	*/
-
 
 	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm)); //Escritura del registro ARR
 	__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm));
@@ -102,7 +101,6 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_1;
-            //motor1.theta = 0.0;
             motor1.hom=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F1\n", 4, 100);
             HAL_Delay(30);
@@ -130,7 +128,6 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_2;
-            //motor2.theta = 0.0;
             motor2.hom=true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F2\n", 4, 100);
             HAL_Delay(30);
@@ -157,7 +154,6 @@ void homing(void) {
             }
 
             Stop_PWM_MOTOR_3;
-            //motor3.theta = 0.0;
             motor3.hom = true;
             HAL_UART_Transmit(&huart3,(uint8_t *)"F3\n", 4, 100);
 			HAL_Delay(30);

@@ -1,6 +1,4 @@
-../Core/Src/GlobalFunc.c:10:9:transpuesta	96	static
-../Core/Src/GlobalFunc.c:20:8:productDot	32	static
-../Core/Src/GlobalFunc.c:28:8:determinante	24	static
-../Core/Src/GlobalFunc.c:34:9:adjunta	88	static
-../Core/Src/GlobalFunc.c:48:9:inv	248	static
-../Core/Src/GlobalFunc.c:64:9:productMatriz	120	static
+../Core/Src/GlobalFunc.c:11:8:dotProduct	40	static
+../Core/Src/GlobalFunc.c:19:6:matrixTranspose	24	static
+../Core/Src/GlobalFunc.c:29:6:inv	120	static
+../Core/Src/GlobalFunc.c:60:6:matrixProduct	40	static
