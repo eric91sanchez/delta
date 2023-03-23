@@ -7,19 +7,32 @@
 
 #include <GlobalFunc.h>
 #include "trajectory.h"
-
+#include <stdlib.h>
 
 bool flagInv = false;
-float alima;
-float alimd;
-float vlim;
-float T,Ta,Td,Tv,Tj1,Tj2,Tj,delta;
-float qi,qf;
+double alima;
+double alimd;
+double vlim;
+double T,Ta,Td,Tv,Tj1,Tj2,Tj,delta;
+double qi,qf;
 
 double _rpm1,_rpm2,_rpm3;
 uint32_t _peri1,_peri2,_peri3;
 
-void get_Straj(float t){
+
+
+double get_Straj(double t,double _qi, double _qf ,double *params){
+
+	Tj1 = params[0];
+	Tj2 = params[1];
+	Tj = params[2];
+	Ta = params[3];
+	Td = params[4];
+	Tv = params[5];
+	T = params[6];
+
+	qi=_qi;
+	qf=_qf;
 
     if (qf < qi){
 
@@ -139,205 +152,215 @@ void get_Straj(float t){
     }
 
 
+    return qd;
 }
 
 
-void update_ScurveTraj(float _qi ,float _qf, float vi,float vf ,float vmax,float amax,float jmax){
-
-jmin = -jmax;
-amin = -amax;
-vmin = -vmax;
-qi=_qi;
-qf=_qf;
-
-if (qf < qi){
-
-    flagInv = true;
-
-    qi = -qi;
-    qf = -qf;
-    vi = -vi;
-    vf = -vf;
-
-    vmax = -vmin;
-    vmin = -vmax;
-    amax = -amin;
-    amin = -amax;
-    jmax = -jmin;
-    jmin = -jmax;
-
-}
-
-volatile float Tjaux = MIN(sqrt(fabs(vf-vi)/jmax),amax/jmax);
+double*update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax){
 
 
-if (Tjaux<amax/jmax){
-    //if (qf-qi > Tjaux*(vi+vf)) {printf("the trajectory is feasible \n");}
-    //else {printf("the trajectory is NOT \n");}
-}
-else if (Tjaux == amax/jmax){
-    //if (qf-qi > 0.5*(vi+vf)*(Tjaux+fabs(vi+vf)/amax)) {printf("the trajectory is feasible\n");}
-    //else {printf("the trajectory is NOT feasible\n");}
-}
-//Phase 1: acceleration
-if ((vmax-vi)*jmax < pow(amax,2)){
-    //printf("amax is NOT reached\n");
+	int nbSegment = 7; //Number of profil segments
+	double* params = (double*)malloc(nbSegment * sizeof(double));
 
-    Tj1=sqrt(fabs(vmax-vi)/jmax);
-    Ta=Tj1*2;
-}
-else{
-    //printf("amax is reached\n");
-    Tj1=amax/jmax;
-    Ta=Tj1+(vmax-vi)/amax;
-}
+	jmin = -jmax;
+	amin = -amax;
+	vmin = -vmax;
+	qi=_qi;
+	qf=_qf;
 
-//Phase 3: Desacceleration
+	if (qf < qi){
 
+		flagInv = true;
 
-if ((vmax-vf)*jmax < pow(amax,2)){
-    //printf("amin is NOT reached\n");
+		qi = -qi;
+		qf = -qf;
+		vi = -vi;
+		vf = -vf;
 
-    Tj2=sqrt(fabs(vmax-vf)/jmax);
-    Td=Tj2*2;
-}
-else{
-    //printf("amin is reached\n");
-    Tj2=amax/jmax;
-    Td=Tj2+(vmax-vf)/amax;
-}
+		vmax = -vmin;
+		vmin = -vmax;
+		amax = -amin;
+		amin = -amax;
+		jmax = -jmin;
+		jmin = -jmax;
+
+	}
+
+	volatile float Tjaux = MIN(sqrt(fabs(vf-vi)/jmax),amax/jmax);
 
 
-Tv = (qf-qi)/vmax - Ta/2*(1+vi/vmax)-Td/2*(1+vf/vmax);
+	if (Tjaux<amax/jmax){
+		//if (qf-qi > Tjaux*(vi+vf)) {printf("the trajectory is feasible \n");}
+		//else {printf("the trajectory is NOT \n");}
+	}
+	else if (Tjaux == amax/jmax){
+		//if (qf-qi > 0.5*(vi+vf)*(Tjaux+fabs(vi+vf)/amax)) {printf("the trajectory is feasible\n");}
+		//else {printf("the trajectory is NOT feasible\n");}
+	}
+	//Phase 1: acceleration
+	if ((vmax-vi)*jmax < pow(amax,2)){
+		//printf("amax is NOT reached\n");
 
-if (Tv>0){
-    //printf("the max velocity is reached\n");
-}
-else{
-    //printf("CASE 2\n");
-    //printf("In this case vmax is NOT reached, so Tv=0\n");
-    Tj1=amax/jmax;
-    Tj2=Tj1;
-    Tj=Tj1;
-    delta = (pow(amax,4)/pow(jmax,2))+2*(pow(vi,2)+pow(vf,2))+amax*(4*(qf-qi)-2*(amax/jmax)*(vi+vf));
-    Ta=((pow(amax,2)/jmax)-2*vi+sqrt(delta))/(2*amax);
-    Td=((pow(amax,2)/jmax)-2*vf+sqrt(delta))/(2*amax);
-    Tv=0;
+		Tj1=sqrt(fabs(vmax-vi)/jmax);
+		Ta=Tj1*2;
+	}
+	else{
+		//printf("amax is reached\n");
+		Tj1=amax/jmax;
+		Ta=Tj1+(vmax-vi)/amax;
+	}
 
-
-    if (Ta<2*Tj || Td<2*Tj){
-        //printf("entre\n");
-        while (!(Ta>2*Tj && Td>2*Tj)){
-
-            amax=amax*0.99;
-            Tj=amax/jmax;
-            delta = (pow(amax,4)/pow(jmax,2))+2*(pow(vi,2)+pow(vf,2))+amax*(4*(qf-qi)-2*(amax/jmax)*(vi+vf));
-            Ta=((pow(amax,2)/jmax)-2*vi+sqrt(delta))/(2*amax);
-            Td=((pow(amax,2)/jmax)-2*vf+sqrt(delta))/(2*amax);
-
-            //print(f'{i}',amax)
+	//Phase 3: Desacceleration
 
 
-            if (Ta<0){
-                Ta=0;
-                Tj1=0;
-                Td=2*((qf-qi)/(vf+vi));
-                Tj2=(jmax*(qf-qi)-sqrt(jmax*(jmax*(pow(qf-qi,2))+pow(vf+vi,2)*(vf-vi))))/(jmax*(vf+vi));
-                break;
-            }
-            if (Td<0){
-                Td=0;
-                Ta=2*((qf-qi)/(vf+vi));
-                Tj1=(jmax*(qf-qi)-sqrt(jmax*(jmax*(pow(qf-qi,2))-pow(vf+vi,2)*(vf-vi))))/(jmax*(vf+vi));
-                Tj2=0;
-                break;
-            }
-        }
-    }
+	if ((vmax-vf)*jmax < pow(amax,2)){
+		//printf("amin is NOT reached\n");
 
-}
-
-}
+		Tj2=sqrt(fabs(vmax-vf)/jmax);
+		Td=Tj2*2;
+	}
+	else{
+		//printf("amin is reached\n");
+		Tj2=amax/jmax;
+		Td=Tj2+(vmax-vf)/amax;
+	}
 
 
-void setProfilTimer(void) {	// velAng en rpm
-	/*   -----------------------------------------------------------------------
-	 *   Funcion que configura el PWM del timer 12,13 14, para que el motor vaya a la
-	 *   velocidad deseada.
-	 *   Entrada: velocidad Angular de cada eslabon, en rad/s.
-	 ----------------------------------------------------------------------- */
+	Tv = (qf-qi)/vmax - Ta/2*(1+vi/vmax)-Td/2*(1+vf/vmax);
 
-		_rpm1 = motor1.omega * RADs_TO_RPM;
-		_rpm2 = motor2.omega * RADs_TO_RPM;
-		_rpm3 = motor3.omega * RADs_TO_RPM;
-		/*
-		if(rpm1<=0.1){
-			rpm1=0.1;
+	if (Tv>0){
+		//printf("the max velocity is reached\n");
+	}
+	else{
+		//printf("CASE 2\n");
+		//printf("In this case vmax is NOT reached, so Tv=0\n");
+		Tj1=amax/jmax;
+		Tj2=Tj1;
+		Tj=Tj1;
+		delta = (pow(amax,4)/pow(jmax,2))+2*(pow(vi,2)+pow(vf,2))+amax*(4*(qf-qi)-2*(amax/jmax)*(vi+vf));
+		Ta=((pow(amax,2)/jmax)-2*vi+sqrt(delta))/(2*amax);
+		Td=((pow(amax,2)/jmax)-2*vf+sqrt(delta))/(2*amax);
+		Tv=0;
+
+
+		if (Ta<2*Tj || Td<2*Tj){
+			//printf("entre\n");
+			while (!(Ta>2*Tj && Td>2*Tj)){
+
+				amax=amax*0.99;
+				Tj=amax/jmax;
+				delta = (pow(amax,4)/pow(jmax,2))+2*(pow(vi,2)+pow(vf,2))+amax*(4*(qf-qi)-2*(amax/jmax)*(vi+vf));
+				Ta=((pow(amax,2)/jmax)-2*vi+sqrt(delta))/(2*amax);
+				Td=((pow(amax,2)/jmax)-2*vf+sqrt(delta))/(2*amax);
+
+				//print(f'{i}',amax)
+
+
+				if (Ta<0){
+					Ta=0;
+					Tj1=0;
+					Td=2*((qf-qi)/(vf+vi));
+					Tj2=(jmax*(qf-qi)-sqrt(jmax*(jmax*(pow(qf-qi,2))+pow(vf+vi,2)*(vf-vi))))/(jmax*(vf+vi));
+					break;
+				}
+				if (Td<0){
+					Td=0;
+					Ta=2*((qf-qi)/(vf+vi));
+					Tj1=(jmax*(qf-qi)-sqrt(jmax*(jmax*(pow(qf-qi,2))-pow(vf+vi,2)*(vf-vi))))/(jmax*(vf+vi));
+					Tj2=0;
+					break;
+				}
+			}
 		}
-		if(rpm2<=0.1){
-			rpm2=0.1;
+	}
+
+	params[0]=Tj1;
+	params[1]=Tj2;
+	params[2]=Tj;
+	params[3]=Ta;
+	params[4]=Td;
+	params[5]=Tv;
+	params[6]=T;
+
+return params;
+}
+
+
+void setProfilTimer(void){
+
+	motor1.rpm = motor1.omega * RADs_TO_RPM;
+	motor2.rpm = motor2.omega * RADs_TO_RPM;
+	motor3.rpm = motor3.omega * RADs_TO_RPM;
+	/*
+	if(rpm1<=0.1){
+		rpm1=0.1;
+	}
+	if(rpm2<=0.1){
+		rpm2=0.1;
+	}
+	if(rpm3<=0.1){
+		rpm3=0.1;
+	}
+	*/
+
+	rpm1 = 4.0;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+	rpm2 = 1.0 ;
+	rpm3 = 1.0;
+
+
+	_peri1= COUNTERPERIOD(rpm1);
+	_peri2= COUNTERPERIOD(rpm2);
+	_peri3= COUNTERPERIOD(rpm3);
+
+
+
+
+	TIM12->ARR = _peri1;
+	TIM13->ARR = _peri2;
+	TIM14->ARR = _peri3;
+
+
+
+	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
+	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
+	TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
+
+
+	// Calculo el error por casteo a int, y cuando supero la unidad, lo compenzo --------------
+
+	/*
+
+	for (int i = 0; i < 3; ++i) {
+		ErrorPeriodo[i] = periodoM[i] - (double) ((int32_t) periodoM[i]);
+		ErrorAcumuladoPeriodo[i] = ErrorAcumuladoPeriodo[i] + ErrorPeriodo[i];
+		if (ErrorAcumuladoPeriodo[i] > 1) {
+			periodoM[i] = periodoM[i] + 1;
+			ErrorAcumuladoPeriodo[i] = ErrorAcumuladoPeriodo[i] - 1;
 		}
-		if(rpm3<=0.1){
-			rpm3=0.1;
+		if (periodoM[i] < 2) {
+			periodoM[i] = 0; // velocidad lineal de 10.000mm/s !!!
+		}
+
+		else if (periodoM[i] > pow(2, 16)) { 		// desborde de timer 32 bits
+			periodoM[i] = pow(2, 16);
+		}
+	}
+
+		periodoM[0]=(uint32_t)(((FCL * 60.0) / (rpm1 * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
+		periodoM[1]=(uint32_t)(((FCL * 60.0) / (rpm2 * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
+		periodoM[2]=(uint32_t)(((FCL * 60.0) / (rpm3 * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
+
+
+		if (TIM12->CNT > periodoM[0]) {
+					TIM12->CNT = periodoM[0] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
+		}
+		if (TIM13->CNT > periodoM[1]) {
+					TIM13->CNT = periodoM[1] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
+		}
+		if (TIM14->CNT > periodoM[2]) {
+					TIM14->CNT = periodoM[2] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
 		}
 		*/
-
-		rpm1 = 1;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-		rpm2 = 1 ;
-		rpm3 = 1;
-
-
-		_peri1= COUNTERPERIOD(rpm1);
-		_peri2= COUNTERPERIOD(rpm2);
-		_peri3= COUNTERPERIOD(rpm3);
-
-
-		TIM12->ARR = _peri1;
-		TIM13->ARR = _peri2;
-		TIM14->ARR = _peri3;
-
-
-
-		TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
-		TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
-		TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
-
-
-		// Calculo el error por casteo a int, y cuando supero la unidad, lo compenzo --------------
-
-		/*
-
-		for (int i = 0; i < 3; ++i) {
-			ErrorPeriodo[i] = periodoM[i] - (double) ((int32_t) periodoM[i]);
-			ErrorAcumuladoPeriodo[i] = ErrorAcumuladoPeriodo[i] + ErrorPeriodo[i];
-			if (ErrorAcumuladoPeriodo[i] > 1) {
-				periodoM[i] = periodoM[i] + 1;
-				ErrorAcumuladoPeriodo[i] = ErrorAcumuladoPeriodo[i] - 1;
-			}
-			if (periodoM[i] < 2) {
-				periodoM[i] = 0; // velocidad lineal de 10.000mm/s !!!
-			}
-
-			else if (periodoM[i] > pow(2, 16)) { 		// desborde de timer 32 bits
-				periodoM[i] = pow(2, 16);
-			}
-		}
-
-			periodoM[0]=(uint32_t)(((FCL * 60.0) / (rpm1 * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
-			periodoM[1]=(uint32_t)(((FCL * 60.0) / (rpm2 * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
-			periodoM[2]=(uint32_t)(((FCL * 60.0) / (rpm3 * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
-
-
-			if (TIM12->CNT > periodoM[0]) {
-						TIM12->CNT = periodoM[0] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-			}
-			if (TIM13->CNT > periodoM[1]) {
-						TIM13->CNT = periodoM[1] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-			}
-			if (TIM14->CNT > periodoM[2]) {
-						TIM14->CNT = periodoM[2] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-			}
-			*/
 
 
 }

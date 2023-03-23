@@ -27,10 +27,6 @@ void homing(void) {
 	positive_Dir_MOTOR_2;
 	positive_Dir_MOTOR_3;
 
-	HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_1);
-	HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_2);
-	HAL_TIM_IC_Stop_DMA(&htim2, TIM_CHANNEL_3);
-
 	HAL_NVIC_DisableIRQ(EXTI0_IRQn);	//Apago interrupcion EndStop 1 Superior
 	HAL_NVIC_DisableIRQ(EXTI1_IRQn);	//Apago interrupcion EndStop 1 Inferior
 	HAL_NVIC_DisableIRQ(EXTI2_IRQn);	//Apago interrupcion EndStop 2 Superior
@@ -44,17 +40,12 @@ void homing(void) {
 	Stop_PWM_MOTOR_2;
 	Stop_PWM_MOTOR_3;
 
-	/*
-	motor1.counterPeriod =  COUNTERPERIOD(rpm);
-	motor2.counterPeriod =  COUNTERPERIOD(rpm);
-	motor3.counterPeriod =  COUNTERPERIOD(rpm);
-	*/
 
 	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm)); //Escritura del registro ARR
 	__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm));
 	__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(rpm));
 
-	__HAL_TIM_SET_AUTORELOAD(&htim2,3000); //Escritura del registro ARR
+
 
 	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
 	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);

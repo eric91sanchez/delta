@@ -181,7 +181,7 @@ void Error_Handler(void);
 #define negative_Dir_MOTOR_3 (HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_SET))
 
 #define FCL 64000000.0
-#define numval   1
+
 
 #define MICROSTEPRESOLUTION 8000.0			   //Micropasos por revolucion. Corresponde a la configuracion de los Swithces del Driver
 #define REDUCTOR 1.0				 		   //Relacion de reduccion (Se la esablece a 1 ya que hemos quitado los reductores del robot)

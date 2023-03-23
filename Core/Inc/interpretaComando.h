@@ -21,7 +21,8 @@ extern statesMachine state;
 extern UART_HandleTypeDef huart3;
 extern uint8_t rx_buffer[30];
 extern bool receptionFlag;
-extern float vmax,amax,jmax,vi,vf;
+
+extern double vmax,amax,jmax,vi,vf;
 
 
 extern double flagErrorEndStop;

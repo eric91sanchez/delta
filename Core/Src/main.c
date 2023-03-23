@@ -31,7 +31,7 @@
 #include "motor.h"
 #include "homing.h"
 #include "interpretaComando.h"
-#include "inverseJacobian.h"
+//#include "inverseJacobian.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,42 +59,39 @@ Motor motor1, motor2,motor3;
 double rpm1, rpm2, rpm3;
 double ErrorPeriodo[3];
 double ErrorAcumuladoPeriodo[3];
-double omega[3];
+//double omega[3];
 statesMachine state = INIT;
 
 bool homFin = false;
 bool startMotors = false;
 bool stopMotors = false;
 
-uint32_t fallData1[numval];
-uint32_t fallData2[numval];
-uint32_t fallData3[numval];
-
 //--------------------------------------------
 //Valores para crear el perfil de velocidad
-float q=0,qd=0,qdd=0,qddd=0;
-float jmax = 1;
-float jmin;
+double q=0,qd=0,qdd=0,qddd=0;
+double jmax = 1;
+double jmin;
 
-float vmax = 0.4;
-float vmin;
+double vmax = 0.4;
+double vmin;
 
-float vi = 0;
-float vf = 0;
+double vi = 0;
+double vf = 0;
 
-float amax = 4;
-float amin;
+double amax = 4;
+double amin;
 //--------------------------------------------
 
 Vec3D Pini;
 Vec3D Pfin;
-float_t euclideanDistance;
+double *arrayParams1,*arrayParams2,*arrayParams3;
 
+//float_t euclideanDistance;
+//float_t vDirector[3];
+//double Recta3D[3];
+//double dRecta3D[3];
+//double dRecta3DZ=0; // para debugear
 
-float_t vDirector[3];
-double Recta3D[3];
-double dRecta3D[3];
-double dRecta3DZ=0; // para debugear
 double time;
 
 uint8_t rx_index = 0;
@@ -103,28 +100,15 @@ uint8_t rx_data;
 uint8_t message[] = "Inicializacion en curso...\n";		//Mensaje enviado al iniciar el programa
 uint8_t message1[] = "El robot ya se encuentra operacional.\n";
 
-
 bool receptionFlag=false;
-
-
 
 double periodoM[3];
 uint32_t periodoM1, periodoM2, periodoM3;
 
 
-//double FlagTrayectoM1=0, FlagTrayectoM2=0, FlagTrayectoM3=0;
-
 double flagErrorEndStop = 0;
 uint8_t cm0;				//Flag start transmit
 bool timeFlag;
-int FlagButton = 0;
-int test = 0 , test1= 0 , test2 = 0, testinMain = 0;
-int updateFlag = 0;
-
-
-
-
-
 
 
 /* USER CODE END PV */
@@ -168,9 +152,6 @@ void robotInitialization(void){
 	periodoM[1] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
 	periodoM[2] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
 
-
-
-
 	TIM12->ARR = periodoM[0];
 	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);  //pulse
 	TIM13->ARR =periodoM[1];
@@ -178,8 +159,6 @@ void robotInitialization(void){
 	TIM14->ARR =periodoM[2];
 	TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
 	*/
-
-
 
 	/*
 	Start_PWM_MOTOR_1;
@@ -238,8 +217,8 @@ int main(void)
   MX_TIM15_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
-  MX_TIM3_Init();
   MX_TIM4_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
 
@@ -326,8 +305,13 @@ int main(void)
 					HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 				}
 
-				get_Straj(time);
+				motor1.omega = get_Straj(time,motor1.currentAngle,motor1.theta,arrayParams1);
 
+				motor2.omega = get_Straj(time,motor2.currentAngle,motor2.theta,arrayParams2);
+
+				motor3.omega = get_Straj(time,motor3.currentAngle,motor3.theta,arrayParams3);
+
+				/*
 				Recta3D[0] = Pini.x + q * vDirector[0];
 				Recta3D[1] = Pini.y + q * vDirector[1];
 				Recta3D[2] = Pini.z + q * vDirector[2];
@@ -336,9 +320,10 @@ int main(void)
 				dRecta3D[2] = 0 + qd * vDirector[2];
 
 				inverseJacobian(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
-
+				*/
 
 				setProfilTimer();
+
 
 				if(startMotors){
 					startMotors = false;
@@ -348,6 +333,7 @@ int main(void)
 				}
 
 				stopMotors = true;
+
 			}// End while
 
 
@@ -369,6 +355,11 @@ int main(void)
 			Pini.y = Pfin.y;
 			Pini.z = Pfin.z;
 
+			//TODO: Ver si esta bien liberar la memoria en este punto
+			free(arrayParams1);
+			free(arrayParams2);
+			free(arrayParams3);
+
 			HAL_TIM_Base_Stop_IT(&htim15);
 			HAL_TIM_Base_Stop(&htim5);
 
@@ -389,10 +380,12 @@ int main(void)
 				HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);
 				HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);
 
+				/*
 				euclideanDistance = sqrt(pow(Pfin.x - Pini.x, 2) + pow(Pfin.y - Pini.y, 2) + pow(Pfin.z - Pini.z, 2));
 				vDirector[0] = (Pfin.x - Pini.x) / euclideanDistance;	//Vector director en X
 				vDirector[1] = (Pfin.y - Pini.y) / euclideanDistance;	//Vector director en Y
 				vDirector[2] = (Pfin.z - Pini.z) / euclideanDistance;	//Vector director en Z
+				*/
 
 				inverseKinematic(Pfin);
 
@@ -400,7 +393,9 @@ int main(void)
 				configMotor(&motor2,2);
 				configMotor(&motor3,3);
 
-				update_ScurveTraj(0, euclideanDistance, vi, vf, vmax, amax, jmax);
+				arrayParams1 = update_ScurveTraj(motor1.currentAngle, motor1.theta, vi, vf, vmax, amax, jmax);
+				arrayParams2 = update_ScurveTraj(motor2.currentAngle, motor2.theta, vi, vf, vmax, amax, jmax);
+				arrayParams3 = update_ScurveTraj(motor3.currentAngle, motor3.theta, vi, vf, vmax, amax, jmax);
 
 				timeFlag = false;
 
@@ -500,14 +495,6 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-
-	  if(GPIO_Pin == BUTTON_Pin) {
-		  FlagButton=1;
-
-	  } else {
-	      __NOP();
-	  }
-
 
 
 		//PREGUNTAR: COMO SERIA LA LOGICA DE INTERRUPCION CUANDO UNA PATA TOCA UN FINAL DE CARRERA
@@ -649,18 +636,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		}
 
 		time = (((double) (TIM5->CNT)) * ((double)(TIM5->PSC + 1) / FCL));
-		/*
-		get_Straj(time);
-
-		Recta3D[0] = Pini.x + q * vDirector[0];
-		Recta3D[1] = Pini.y + q * vDirector[1];
-		Recta3D[2] = Pini.z + q * vDirector[2];
-		dRecta3D[0] = 0 + qd * vDirector[0];
-		dRecta3D[1] = 0 + qd * vDirector[1];
-		dRecta3D[2] = 0 + qd * vDirector[2];
-
-		inverseJacobian(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
-	*/
 	}
 }
 /* USER CODE END 4 */
