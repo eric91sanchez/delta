@@ -156,11 +156,11 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
 }
 
 
-double*update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax){
+void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax,double *params){
 
 
-	int nbSegment = 7; //Number of profil segments
-	double* params = (double*)malloc(nbSegment * sizeof(double));
+	//int nbSegment = 7; //Number of profil segments
+	//*params = (double*)malloc(nbSegment * sizeof(double));
 
 	jmin = -jmax;
 	amin = -amax;
@@ -186,7 +186,7 @@ double*update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vma
 
 	}
 
-	volatile float Tjaux = MIN(sqrt(fabs(vf-vi)/jmax),amax/jmax);
+	double Tjaux = MIN(sqrt(fabs(vf-vi)/jmax),amax/jmax);
 
 
 	if (Tjaux<amax/jmax){
@@ -274,15 +274,17 @@ double*update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vma
 		}
 	}
 
-	params[0]=Tj1;
-	params[1]=Tj2;
-	params[2]=Tj;
-	params[3]=Ta;
-	params[4]=Td;
-	params[5]=Tv;
-	params[6]=T;
+	//double values[]={Tj1,Tj2,Tj,Ta,Td,Tv,T};
 
-return params;
+	*(params) = Tj1;
+	*(params+1)=Tj2;
+	*(params+2)=Tj;
+	*(params+3)=Ta;
+	*(params+4)=Td;
+	*(params+5)=Tv;
+	*(params+6)=T;
+
+
 }
 
 

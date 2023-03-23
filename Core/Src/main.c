@@ -72,19 +72,24 @@ double q=0,qd=0,qdd=0,qddd=0;
 double jmax = 1;
 double jmin;
 
-double vmax = 0.4;
+double vmax = 0.5;
 double vmin;
 
 double vi = 0;
 double vf = 0;
 
-double amax = 4;
+double amax = 2;
 double amin;
 //--------------------------------------------
 
 Vec3D Pini;
 Vec3D Pfin;
-double *arrayParams1,*arrayParams2,*arrayParams3;
+
+double arrayParams1[7];
+double arrayParams2[7];
+double arrayParams3[7];
+
+//*arrayParams2,*arrayParams3;
 
 //float_t euclideanDistance;
 //float_t vDirector[3];
@@ -305,11 +310,11 @@ int main(void)
 					HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 				}
 
-				motor1.omega = get_Straj(time,motor1.currentAngle,motor1.theta,arrayParams1);
+				//motor1.omega = get_Straj(time,motor1.currentAngle,motor1.theta,arrayParams1);
 
-				motor2.omega = get_Straj(time,motor2.currentAngle,motor2.theta,arrayParams2);
+				//motor2.omega = get_Straj(time,motor2.currentAngle,motor2.theta,arrayParams2);
 
-				motor3.omega = get_Straj(time,motor3.currentAngle,motor3.theta,arrayParams3);
+				//motor3.omega = get_Straj(time,motor3.currentAngle,motor3.theta,arrayParams3);
 
 				/*
 				Recta3D[0] = Pini.x + q * vDirector[0];
@@ -356,9 +361,9 @@ int main(void)
 			Pini.z = Pfin.z;
 
 			//TODO: Ver si esta bien liberar la memoria en este punto
-			free(arrayParams1);
-			free(arrayParams2);
-			free(arrayParams3);
+			//free(arrayParams1);
+			//free(arrayParams2);
+			//free(arrayParams3);
 
 			HAL_TIM_Base_Stop_IT(&htim15);
 			HAL_TIM_Base_Stop(&htim5);
@@ -393,9 +398,9 @@ int main(void)
 				configMotor(&motor2,2);
 				configMotor(&motor3,3);
 
-				arrayParams1 = update_ScurveTraj(motor1.currentAngle, motor1.theta, vi, vf, vmax, amax, jmax);
-				arrayParams2 = update_ScurveTraj(motor2.currentAngle, motor2.theta, vi, vf, vmax, amax, jmax);
-				arrayParams3 = update_ScurveTraj(motor3.currentAngle, motor3.theta, vi, vf, vmax, amax, jmax);
+				update_ScurveTraj(motor1.currentAngle, motor1.theta, vi, vf, vmax, amax, jmax, arrayParams1);
+				update_ScurveTraj(motor2.currentAngle, motor2.theta, vi, vf, vmax, amax, jmax, arrayParams2);
+				update_ScurveTraj(motor3.currentAngle, motor3.theta, vi, vf, vmax, amax, jmax, arrayParams3);
 
 				timeFlag = false;
 
