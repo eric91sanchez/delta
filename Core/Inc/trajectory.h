@@ -35,7 +35,7 @@ extern TIM_HandleTypeDef htim14;
 extern UART_HandleTypeDef huart3;
 
 
-double* update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax);
+void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax, double *params);
 double get_Straj(double t,double _qi, double _qf,double *params);
 
 void setProfilTimer(void);

@@ -156,11 +156,11 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
 }
 
 
-double*update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax){
+void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax, double *params){
 
 
-	int nbSegment = 7; //Number of profil segments
-	double* params = (double*)malloc(nbSegment * sizeof(double));
+	//int nbSegment = 7; //Number of profil segments
+	//double* params = (double*)malloc(nbSegment * sizeof(double));
 
 	jmin = -jmax;
 	amin = -amax;
@@ -226,7 +226,7 @@ double*update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vma
 	}
 
 
-	Tv = (qf-qi)/vmax - Ta/2*(1+vi/vmax)-Td/2*(1+vf/vmax);
+	Tv = (qf-qi)/vmax - (Ta/2)*(1+(vi/vmax))-(Td/2)*(1+(vf/vmax));
 
 	if (Tv>0){
 		//printf("the max velocity is reached\n");
@@ -273,16 +273,18 @@ double*update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vma
 			}
 		}
 	}
+	//double params[7]={Tj1,Tj2,Tj,Ta,Td,Tv,T};
 
-	params[0]=Tj1;
-	params[1]=Tj2;
-	params[2]=Tj;
-	params[3]=Ta;
-	params[4]=Td;
-	params[5]=Tv;
-	params[6]=T;
 
-return params;
+	*(params)=Tj1;
+	*(params+1)=Tj2;
+	*(params+2)=Tj;
+	*(params+3)=Ta;
+	*(params+4)=Td;
+	*(params+5)=Tv;
+	*(params+6)=T;
+
+//return *params;
 }
 
 
@@ -303,14 +305,14 @@ void setProfilTimer(void){
 	}
 	*/
 
-	rpm1 = 4.0;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-	rpm2 = 1.0 ;
-	rpm3 = 1.0;
+	rpm1 = 12.0;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+	rpm2 = 12.0 ;
+	rpm3 = 12.0;
 
 
-	_peri1= COUNTERPERIOD(rpm1);
-	_peri2= COUNTERPERIOD(rpm2);
-	_peri3= COUNTERPERIOD(rpm3);
+	_peri1= COUNTERPERIOD(motor1.rpm);
+	_peri2= COUNTERPERIOD(motor2.rpm);
+	_peri3= COUNTERPERIOD(motor3.rpm);
 
 
 
