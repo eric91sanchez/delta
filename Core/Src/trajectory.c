@@ -25,11 +25,11 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
 
 	Tj1 = params[0];
 	Tj2 = params[1];
-	Tj = params[2];
-	Ta = params[3];
-	Td = params[4];
-	Tv = params[5];
-	T = params[6];
+	Tj  = params[2];
+	Ta  = params[3];
+	Td  = params[4];
+	Tv  = params[5];
+	T   = params[6];
 
 	qi=_qi;
 	qf=_qf;
