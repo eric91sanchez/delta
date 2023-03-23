@@ -25,11 +25,11 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
 
 	Tj1 = params[0];
 	Tj2 = params[1];
-	Tj  = params[2];
-	Ta  = params[3];
-	Td  = params[4];
-	Tv  = params[5];
-	T   = params[6];
+	Tj = params[2];
+	Ta = params[3];
+	Td = params[4];
+	Tv = params[5];
+	T = params[6];
 
 	qi=_qi;
 	qf=_qf;
@@ -156,11 +156,11 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
 }
 
 
-void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax,double *params){
+void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax, double *params){
 
 
 	//int nbSegment = 7; //Number of profil segments
-	//*params = (double*)malloc(nbSegment * sizeof(double));
+	//double* params = (double*)malloc(nbSegment * sizeof(double));
 
 	jmin = -jmax;
 	amin = -amax;
@@ -186,7 +186,7 @@ void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,
 
 	}
 
-	double Tjaux = MIN(sqrt(fabs(vf-vi)/jmax),amax/jmax);
+	volatile float Tjaux = MIN(sqrt(fabs(vf-vi)/jmax),amax/jmax);
 
 
 	if (Tjaux<amax/jmax){
@@ -226,7 +226,7 @@ void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,
 	}
 
 
-	Tv = (qf-qi)/vmax - Ta/2*(1+vi/vmax)-Td/2*(1+vf/vmax);
+	Tv = (qf-qi)/vmax - (Ta/2)*(1+(vi/vmax))-(Td/2)*(1+(vf/vmax));
 
 	if (Tv>0){
 		//printf("the max velocity is reached\n");
@@ -273,10 +273,10 @@ void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,
 			}
 		}
 	}
+	//double params[7]={Tj1,Tj2,Tj,Ta,Td,Tv,T};
 
-	//double values[]={Tj1,Tj2,Tj,Ta,Td,Tv,T};
 
-	*(params) = Tj1;
+	*(params)=Tj1;
 	*(params+1)=Tj2;
 	*(params+2)=Tj;
 	*(params+3)=Ta;
@@ -284,7 +284,7 @@ void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,
 	*(params+5)=Tv;
 	*(params+6)=T;
 
-
+//return *params;
 }
 
 
@@ -305,14 +305,14 @@ void setProfilTimer(void){
 	}
 	*/
 
-	rpm1 = 4.0;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-	rpm2 = 1.0 ;
-	rpm3 = 1.0;
+	rpm1 = 12.0;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+	rpm2 = 12.0 ;
+	rpm3 = 12.0;
 
 
-	_peri1= COUNTERPERIOD(rpm1);
-	_peri2= COUNTERPERIOD(rpm2);
-	_peri3= COUNTERPERIOD(rpm3);
+	_peri1= COUNTERPERIOD(motor1.rpm);
+	_peri2= COUNTERPERIOD(motor2.rpm);
+	_peri3= COUNTERPERIOD(motor3.rpm);
 
 
 
