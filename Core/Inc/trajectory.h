@@ -21,7 +21,7 @@ extern double vmin,jmin,amin;
 
 
 extern Motor motor1,motor2,motor3;
-extern double rpm1, rpm2, rpm3;
+
 /*
 
 extern double ErrorPeriodo[3];

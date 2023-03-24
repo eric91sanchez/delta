@@ -60,8 +60,8 @@ all: main-build
 main-build: delta.elf secondary-outputs
 
 # Tool invocations
-delta.elf delta.map: $(OBJS) $(USER_OBJS) D:\Documentoss\FACULTAD\ROBOT\ DELTA\ -\ Proyecto\ final\DELTA\WorkspaceIDEmicro\delta\STM32H743ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "delta.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"D:\Documentoss\FACULTAD\ROBOT DELTA - Proyecto final\DELTA\WorkspaceIDEmicro\delta\STM32H743ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="delta.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+delta.elf delta.map: $(OBJS) $(USER_OBJS) C:\Users\EliasC\Documents\WorkspaceSTM32\delta\STM32H743ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "delta.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\Users\EliasC\Documents\WorkspaceSTM32\delta\STM32H743ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="delta.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

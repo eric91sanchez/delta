@@ -17,9 +17,6 @@ double T,Ta,Td,Tv,Tj1,Tj2,Tj,delta;
 double qi,qf;
 
 double _rpm1,_rpm2,_rpm3;
-uint32_t _peri1,_peri2,_peri3;
-
-
 
 double get_Straj(double t,double _qi, double _qf ,double *params){
 
@@ -158,10 +155,6 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
 
 void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax, double *params){
 
-
-	//int nbSegment = 7; //Number of profil segments
-	//double* params = (double*)malloc(nbSegment * sizeof(double));
-
 	jmin = -jmax;
 	amin = -amax;
 	vmin = -vmax;
@@ -273,8 +266,6 @@ void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,
 			}
 		}
 	}
-	//double params[7]={Tj1,Tj2,Tj,Ta,Td,Tv,T};
-
 
 	*(params)=Tj1;
 	*(params+1)=Tj2;
@@ -284,7 +275,6 @@ void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,
 	*(params+5)=Tv;
 	*(params+6)=T;
 
-//return *params;
 }
 
 
@@ -293,35 +283,16 @@ void setProfilTimer(void){
 	motor1.rpm = motor1.omega * RADs_TO_RPM;
 	motor2.rpm = motor2.omega * RADs_TO_RPM;
 	motor3.rpm = motor3.omega * RADs_TO_RPM;
-	/*
-	if(rpm1<=0.1){
-		rpm1=0.1;
-	}
-	if(rpm2<=0.1){
-		rpm2=0.1;
-	}
-	if(rpm3<=0.1){
-		rpm3=0.1;
-	}
-	*/
 
-	rpm1 = 12.0;   //HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-	rpm2 = 12.0 ;
-	rpm3 = 12.0;
+	//HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
+	//_rpm1 = 12.0;
+	//_rpm2 = 12.0 ;
+	//_rpm3 = 12.0;
 
-
-	_peri1= COUNTERPERIOD(motor1.rpm);
-	_peri2= COUNTERPERIOD(motor2.rpm);
-	_peri3= COUNTERPERIOD(motor3.rpm);
-
-
-
-
-	TIM12->ARR = _peri1;
-	TIM13->ARR = _peri2;
-	TIM14->ARR = _peri3;
-
-
+	//Escritura del registro ARR
+	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(motor1.rpm));
+	__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(motor2.rpm));
+	__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(motor3.rpm));
 
 	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
 	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
