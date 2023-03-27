@@ -88,12 +88,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define E_EndStop2_Sup_Pin GPIO_PIN_2
-#define E_EndStop2_Sup_GPIO_Port GPIOE
-#define E_EndStop2_Sup_EXTI_IRQn EXTI2_IRQn
-#define E_EndStop2_Inf_Pin GPIO_PIN_3
-#define E_EndStop2_Inf_GPIO_Port GPIOE
-#define E_EndStop2_Inf_EXTI_IRQn EXTI3_IRQn
 #define E_EndStop3_Sup_Pin GPIO_PIN_4
 #define E_EndStop3_Sup_GPIO_Port GPIOE
 #define E_EndStop3_Sup_EXTI_IRQn EXTI4_IRQn
@@ -107,10 +101,23 @@ void Error_Handler(void);
 #define S_PulsoPaP2_GPIO_Port GPIOF
 #define S_PulsoPaP3_Pin GPIO_PIN_9
 #define S_PulsoPaP3_GPIO_Port GPIOF
+#define stepFeedback1_Pin GPIO_PIN_0
+#define stepFeedback1_GPIO_Port GPIOA
 #define NucleoF4_RX_Pin GPIO_PIN_2
 #define NucleoF4_RX_GPIO_Port GPIOA
 #define NucleoF4_TX_Pin GPIO_PIN_3
 #define NucleoF4_TX_GPIO_Port GPIOA
+#define stepFeedback2_Pin GPIO_PIN_6
+#define stepFeedback2_GPIO_Port GPIOA
+#define faultDriver1_Pin GPIO_PIN_12
+#define faultDriver1_GPIO_Port GPIOE
+#define faultDriver1_EXTI_IRQn EXTI15_10_IRQn
+#define faultDriver2_Pin GPIO_PIN_14
+#define faultDriver2_GPIO_Port GPIOE
+#define faultDriver2_EXTI_IRQn EXTI15_10_IRQn
+#define faultDriver3_Pin GPIO_PIN_15
+#define faultDriver3_GPIO_Port GPIOE
+#define faultDriver3_EXTI_IRQn EXTI15_10_IRQn
 #define S_PulsoPaP1_Pin GPIO_PIN_14
 #define S_PulsoPaP1_GPIO_Port GPIOB
 #define Jetson_RX_Pin GPIO_PIN_15
@@ -119,6 +126,8 @@ void Error_Handler(void);
 #define STLINK_TX_GPIO_Port GPIOD
 #define STLINK_RX_Pin GPIO_PIN_9
 #define STLINK_RX_GPIO_Port GPIOD
+#define stepFeedback3_Pin GPIO_PIN_12
+#define stepFeedback3_GPIO_Port GPIOD
 #define S_DirPaP1_Pin GPIO_PIN_8
 #define S_DirPaP1_GPIO_Port GPIOC
 #define S_DirPaP2_Pin GPIO_PIN_9
@@ -133,12 +142,22 @@ void Error_Handler(void);
 #define S_Enable_2_GPIO_Port GPIOD
 #define S_Enable_3_Pin GPIO_PIN_6
 #define S_Enable_3_GPIO_Port GPIOD
+#define relayDrivers_Pin GPIO_PIN_7
+#define relayDrivers_GPIO_Port GPIOD
+
+/* USER CODE BEGIN Private defines */
 #define E_EndStop1_Sup_Pin GPIO_PIN_0
 #define E_EndStop1_Sup_GPIO_Port GPIOE
 #define E_EndStop1_Sup_EXTI_IRQn EXTI0_IRQn
 #define E_EndStop1_Inf_Pin GPIO_PIN_1
 #define E_EndStop1_Inf_GPIO_Port GPIOE
 #define E_EndStop1_Inf_EXTI_IRQn EXTI1_IRQn
+#define E_EndStop2_Sup_Pin GPIO_PIN_2
+#define E_EndStop2_Sup_GPIO_Port GPIOE
+#define E_EndStop2_Sup_EXTI_IRQn EXTI2_IRQn
+#define E_EndStop2_Inf_Pin GPIO_PIN_3
+#define E_EndStop2_Inf_GPIO_Port GPIOE
+#define E_EndStop2_Inf_EXTI_IRQn EXTI3_IRQn
 
 #define stepFeedback1_Pin GPIO_PIN_0
 #define stepFeedback1_GPIO_Port GPIOA
@@ -146,10 +165,6 @@ void Error_Handler(void);
 #define stepFeedback2_GPIO_Port GPIOA
 #define stepFeedback3_Pin GPIO_PIN_12
 #define stepFeedback3_GPIO_Port GPIOD
-
-
-
-/* USER CODE BEGIN Private defines */
 
 //Macros de la lectura de los finales de carrera
 #define ES1s_PRESSED !(HAL_GPIO_ReadPin(E_EndStop1_Sup_GPIO_Port, E_EndStop1_Sup_Pin))
@@ -189,6 +204,9 @@ void Error_Handler(void);
 #define negative_Dir_MOTOR_1 (HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_SET))
 #define negative_Dir_MOTOR_2 (HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_SET))
 #define negative_Dir_MOTOR_3 (HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_SET))
+
+#define relayCerrado (HAL_GPIO_WritePin(relayDrivers_GPIO_Port, relayDrivers_Pin, GPIO_PIN_RESET)) // conectado a normal cerrado
+#define relayAbierto (HAL_GPIO_WritePin(relayDrivers_GPIO_Port, relayDrivers_Pin, GPIO_PIN_SET))
 
 #define FCL 64000000.0
 
