@@ -71,8 +71,6 @@ bool startMotors = false;
 bool stopMotors = false;
 bool endStopAlarmSup = false;
 bool endStopAlarmInf = false;
-bool continuar = true;
-bool faultDrivers = false;
 
 //--------------------------------------------
 //Valores para crear el perfil de velocidad
@@ -231,8 +229,8 @@ int main(void)
   MX_TIM15_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
-  MX_TIM3_Init();
   MX_TIM4_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
 
@@ -446,8 +444,7 @@ int main(void)
 
 		case FAULT:
 
-			if((endStopAlarmSup || endStopAlarmInf) && continuar){
-				 continuar = false;
+			if(endStopAlarmSup || endStopAlarmInf){
 				//Detengo sistema
 				 Stop_PWM_MOTOR_1;
 				 Stop_PWM_MOTOR_2;
@@ -464,26 +461,18 @@ int main(void)
 				 Start_PWM_MOTOR_1;
 				 Start_PWM_MOTOR_2;
 				 Start_PWM_MOTOR_3;
-				 HAL_Delay(200);  //eliminar y colocar movimiento de cierta cantidad de pasos
+				 HAL_Delay(200);
 
 				 Stop_PWM_MOTOR_1;
 				 Stop_PWM_MOTOR_2;
 				 Stop_PWM_MOTOR_3;
 
-
+				 state = READY;
 				 endStopAlarmSup = false;
 				 endStopAlarmInf = false;
 
 			}
-			else if (faultDrivers && continuar){
-							relayAbierto;
-							HAL_Delay(250);
-							relayCerrado;
-							faultDrivers = false;
-			}
-			else if(!endStopAlarmSup && !endStopAlarmInf && !faultDrivers && continuar){
-				state = READY;
-			}
+
 
 			break;
 
@@ -608,23 +597,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 endStopAlarmSup = true;
 			 state = FAULT;
 			 break;
-		 case BUTTON_Pin:
-			 continuar = true;
-			 break;
-		 case faultDriver1_Pin:
-				 continuar = false;
-			 	 faultDrivers = true;
-			 	 break;
-		 case faultDriver2_Pin:
-			 continuar = false;
-			 faultDrivers = true;
-			 break;
-		 case faultDriver3_Pin:
-			 continuar = false;
-			 faultDrivers = true;
-			 break;
-
-
 	}
 
 }
