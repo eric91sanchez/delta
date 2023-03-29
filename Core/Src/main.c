@@ -64,6 +64,10 @@ statesMachine state = INIT;
 bool homFin = false;
 bool startMotors = false;
 bool stopMotors = false;
+bool endStopAlarmSup = false;
+bool endStopAlarmInf = false;
+bool continuar = false;
+bool faultDrivers = false;
 
 //--------------------------------------------
 //Valores para crear el perfil de velocidad
@@ -243,6 +247,7 @@ int main(void)
 			  robotInitialization();
 			  HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100); //Mensaje inidicando que el Robot esta listo para su uso
 
+
 			  state = READY;
 
 			break;
@@ -264,13 +269,18 @@ int main(void)
 	        if(homFin){
 
 	        	homFin = false;
-
+	        	HAL_Delay(1);
 	        	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
 	        	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior
 	        	HAL_NVIC_EnableIRQ(EXTI2_IRQn);		//Enciendo interrupcion EndStop 2 Superior
 	        	HAL_NVIC_EnableIRQ(EXTI3_IRQn);		//Enciendo interrupcion EndStop 2 Inferior
 	        	HAL_NVIC_EnableIRQ(EXTI4_IRQn);		//Enciendo interrupcion EndStop 3 Superior
 	        	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Enciendo interrupcion EndStop 3 Inferior
+	        	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); //Enciendo interrupcion faultDriver
+
+	        	endStopAlarmInf=false;
+	        	endStopAlarmSup=false;
+
 
 				Pini.x=0;
 				Pini.y=0;
@@ -395,7 +405,50 @@ int main(void)
 
 		case FAULT:
 
-			//TODO: DESARROLLAR EL ESTADO DE EMERGENCIA/ERROR
+
+			if((endStopAlarmSup || endStopAlarmInf) && continuar){
+
+				//Detengo sistema
+				 Stop_PWM_MOTOR_1;
+				 Stop_PWM_MOTOR_2;
+				 Stop_PWM_MOTOR_3;
+
+				 HAL_UART_Transmit(&huart3, "EndStopAlarm\n\r", 12, 100);
+
+				 configMotor(&motor1,1);		//Se elige dir
+				 configMotor(&motor2,2);
+				 configMotor(&motor3,3);
+
+				 //TODO CAMBIAR VELOCIDAD
+
+				 //Se mueve 200ms en la direccion decreciente
+				 //HAL_Delay(0.5); 				//delay cambio de dir
+				 Start_PWM_MOTOR_1;
+				 Start_PWM_MOTOR_2;
+				 Start_PWM_MOTOR_3;
+				 HAL_Delay(200);  //eliminar y colocar movimiento de cierta cantidad de pasos
+
+				 Stop_PWM_MOTOR_1;
+				 Stop_PWM_MOTOR_2;
+				 Stop_PWM_MOTOR_3;
+
+				 if(ES1s_UNPRESSED && ES2s_UNPRESSED && ES3s_UNPRESSED && ES1i_UNPRESSED && ES2i_UNPRESSED && ES3i_UNPRESSED){
+					 endStopAlarmSup = false;
+					 endStopAlarmInf = false;
+					 state = READY;
+					 continuar = false;
+				 }
+
+
+			}
+			else if (faultDrivers && continuar){
+				relayAbierto;
+				HAL_Delay(100);
+				relayCerrado;
+				faultDrivers = false;
+				continuar = false;
+				state = READY;
+			}
 
 
 			break;
@@ -472,29 +525,70 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
-	if (GPIO_Pin == E_EndStop1_Inf_Pin ){
-		Stop_PWM_MOTOR_1;
-		//HAL_UART_Transmit(&huart3, "EndStop1Inf\n\r", 13, 100);
-	}
-	if (GPIO_Pin == E_EndStop1_Sup_Pin ){
-		Stop_PWM_MOTOR_1;
-		//HAL_UART_Transmit(&huart3, "EndStop1Sup\n\r", 13, 100);
-	}
-	if (GPIO_Pin == E_EndStop2_Inf_Pin ){
-		Stop_PWM_MOTOR_2;
-		//HAL_UART_Transmit(&huart3, "EndStop2Inf\n\r", 13, 100);
-	}
-	if (GPIO_Pin == E_EndStop2_Sup_Pin ){
-		Stop_PWM_MOTOR_2;
-		//HAL_UART_Transmit(&huart3, "EndStop2Sup\n\r", 13, 100);
-	}
-	if (GPIO_Pin == E_EndStop3_Inf_Pin ){
-		Stop_PWM_MOTOR_3;
-		//HAL_UART_Transmit(&huart3, "EndStop3Inf\n\r", 13, 100);
-	}
-	if (GPIO_Pin == E_EndStop3_Sup_Pin ){
-		Stop_PWM_MOTOR_3;
-		//HAL_UART_Transmit(&huart3, "EndStop3Sup\n\r", 13, 100);
+	//PREGUNTAR: COMO SERIA LA LOGICA DE INTERRUPCION CUANDO UNA PATA TOCA UN FINAL DE CARRERA
+	switch( GPIO_Pin){
+		 case E_EndStop1_Inf_Pin:
+			 endStopAlarmInf = true;
+			 Stop_PWM_MOTOR_1;
+			 Stop_PWM_MOTOR_2;
+			 Stop_PWM_MOTOR_3;
+			 state = FAULT;
+			 break;
+		 case E_EndStop1_Sup_Pin:
+			 Stop_PWM_MOTOR_1;
+			 Stop_PWM_MOTOR_2;
+			 Stop_PWM_MOTOR_3;
+			 endStopAlarmSup = true;
+			 state = FAULT;
+			 break;
+		 case E_EndStop2_Inf_Pin:
+			 Stop_PWM_MOTOR_1;
+			 Stop_PWM_MOTOR_2;
+			 Stop_PWM_MOTOR_3;
+			 endStopAlarmInf = true;
+			 state = FAULT;
+			 break;
+		 case E_EndStop2_Sup_Pin:
+			 Stop_PWM_MOTOR_1;
+			 Stop_PWM_MOTOR_2;
+			 Stop_PWM_MOTOR_3;
+			 endStopAlarmSup = true;
+			 state = FAULT;
+			 break;
+		 case E_EndStop3_Inf_Pin:
+			 Stop_PWM_MOTOR_1;
+			 Stop_PWM_MOTOR_2;
+			 Stop_PWM_MOTOR_3;
+			 endStopAlarmInf = true;
+			 state = FAULT;
+			 break;
+		 case E_EndStop3_Sup_Pin:
+			 Stop_PWM_MOTOR_1;
+			 Stop_PWM_MOTOR_2;
+			 Stop_PWM_MOTOR_3;
+			 endStopAlarmSup = true;
+			 state = FAULT;
+			 break;
+		 case BUTTON_Pin:
+			 continuar = true;
+			 break;
+		 case faultDriver1_Pin:
+			 continuar = false;
+			 faultDrivers = true;
+			 state = FAULT;
+			 break;
+		 case faultDriver2_Pin:
+			 continuar = false;
+			 faultDrivers = true;
+			 state = FAULT;
+			 break;
+		 case faultDriver3_Pin:
+			 continuar = false;
+			 faultDrivers = true;
+			 state = FAULT;
+			 break;
+
+
 	}
 
 

@@ -103,6 +103,8 @@ void Error_Handler(void);
 #define BUTTON_Pin GPIO_PIN_13
 #define BUTTON_GPIO_Port GPIOC
 #define BUTTON_EXTI_IRQn EXTI15_10_IRQn
+#define relayDrivers_Pin GPIO_PIN_3
+#define relayDrivers_GPIO_Port GPIOF
 #define S_PulsoPaP2_Pin GPIO_PIN_8
 #define S_PulsoPaP2_GPIO_Port GPIOF
 #define S_PulsoPaP3_Pin GPIO_PIN_9
@@ -115,6 +117,9 @@ void Error_Handler(void);
 #define NucleoF4_TX_GPIO_Port GPIOA
 #define stepFeedback2_Pin GPIO_PIN_6
 #define stepFeedback2_GPIO_Port GPIOA
+#define faultDriver1_Pin GPIO_PIN_7
+#define faultDriver1_GPIO_Port GPIOE
+#define faultDriver1_EXTI_IRQn EXTI9_5_IRQn
 #define S_PulsoPaP1_Pin GPIO_PIN_14
 #define S_PulsoPaP1_GPIO_Port GPIOB
 #define Jetson_RX_Pin GPIO_PIN_15
@@ -125,6 +130,12 @@ void Error_Handler(void);
 #define STLINK_RX_GPIO_Port GPIOD
 #define stepFeedback3_Pin GPIO_PIN_12
 #define stepFeedback3_GPIO_Port GPIOD
+#define faultDriver2_Pin GPIO_PIN_14
+#define faultDriver2_GPIO_Port GPIOD
+#define faultDriver2_EXTI_IRQn EXTI15_10_IRQn
+#define faultDriver3_Pin GPIO_PIN_15
+#define faultDriver3_GPIO_Port GPIOD
+#define faultDriver3_EXTI_IRQn EXTI15_10_IRQn
 #define S_DirPaP1_Pin GPIO_PIN_8
 #define S_DirPaP1_GPIO_Port GPIOC
 #define S_DirPaP2_Pin GPIO_PIN_9
@@ -185,6 +196,9 @@ void Error_Handler(void);
 #define negative_Dir_MOTOR_1 (HAL_GPIO_WritePin(S_DirPaP1_GPIO_Port, S_DirPaP1_Pin, GPIO_PIN_SET))
 #define negative_Dir_MOTOR_2 (HAL_GPIO_WritePin(S_DirPaP2_GPIO_Port, S_DirPaP2_Pin, GPIO_PIN_SET))
 #define negative_Dir_MOTOR_3 (HAL_GPIO_WritePin(S_DirPaP3_GPIO_Port, S_DirPaP3_Pin, GPIO_PIN_SET))
+
+#define relayAbierto (HAL_GPIO_WritePin(relayDrivers_GPIO_Port, relayDrivers_Pin, GPIO_PIN_SET))
+#define relayCerrado (HAL_GPIO_WritePin(relayDrivers_GPIO_Port, relayDrivers_Pin, GPIO_PIN_RESET))
 
 #define FCL 64000000.0
 

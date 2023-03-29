@@ -33,6 +33,8 @@ void homing(void) {
 	HAL_NVIC_DisableIRQ(EXTI3_IRQn);	//Apago interrupcion EndStop 2 Inferior
 	HAL_NVIC_DisableIRQ(EXTI4_IRQn);	//Apago interrupcion EndStop 3 Superior
 	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);	//Apago interrupcion EndStop 3 Inferior
+	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn); //Apago interrupcion faultDriver
+
 
     //Me aseguro que los motores esten detenidos
 
