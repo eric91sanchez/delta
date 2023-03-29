@@ -53,24 +53,17 @@
 
 /* USER CODE BEGIN PV */
 
-//
-Motor motor1, motor2,motor3;
 
-double rpm1, rpm2, rpm3;
+Motor motor1, motor2,motor3;
 
 double ErrorPeriodo[3];
 double ErrorAcumuladoPeriodo[3];
-
-//double omega[3];
-
-//Inicializacion variables
+int test =0;
 statesMachine state = INIT;
 
 bool homFin = false;
 bool startMotors = false;
 bool stopMotors = false;
-bool endStopAlarmSup = false;
-bool endStopAlarmInf = false;
 
 //--------------------------------------------
 //Valores para crear el perfil de velocidad
@@ -81,7 +74,7 @@ double jmin;
 double vmax = 0.5;
 double vmin;
 
-double vi = 0;
+double vi = 0.3;
 double vf = 0;
 
 double amax = 2;
@@ -90,7 +83,7 @@ double amin;
 
 Vec3D Pini;
 Vec3D Pfin;
-//double *arrayParams1,*arrayParams2,*arrayParams3;
+
 double arrayParams1[7];
 double arrayParams2[7];
 double arrayParams3[7];
@@ -136,11 +129,11 @@ void robotInitialization(void){
 
 	/* En esta rutina se procederá a inicializar perifericos vinculados al robot asi como la definicion
 	* de un estado seguro y no referenciado del robot al momento de energizarlo, esto quiere decir que
-	* se habilitaran los drivers al momento de lanzar el programa para que los motores se bloqueen. Se procedera
+	* habilatamos los drivers al momento de lanzar el programa para que los motores se bloqueen. Se procedera
 	* a darles una consigna pequeña de posicion en direccion horario para que los eslabones no entren en la
 	* singularidad de los 90º */
 
-	//Se inician timers para señal PWM
+
 	HAL_TIM_Base_Start(&htim12);
 	HAL_TIM_Base_Start(&htim13);
 	HAL_TIM_Base_Start(&htim14);
@@ -182,8 +175,6 @@ void robotInitialization(void){
     Stop_PWM_MOTOR_3;
 
     */
-
-	//Se establece estado actual de los pasos de cada uno de los motores
 	motor1.stepReached = false;
 	motor2.stepReached = false;
 	motor3.stepReached = false;
@@ -229,8 +220,8 @@ int main(void)
   MX_TIM15_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
-  MX_TIM4_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
 
@@ -246,77 +237,59 @@ int main(void)
 		switch (state){
 
 		case INIT:
-			//Mensaje de inicializacion en curso.
-			  HAL_UART_Transmit(&huart3, message, sizeof(message), 100);
 
+			  HAL_UART_Transmit(&huart3, message, sizeof(message), 100); //Mensaje de inicializacion en curso.
 			  HAL_UART_Receive_IT(&huart3, &rx_data, 1);
-
-			//Se energizan los motores, inicia TIMER PWM y se establece estado de los motores
 			  robotInitialization();
-
-			//Mensaje de Robot listo para su uso
-			  HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100);
+			  HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100); //Mensaje inidicando que el Robot esta listo para su uso
 
 			  state = READY;
 
 			break;
 
-		case READY:
-					//si recibe consigna comienza e
-					if (receptionFlag){
+		case HOME:
 
-						receptionFlag = false;
+			receptionFlag = false; //Solo para asegurarse de no saltar al estado ready con esta bandera en true
 
-						startMotors = true;
+			//Ponemos el enable en bajo para habilitar el driver
 
-						HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
-						HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);
-						HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);
+			HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
 
-						/*
-						euclideanDistance = sqrt(pow(Pfin.x - Pini.x, 2) + pow(Pfin.y - Pini.y, 2) + pow(Pfin.z - Pini.z, 2));
-						vDirector[0] = (Pfin.x - Pini.x) / euclideanDistance;	//Vector director en X
-						vDirector[1] = (Pfin.y - Pini.y) / euclideanDistance;	//Vector director en Y
-						vDirector[2] = (Pfin.z - Pini.z) / euclideanDistance;	//Vector director en Z
-						*/
+			HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
 
-						inverseKinematic(Pfin);
+			homing();
 
-						configMotor(&motor1,1);
-						configMotor(&motor2,2);
-						configMotor(&motor3,3);
+	        if(homFin){
 
-						motor1.currentAngle = 0;
-						motor2.currentAngle = 0;
-						motor3.currentAngle = 0;
+	        	homFin = false;
 
-						update_ScurveTraj(motor1.currentAngle, motor1.theta, vi, vf, vmax, amax, jmax, arrayParams1);
-						update_ScurveTraj(motor2.currentAngle, motor2.theta, vi, vf, vmax, amax, jmax, arrayParams2);
-						update_ScurveTraj(motor3.currentAngle, motor3.theta, vi, vf, vmax, amax, jmax, arrayParams3);
+	        	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
+	        	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior
+	        	HAL_NVIC_EnableIRQ(EXTI2_IRQn);		//Enciendo interrupcion EndStop 2 Superior
+	        	HAL_NVIC_EnableIRQ(EXTI3_IRQn);		//Enciendo interrupcion EndStop 2 Inferior
+	        	HAL_NVIC_EnableIRQ(EXTI4_IRQn);		//Enciendo interrupcion EndStop 3 Superior
+	        	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Enciendo interrupcion EndStop 3 Inferior
 
-						timeFlag = false;
+				Pini.x=0;
+				Pini.y=0;
+				Pini.z =-0.5208; //antes era -0.33
 
-						motor1.pMotor = 0;
-						motor2.pMotor = 0;
-						motor3.pMotor = 0;
+				motor1.theta = 0.0;
+				motor2.theta = 0.0;
+				motor3.theta = 0.0;
 
-						motor1.stepReached = false;
-						motor2.stepReached = false;
-						motor3.stepReached = false;
+				motor1.currentAngle = 0.0;
+				motor2.currentAngle = 0.0;
+				motor3.currentAngle = 0.0;
 
-						motor1.rpm = 0;
-						motor2.rpm = 0;
-						motor3.rpm = 0;
+				state = READY;
 
-						HAL_TIM_Base_Start(&htim5);
-						HAL_TIM_Base_Start_IT(&htim15);
+	        }
 
 
-						state = WORKING;
-					}
-					break;
-
-
+			break;
 
 		case WORKING:
 
@@ -329,28 +302,15 @@ int main(void)
 					HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
 				}else if (motor2.stepReached) {
 					Stop_PWM_MOTOR_2;
-					HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+					HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_2);
 				}else if (motor3.stepReached){
 					Stop_PWM_MOTOR_3;
-					HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+					HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_3);
 				}
 
 				motor1.omega = get_Straj(time,motor1.currentAngle,motor1.theta,arrayParams1);
-//
 				motor2.omega = get_Straj(time,motor2.currentAngle,motor2.theta,arrayParams2);
-//
 				motor3.omega = get_Straj(time,motor3.currentAngle,motor3.theta,arrayParams3);
-
-				/*
-				Recta3D[0] = Pini.x + q * vDirector[0];
-				Recta3D[1] = Pini.y + q * vDirector[1];
-				Recta3D[2] = Pini.z + q * vDirector[2];
-				dRecta3D[0] = 0 + qd * vDirector[0];
-				dRecta3D[1] = 0 + qd * vDirector[1];
-				dRecta3D[2] = 0 + qd * vDirector[2];
-
-				inverseJacobian(dRecta3D[0], dRecta3D[1], dRecta3D[2], Recta3D[0], Recta3D[1], Recta3D[2]);
-				*/
 
 				setProfilTimer();
 
@@ -385,13 +345,6 @@ int main(void)
 			Pini.y = Pfin.y;
 			Pini.z = Pfin.z;
 
-			/*
-			//TODO: Ver si esta bien liberar la memoria en este punto
-			free(arrayParams1);
-			free(arrayParams2);
-			free(arrayParams3);
-			*/
-
 			HAL_TIM_Base_Stop_IT(&htim15);
 			HAL_TIM_Base_Stop(&htim5);
 
@@ -400,78 +353,49 @@ int main(void)
 
 			break;
 
+		case READY:
 
-		case HOME:
+			if (receptionFlag){
 
-			receptionFlag = false; //Solo para asegurarse de no saltar al estado ready con esta bandera en true
+				receptionFlag = false;
 
-			//Ponemos el enable en bajo para habilitar el driver
+				startMotors = true;
 
-			HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
+				HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
+				HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);
+				HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);
 
-			HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
+				inverseKinematic(Pfin);
 
-			homing();
+				update_ScurveTraj(motor1.currentAngle, motor1.theta, vi, vf, vmax, amax, jmax, arrayParams1);
+				update_ScurveTraj(motor2.currentAngle, motor2.theta, vi, vf, vmax, amax, jmax, arrayParams2);
+				update_ScurveTraj(motor3.currentAngle, motor3.theta, vi, vf, vmax, amax, jmax, arrayParams3);
 
-			if(homFin){
+				configMotor(&motor1,1);
+				configMotor(&motor2,2);
+				configMotor(&motor3,3);
 
-				homFin = false;
+				timeFlag = false;
 
-				HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
-				HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior
-				HAL_NVIC_EnableIRQ(EXTI2_IRQn);		//Enciendo interrupcion EndStop 2 Superior
-				HAL_NVIC_EnableIRQ(EXTI3_IRQn);		//Enciendo interrupcion EndStop 2 Inferior
-				HAL_NVIC_EnableIRQ(EXTI4_IRQn);		//Enciendo interrupcion EndStop 3 Superior
-				HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Enciendo interrupcion EndStop 3 Inferior
+				motor1.pMotor = 0;
+				motor2.pMotor = 0;
+				motor3.pMotor = 0;
 
-				Pini.x=0;
-				Pini.y=0;
-				Pini.z =-0.5208; //antes era -0.33
+				motor1.stepReached = false;
+				motor2.stepReached = false;
+				motor3.stepReached = false;
 
-				motor1.theta = 0.0;
-				motor2.theta = 0.0;
-				motor3.theta = 0.0;
+				HAL_TIM_Base_Start(&htim5);
+				HAL_TIM_Base_Start_IT(&htim15);
 
-				motor1.currentAngle = 0.0;
-				motor2.currentAngle = 0.0;
-				motor3.currentAngle = 0.0;
 
-				state = READY;
+				state = WORKING;
 			}
 			break;
 
 		case FAULT:
 
-			if(endStopAlarmSup || endStopAlarmInf){
-				//Detengo sistema
-				 Stop_PWM_MOTOR_1;
-				 Stop_PWM_MOTOR_2;
-				 Stop_PWM_MOTOR_3;
-
-				 HAL_UART_Transmit(&huart3, "EndStopAlarm\n\r", 12, 100);
-
-				 configMotor(&motor1,1);		//Se elige dir
-				 configMotor(&motor2,2);
-				 configMotor(&motor3,3);
-
-				 //Se mueve 200ms en la direccion decreciente
-				 HAL_Delay(0.5); 				//delay cambio de dir
-				 Start_PWM_MOTOR_1;
-				 Start_PWM_MOTOR_2;
-				 Start_PWM_MOTOR_3;
-				 HAL_Delay(200);
-
-				 Stop_PWM_MOTOR_1;
-				 Stop_PWM_MOTOR_2;
-				 Stop_PWM_MOTOR_3;
-
-				 state = READY;
-				 endStopAlarmSup = false;
-				 endStopAlarmInf = false;
-
-			}
+			//TODO: DESARROLLAR EL ESTADO DE EMERGENCIA/ERROR
 
 
 			break;
@@ -546,58 +470,33 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-
-
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
-
-		//PREGUNTAR: COMO SERIA LA LOGICA DE INTERRUPCION CUANDO UNA PATA TOCA UN FINAL DE CARRERA
-	switch( GPIO_Pin){
-		 case E_EndStop1_Inf_Pin:
-			 endStopAlarmInf = true;
-			 Stop_PWM_MOTOR_1;
-			 Stop_PWM_MOTOR_2;
-			 Stop_PWM_MOTOR_3;
-
-			 state = FAULT;
-			 break;
-		 case E_EndStop1_Sup_Pin:
-			 Stop_PWM_MOTOR_1;
-			 Stop_PWM_MOTOR_2;
-			 Stop_PWM_MOTOR_3;
-			 endStopAlarmSup = true;
-			 state = FAULT;
-			 break;
-		 case E_EndStop2_Inf_Pin:
-			 Stop_PWM_MOTOR_1;
-			 Stop_PWM_MOTOR_2;
-			 Stop_PWM_MOTOR_3;
-			 endStopAlarmInf = true;
-			 state = FAULT;
-			 break;
-		 case E_EndStop2_Sup_Pin:
-			 Stop_PWM_MOTOR_1;
-			 Stop_PWM_MOTOR_2;
-			 Stop_PWM_MOTOR_3;
-			 endStopAlarmSup = true;
-			 state = FAULT;
-			 break;
-		 case E_EndStop3_Inf_Pin:
-			 Stop_PWM_MOTOR_1;
-			 Stop_PWM_MOTOR_2;
-			 Stop_PWM_MOTOR_3;
-			 endStopAlarmInf = true;
-			 state = FAULT;
-			 break;
-		 case E_EndStop3_Sup_Pin:
-			 Stop_PWM_MOTOR_1;
-			 Stop_PWM_MOTOR_2;
-			 Stop_PWM_MOTOR_3;
-			 endStopAlarmSup = true;
-			 state = FAULT;
-			 break;
+	if (GPIO_Pin == E_EndStop1_Inf_Pin ){
+		Stop_PWM_MOTOR_1;
+		//HAL_UART_Transmit(&huart3, "EndStop1Inf\n\r", 13, 100);
 	}
+	if (GPIO_Pin == E_EndStop1_Sup_Pin ){
+		Stop_PWM_MOTOR_1;
+		//HAL_UART_Transmit(&huart3, "EndStop1Sup\n\r", 13, 100);
+	}
+	if (GPIO_Pin == E_EndStop2_Inf_Pin ){
+		Stop_PWM_MOTOR_2;
+		//HAL_UART_Transmit(&huart3, "EndStop2Inf\n\r", 13, 100);
+	}
+	if (GPIO_Pin == E_EndStop2_Sup_Pin ){
+		Stop_PWM_MOTOR_2;
+		//HAL_UART_Transmit(&huart3, "EndStop2Sup\n\r", 13, 100);
+	}
+	if (GPIO_Pin == E_EndStop3_Inf_Pin ){
+		Stop_PWM_MOTOR_3;
+		//HAL_UART_Transmit(&huart3, "EndStop3Inf\n\r", 13, 100);
+	}
+	if (GPIO_Pin == E_EndStop3_Sup_Pin ){
+		Stop_PWM_MOTOR_3;
+		//HAL_UART_Transmit(&huart3, "EndStop3Sup\n\r", 13, 100);
+	}
+
 
 }
 
@@ -670,7 +569,8 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 
 
 
-	/* IMPLEMENTACION CON DMA Y UN SOLO TIMER
+	/*
+	//IMPLEMENTACION CON UN SOLO TIMER
 	if (htim->Instance == TIM2) {
 		if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1){
 
@@ -698,6 +598,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 		else{}
 	}
 	*/
+
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {

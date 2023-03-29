@@ -51,8 +51,8 @@ typedef enum {INIT,READY,WORKING,HOME,FAULT} statesMachine;
 
 typedef struct Motor{
 
-	uint32_t pMotor;		//Pasos a realizar
-	uint32_t numStep;		//p
+	uint32_t pMotor;
+	uint32_t numStep;
 	double theta;     		//Posicion angular[degrees]
 	double omega;     		//Velocidad angular[rad/s]
 	double rpm;				//Velocidad angular[rev/min]
@@ -107,10 +107,14 @@ void Error_Handler(void);
 #define S_PulsoPaP2_GPIO_Port GPIOF
 #define S_PulsoPaP3_Pin GPIO_PIN_9
 #define S_PulsoPaP3_GPIO_Port GPIOF
+#define stepFeedback1_Pin GPIO_PIN_0
+#define stepFeedback1_GPIO_Port GPIOA
 #define NucleoF4_RX_Pin GPIO_PIN_2
 #define NucleoF4_RX_GPIO_Port GPIOA
 #define NucleoF4_TX_Pin GPIO_PIN_3
 #define NucleoF4_TX_GPIO_Port GPIOA
+#define stepFeedback2_Pin GPIO_PIN_6
+#define stepFeedback2_GPIO_Port GPIOA
 #define S_PulsoPaP1_Pin GPIO_PIN_14
 #define S_PulsoPaP1_GPIO_Port GPIOB
 #define Jetson_RX_Pin GPIO_PIN_15
@@ -119,6 +123,8 @@ void Error_Handler(void);
 #define STLINK_TX_GPIO_Port GPIOD
 #define STLINK_RX_Pin GPIO_PIN_9
 #define STLINK_RX_GPIO_Port GPIOD
+#define stepFeedback3_Pin GPIO_PIN_12
+#define stepFeedback3_GPIO_Port GPIOD
 #define S_DirPaP1_Pin GPIO_PIN_8
 #define S_DirPaP1_GPIO_Port GPIOC
 #define S_DirPaP2_Pin GPIO_PIN_9
@@ -139,16 +145,6 @@ void Error_Handler(void);
 #define E_EndStop1_Inf_Pin GPIO_PIN_1
 #define E_EndStop1_Inf_GPIO_Port GPIOE
 #define E_EndStop1_Inf_EXTI_IRQn EXTI1_IRQn
-
-#define stepFeedback1_Pin GPIO_PIN_0
-#define stepFeedback1_GPIO_Port GPIOA
-#define stepFeedback2_Pin GPIO_PIN_6
-#define stepFeedback2_GPIO_Port GPIOA
-#define stepFeedback3_Pin GPIO_PIN_12
-#define stepFeedback3_GPIO_Port GPIOD
-
-
-
 /* USER CODE BEGIN Private defines */
 
 //Macros de la lectura de los finales de carrera
