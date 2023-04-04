@@ -51,17 +51,19 @@ typedef enum {INIT,READY,WORKING,HOME,FAULT} statesMachine;
 
 typedef struct Motor{
 
-	uint32_t pMotor;
-	uint32_t numStep;
 	double theta;     		//Posicion angular[degrees]
 	double omega;     		//Velocidad angular[rad/s]
 	double rpm;				//Velocidad angular[rev/min]
-	bool hom;
-	bool stepReached;
 
-	double currentAngle;
-	double calcStep;
-	double remanente;
+	bool hom;				//Booleano que nos permite saber si un motor a logrado hacer un homing con exito
+	bool stepReached;		//Booleano utilizado para indicar cuando un motor a llegado a su posicion objetivo
+
+	double currentAngle;	//Este valor almacena el angulo actual del motor
+	double calcStep; 		//Numero de pasos a realizar con punto flotante
+	uint32_t numStep;		//Numero exacto de pasos a realizar
+	double remainder;		//Remanente para compensar la perdida de pasos por casteo a int
+
+	uint32_t pMotor;		//Contador que se incrementa con las interrupciones de inputCapture para saber si un motor llego a la posicion deseada
 
 }Motor;
 
@@ -150,12 +152,12 @@ void Error_Handler(void);
 #define S_Enable_2_GPIO_Port GPIOD
 #define S_Enable_3_Pin GPIO_PIN_6
 #define S_Enable_3_GPIO_Port GPIOD
+#define E_EndStop1_Inf_Pin GPIO_PIN_12
+#define E_EndStop1_Inf_GPIO_Port GPIOG
+#define E_EndStop1_Inf_EXTI_IRQn EXTI15_10_IRQn
 #define E_EndStop1_Sup_Pin GPIO_PIN_0
 #define E_EndStop1_Sup_GPIO_Port GPIOE
 #define E_EndStop1_Sup_EXTI_IRQn EXTI0_IRQn
-#define E_EndStop1_Inf_Pin GPIO_PIN_1
-#define E_EndStop1_Inf_GPIO_Port GPIOE
-#define E_EndStop1_Inf_EXTI_IRQn EXTI1_IRQn
 /* USER CODE BEGIN Private defines */
 
 //Macros de la lectura de los finales de carrera

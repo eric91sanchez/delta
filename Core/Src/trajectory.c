@@ -16,7 +16,6 @@ double vlim;
 double T,Ta,Td,Tv,Tj1,Tj2,Tj,delta;
 double qi,qf;
 
-double _rpm1,_rpm2,_rpm3;
 
 double get_Straj(double t,double _qi, double _qf ,double *params){
 
@@ -283,11 +282,6 @@ void setProfilTimer(void){
 	motor1.rpm = motor1.omega * RADs_TO_RPM;
 	motor2.rpm = motor2.omega * RADs_TO_RPM;
 	motor3.rpm = motor3.omega * RADs_TO_RPM;
-
-	//HARDCODE PARA HACER PRUEBAS A BAJA VELOCIDAD
-	//_rpm1 = 12.0;
-	//_rpm2 = 12.0 ;
-	//_rpm3 = 12.0;
 
 	//Escritura del registro ARR
 	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(motor1.rpm));

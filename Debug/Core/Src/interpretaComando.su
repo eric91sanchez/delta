@@ -1,1 +1,2 @@
+../Drivers/CMSIS/Include/core_cm7.h:2156:34:__NVIC_SystemReset	4	static,ignoring_inline_asm
 ../Core/Src/interpretaComando.c:15:6:interpretaComando	24	static

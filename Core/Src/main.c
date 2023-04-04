@@ -58,7 +58,11 @@ Motor motor1, motor2,motor3;
 
 double ErrorPeriodo[3];
 double ErrorAcumuladoPeriodo[3];
-int test =0;
+int test =0,test1=0;
+bool unavez= true;
+
+
+
 statesMachine state = INIT;
 
 bool homFin = false;
@@ -66,6 +70,8 @@ bool startMotors = false;
 bool stopMotors = false;
 bool endStopAlarmSup = false;
 bool endStopAlarmInf = false;
+
+
 bool continuar = false;
 bool faultDrivers = false;
 
@@ -93,14 +99,8 @@ double arrayParams2[7];
 double arrayParams3[7];
 
 
-//float_t euclideanDistance;
-//float_t vDirector[3];
-//double Recta3D[3];
-//double dRecta3D[3];
-//double dRecta3DZ=0; // para debugear
-
 double time;
-
+double rpm_fault = 1;
 uint8_t rx_index = 0;
 uint8_t rx_buffer[30];
 uint8_t rx_data;
@@ -229,6 +229,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -255,14 +256,6 @@ int main(void)
 		case HOME:
 
 			receptionFlag = false; //Solo para asegurarse de no saltar al estado ready con esta bandera en true
-
-			//Ponemos el enable en bajo para habilitar el driver
-
-			HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
-
-			HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
 
 			homing();
 
@@ -399,6 +392,8 @@ int main(void)
 				HAL_TIM_Base_Start_IT(&htim15);
 
 
+
+
 				state = WORKING;
 			}
 			break;
@@ -406,49 +401,113 @@ int main(void)
 		case FAULT:
 
 
-			if((endStopAlarmSup || endStopAlarmInf) && continuar){
+			__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm_fault)); //Escritura del registro ARR
+			__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm_fault));
+			__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(rpm_fault));
 
-				//Detengo sistema
-				 Stop_PWM_MOTOR_1;
-				 Stop_PWM_MOTOR_2;
-				 Stop_PWM_MOTOR_3;
 
-				 HAL_UART_Transmit(&huart3, "EndStopAlarm\n\r", 12, 100);
 
-				 configMotor(&motor1,1);		//Se elige dir
-				 configMotor(&motor2,2);
-				 configMotor(&motor3,3);
+			TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
+			TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
+			TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
 
-				 //TODO CAMBIAR VELOCIDAD
+			HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+			HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+			HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
-				 //Se mueve 200ms en la direccion decreciente
-				 //HAL_Delay(0.5); 				//delay cambio de dir
-				 Start_PWM_MOTOR_1;
-				 Start_PWM_MOTOR_2;
-				 Start_PWM_MOTOR_3;
-				 HAL_Delay(200);  //eliminar y colocar movimiento de cierta cantidad de pasos
 
-				 Stop_PWM_MOTOR_1;
-				 Stop_PWM_MOTOR_2;
-				 Stop_PWM_MOTOR_3;
 
-				 if(ES1s_UNPRESSED && ES2s_UNPRESSED && ES3s_UNPRESSED && ES1i_UNPRESSED && ES2i_UNPRESSED && ES3i_UNPRESSED){
-					 endStopAlarmSup = false;
-					 endStopAlarmInf = false;
-					 state = READY;
-					 continuar = false;
+
+			while((endStopAlarmSup || endStopAlarmInf) && continuar){
+
+				 HAL_UART_Transmit(&huart3,(uint8_t*) "EndStopAlarm\r\n", 16, 100);
+
+				 if (ES1i_PRESSED){
+					 HAL_Delay(10);
+					 if (ES1i_PRESSED){
+						 positive_Dir_MOTOR_1;
+						 HAL_Delay(0.5); 							//delay cambio de dir
+						 Start_PWM_MOTOR_1;
+						 HAL_Delay(200);
+						 Stop_PWM_MOTOR_1;
+					 }
+				 }
+				 if (ES1s_PRESSED){
+					 HAL_Delay(10);
+					 if (ES1s_PRESSED){
+						 negative_Dir_MOTOR_1;
+						 HAL_Delay(0.5); 							//delay cambio de dir
+						 Start_PWM_MOTOR_1;
+						 HAL_Delay(200);
+						 Stop_PWM_MOTOR_1;
+					 }
 				 }
 
 
-			}
-			else if (faultDrivers && continuar){
-				relayAbierto;
-				HAL_Delay(100);
-				relayCerrado;
-				faultDrivers = false;
-				continuar = false;
-				state = READY;
-			}
+				 if (ES2i_PRESSED){
+					 HAL_Delay(30);
+					 if (ES2i_PRESSED){
+						 positive_Dir_MOTOR_2;
+						 HAL_Delay(0.5); 							//delay cambio de dir
+						 Start_PWM_MOTOR_2;
+						 HAL_Delay(200);
+						 Stop_PWM_MOTOR_2;
+					 }
+				 }
+				 if (ES2s_PRESSED){
+					 HAL_Delay(10);
+					 if (ES2s_PRESSED){
+						 negative_Dir_MOTOR_2;
+						 HAL_Delay(0.5); 							//delay cambio de dir
+						 Start_PWM_MOTOR_2;
+						 HAL_Delay(200);
+						 Stop_PWM_MOTOR_2;
+					 }
+				 }
+				 if (ES3i_PRESSED){
+					 HAL_Delay(10);
+					 if (ES3i_PRESSED){
+						 positive_Dir_MOTOR_3;
+						 HAL_Delay(0.5); 							//delay cambio de dir
+						 Start_PWM_MOTOR_3;
+						 HAL_Delay(200);
+						 Stop_PWM_MOTOR_3;
+					 }
+				 }
+				 if (ES3s_PRESSED){
+					 HAL_Delay(10);
+					 if (ES3s_PRESSED){
+						 negative_Dir_MOTOR_3;
+						 HAL_Delay(0.5); 							//delay cambio de dir
+						 Start_PWM_MOTOR_3;
+						 HAL_Delay(200);
+						 Stop_PWM_MOTOR_3;
+					 }
+				 }
+
+
+				 if(ES1s_UNPRESSED && ES2s_UNPRESSED && ES3s_UNPRESSED && ES1i_UNPRESSED && ES2i_UNPRESSED && ES3i_UNPRESSED){
+					 HAL_Delay(10);
+					 if(ES1s_UNPRESSED && ES2s_UNPRESSED && ES3s_UNPRESSED && ES1i_UNPRESSED && ES2i_UNPRESSED && ES3i_UNPRESSED){
+						 endStopAlarmSup = false;
+						 endStopAlarmInf = false;
+						 state = READY;
+						 continuar = false;
+					 }
+
+				 }
+
+
+			}//End while
+
+//			while(faultDrivers && continuar){
+//				relayAbierto;
+//				HAL_Delay(100);
+//				relayCerrado;
+//				faultDrivers = false;
+//				continuar = false;
+//				state = READY;
+//			}
 
 
 			break;
@@ -525,58 +584,95 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
-	//PREGUNTAR: COMO SERIA LA LOGICA DE INTERRUPCION CUANDO UNA PATA TOCA UN FINAL DE CARRERA
+
 	switch( GPIO_Pin){
+
+
 		 case E_EndStop1_Inf_Pin:
-			 endStopAlarmInf = true;
+
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
+
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
+			 endStopAlarmInf = true;
 			 state = FAULT;
 			 break;
 		 case E_EndStop1_Sup_Pin:
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
+
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
 			 endStopAlarmSup = true;
 			 state = FAULT;
 			 break;
+
 		 case E_EndStop2_Inf_Pin:
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
+
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
 			 endStopAlarmInf = true;
 			 state = FAULT;
 			 break;
+
+
 		 case E_EndStop2_Sup_Pin:
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
+
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
 			 endStopAlarmSup = true;
 			 state = FAULT;
 			 break;
+
 		 case E_EndStop3_Inf_Pin:
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
+
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
 			 endStopAlarmInf = true;
 			 state = FAULT;
+
 			 break;
+
 		 case E_EndStop3_Sup_Pin:
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
+
+
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
 			 endStopAlarmSup = true;
 			 state = FAULT;
 			 break;
+
 		 case BUTTON_Pin:
 			 continuar = true;
 			 break;
+
 		 case faultDriver1_Pin:
 			 continuar = false;
 			 faultDrivers = true;
 			 state = FAULT;
 			 break;
+
 		 case faultDriver2_Pin:
 			 continuar = false;
 			 faultDrivers = true;
@@ -587,6 +683,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 faultDrivers = true;
 			 state = FAULT;
 			 break;
+
+
+		 default: break;
+
+
 
 
 	}
@@ -660,38 +761,6 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 		}
 
 	}
-
-
-
-	/*
-	//IMPLEMENTACION CON UN SOLO TIMER
-	if (htim->Instance == TIM2) {
-		if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1){
-
-			if (motor1.pMotor == motor1.numStep) {
-				motor1.stepReached = true;
-			} else {
-				motor1.pMotor++;
-			}
-		}
-
-		else if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2){
-			if (motor2.pMotor == motor2.numStep) {
-				motor2.stepReached = true;
-			} else {
-				motor2.pMotor++;
-			}
-		}
-		else if(htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3){
-			if (motor3.pMotor == motor3.numStep) {
-				motor3.stepReached = true;
-			} else {
-				motor3.pMotor++;
-			}
-		}
-		else{}
-	}
-	*/
 
 }
 
