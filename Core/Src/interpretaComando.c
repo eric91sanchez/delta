@@ -8,7 +8,7 @@
 
 #include "interpretaComando.h"
 
-
+bool newline_detected = false;
 volatile double aux;
 uint8_t auxString[10];
 
@@ -28,7 +28,7 @@ void interpretaComando(void){
 		flagErrorEndStop = 0;
 		uint8_t i = 1;
 		uint8_t j = 0;
-		while(rx_buffer[i] != 0){
+		while(rx_buffer[i] != 0 && !newline_detected){
 			if(rx_buffer[i] == 'x'){
 				while(rx_buffer[i+1] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
 					auxString[j] = rx_buffer[i+1];
@@ -56,7 +56,7 @@ void interpretaComando(void){
 				HAL_UART_Transmit(&huart3,(uint8_t *)"Py_ok\n", 7, 100);
 			}
 			else if(rx_buffer[i] == 'z'){
-				while(rx_buffer[i+1] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
+				while(rx_buffer[i+1] != '\n' && rx_buffer[i+1] != 0){			//Almacenar dato en buffer hasta que se encuentre un espacio
 					auxString[j] = rx_buffer[i+1];
 					j++;
 					i++;
@@ -67,6 +67,9 @@ void interpretaComando(void){
 				}
 				j=0;
 				HAL_UART_Transmit(&huart3,(uint8_t *)"Pz_ok\n", 7, 100);
+				if(rx_buffer[i+1] == '\n'){	//Detectar salto de línea
+				    newline_detected = true;
+				}
 			}
 			i++;
 		}
