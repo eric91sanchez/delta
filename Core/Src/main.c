@@ -385,12 +385,13 @@ int main(void)
 			TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
 			TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
 
-			test++;
+
+			//test++;
 
 			while((endStopAlarmSup || endStopAlarmInf) && continuar){
 
 				 //HAL_UART_Transmit(&huart3,(uint8_t*)"EndStopAlarm\r\n", 16, 100);
-				test1++;
+				//test1++;
 
 
 				 if (ES1i_PRESSED){
@@ -474,14 +475,19 @@ int main(void)
 
 			}//End while
 
-//			while(faultDrivers && continuar){
+			while(faultDrivers && continuar){
+
 //				relayAbierto;
 //				HAL_Delay(100);
 //				relayCerrado;
-//				faultDrivers = false;
-//				continuar = false;
-//				state = READY;
-//			}
+
+				faultDrivers = false;
+				continuar = false;
+
+				HAL_UART_Transmit(&huart3,(uint8_t*)"Fin_FALL\r\n", 13, 100);
+				state = READY;
+
+			}//End while
 
 
 			break;
@@ -558,7 +564,7 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
-
+	test++;
 	switch( GPIO_Pin){
 
 		 case E_EndStop1_Inf_Pin:
@@ -661,28 +667,30 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 break;
 
 		 case BUTTON_Pin:
-			 continuar = true;
-			 break;
-		/*
-		 case faultDriver1_Pin:
-			 continuar = false;
-			 faultDrivers = true;
-			 state = FAULT;
+
+			 if (!endStopAlarmSup && !endStopAlarmInf && !faultDrivers){
+				 continuar = false;
+			 }else{continuar = true;}
+
 			 break;
 
-		 case faultDriver2_Pin:
-			 continuar = false;
-			 faultDrivers = true;
-			 state = FAULT;
-			 break;
-		 case faultDriver3_Pin:
-			 continuar = false;
-			 faultDrivers = true;
-			 state = FAULT;
-			 break;
 
-			*/
-
+//		 case faultDriver1_Pin:
+//			 //continuar = false;
+//			 faultDrivers = true;
+//			 state = FAULT;
+//			 break;
+//
+//		 case faultDriver2_Pin:
+//			 //continuar = false;
+//			 faultDrivers = true;
+//			 state = FAULT;
+//			 break;
+//		 case faultDriver3_Pin:
+//			 //continuar = false;
+//			 faultDrivers = true;
+//			 state = FAULT;
+//			 break;
 
 		 default: break;
 
