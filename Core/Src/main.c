@@ -375,14 +375,6 @@ int main(void)
 
 		case FAULT:
 
-			 HAL_TIM_Base_Stop_IT(&htim15);
-			 HAL_TIM_Base_Stop(&htim5);
-
-			HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
-			HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
-			HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
-
-
 			__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm_fault)); //Escritura del registro ARR
 			__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm_fault));
 			__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(rpm_fault));
@@ -569,34 +561,34 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	switch( GPIO_Pin){
 
-
 		 case E_EndStop1_Inf_Pin:
 
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
-//			 HAL_TIM_Base_Stop_IT(&htim15);
-//			 HAL_TIM_Base_Stop(&htim5);
-//
-//			HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
-//			HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
-//			HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
+			 HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
 			 state = FAULT;
 			 break;
+
 		 case E_EndStop1_Sup_Pin:
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
-//			 HAL_TIM_Base_Stop_IT(&htim15);
-//			 HAL_TIM_Base_Stop(&htim5);
-//
-//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
+			 HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmSup = true;
 			 state = FAULT;
@@ -607,12 +599,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
-//			 HAL_TIM_Base_Stop_IT(&htim15);
-//			 HAL_TIM_Base_Stop(&htim5);
-//
-//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
+			 HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
 			 state = FAULT;
@@ -624,12 +616,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
-//			 HAL_TIM_Base_Stop_IT(&htim15);
-//			 HAL_TIM_Base_Stop(&htim5);
-//
-//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
+			 HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmSup = true;
 			 state = FAULT;
@@ -639,13 +631,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
-//
-//			 HAL_TIM_Base_Stop_IT(&htim15);
-//			 HAL_TIM_Base_Stop(&htim5);
-//
-//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
+			 HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
 			 state = FAULT;
@@ -657,13 +649,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
 
-//			 HAL_TIM_Base_Stop_IT(&htim15);
-//			 HAL_TIM_Base_Stop(&htim5);
-//
-//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
-//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmSup = true;
 			 state = FAULT;
