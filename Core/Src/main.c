@@ -153,32 +153,6 @@ void robotInitialization(void){
 	positive_Dir_MOTOR_2;
 	positive_Dir_MOTOR_3;
 
-	/*
-
-	periodoM[0] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
-	periodoM[1] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
-	periodoM[2] = (uint32_t)(((FCL * 60.0) / (rpm * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
-
-	TIM12->ARR = periodoM[0];
-	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);  //pulse
-	TIM13->ARR =periodoM[1];
-	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
-	TIM14->ARR =periodoM[2];
-	TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
-	*/
-
-	/*
-	Start_PWM_MOTOR_1;
-	Start_PWM_MOTOR_2;
-	Start_PWM_MOTOR_3;
-
-    HAL_Delay(1000); //offset experimental
-
-    Stop_PWM_MOTOR_1;
-    Stop_PWM_MOTOR_2;
-    Stop_PWM_MOTOR_3;
-
-    */
 	motor1.stepReached = false;
 	motor2.stepReached = false;
 	motor3.stepReached = false;
@@ -263,6 +237,7 @@ int main(void)
 
 	        	homFin = false;
 	        	HAL_Delay(1);
+
 	        	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
 	        	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior
 	        	HAL_NVIC_EnableIRQ(EXTI2_IRQn);		//Enciendo interrupcion EndStop 2 Superior
@@ -270,10 +245,6 @@ int main(void)
 	        	HAL_NVIC_EnableIRQ(EXTI4_IRQn);		//Enciendo interrupcion EndStop 3 Superior
 	        	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Enciendo interrupcion EndStop 3 Inferior
 	        	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); //Enciendo interrupcion faultDriver
-
-	        	endStopAlarmInf=false;
-	        	endStopAlarmSup=false;
-
 
 				Pini.x=0;
 				Pini.y=0;
@@ -299,6 +270,8 @@ int main(void)
 			receptionFlag = false;
 
 			while (!(motor1.stepReached && motor2.stepReached  && motor3.stepReached)){
+
+				if (state==FAULT)break;
 
 				if (motor1.stepReached) {
 					Stop_PWM_MOTOR_1;
@@ -328,6 +301,8 @@ int main(void)
 				stopMotors = true;
 
 			}// End while
+
+
 
 
 			if (stopMotors){   //If steps goals for each motor were reached, we stop motors
@@ -400,6 +375,13 @@ int main(void)
 
 		case FAULT:
 
+			 HAL_TIM_Base_Stop_IT(&htim15);
+			 HAL_TIM_Base_Stop(&htim5);
+
+			HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+			HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+			HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
+
 
 			__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm_fault)); //Escritura del registro ARR
 			__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm_fault));
@@ -411,16 +393,13 @@ int main(void)
 			TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
 			TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
 
-			HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
-			HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
-			HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
-
-
-
+			test++;
 
 			while((endStopAlarmSup || endStopAlarmInf) && continuar){
 
-				 HAL_UART_Transmit(&huart3,(uint8_t*) "EndStopAlarm\r\n", 16, 100);
+				 //HAL_UART_Transmit(&huart3,(uint8_t*)"EndStopAlarm\r\n", 16, 100);
+				test1++;
+
 
 				 if (ES1i_PRESSED){
 					 HAL_Delay(10);
@@ -489,10 +468,13 @@ int main(void)
 				 if(ES1s_UNPRESSED && ES2s_UNPRESSED && ES3s_UNPRESSED && ES1i_UNPRESSED && ES2i_UNPRESSED && ES3i_UNPRESSED){
 					 HAL_Delay(10);
 					 if(ES1s_UNPRESSED && ES2s_UNPRESSED && ES3s_UNPRESSED && ES1i_UNPRESSED && ES2i_UNPRESSED && ES3i_UNPRESSED){
+
 						 endStopAlarmSup = false;
 						 endStopAlarmInf = false;
-						 state = READY;
 						 continuar = false;
+						 HAL_UART_Transmit(&huart3,(uint8_t*)"Fin_FAULT\r\n", 13, 100);
+						 state = READY;
+
 					 }
 
 				 }
@@ -594,8 +576,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
-			 HAL_TIM_Base_Stop_IT(&htim15);
-			 HAL_TIM_Base_Stop(&htim5);
+//			 HAL_TIM_Base_Stop_IT(&htim15);
+//			 HAL_TIM_Base_Stop(&htim5);
+//
+//			HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+//			HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+//			HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
 			 state = FAULT;
@@ -605,8 +591,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
-			 HAL_TIM_Base_Stop_IT(&htim15);
-			 HAL_TIM_Base_Stop(&htim5);
+//			 HAL_TIM_Base_Stop_IT(&htim15);
+//			 HAL_TIM_Base_Stop(&htim5);
+//
+//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmSup = true;
 			 state = FAULT;
@@ -617,8 +607,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
-			 HAL_TIM_Base_Stop_IT(&htim15);
-			 HAL_TIM_Base_Stop(&htim5);
+//			 HAL_TIM_Base_Stop_IT(&htim15);
+//			 HAL_TIM_Base_Stop(&htim5);
+//
+//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
 			 state = FAULT;
@@ -630,8 +624,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
 
-			 HAL_TIM_Base_Stop_IT(&htim15);
-			 HAL_TIM_Base_Stop(&htim5);
+//			 HAL_TIM_Base_Stop_IT(&htim15);
+//			 HAL_TIM_Base_Stop(&htim5);
+//
+//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmSup = true;
 			 state = FAULT;
@@ -641,9 +639,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_1;
 			 Stop_PWM_MOTOR_2;
 			 Stop_PWM_MOTOR_3;
-
-			 HAL_TIM_Base_Stop_IT(&htim15);
-			 HAL_TIM_Base_Stop(&htim5);
+//
+//			 HAL_TIM_Base_Stop_IT(&htim15);
+//			 HAL_TIM_Base_Stop(&htim5);
+//
+//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
 			 state = FAULT;
@@ -656,8 +658,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 Stop_PWM_MOTOR_3;
 
 
-			 HAL_TIM_Base_Stop_IT(&htim15);
-			 HAL_TIM_Base_Stop(&htim5);
+//			 HAL_TIM_Base_Stop_IT(&htim15);
+//			 HAL_TIM_Base_Stop(&htim5);
+//
+//				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
+//				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmSup = true;
 			 state = FAULT;
@@ -666,7 +672,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		 case BUTTON_Pin:
 			 continuar = true;
 			 break;
-
+		/*
 		 case faultDriver1_Pin:
 			 continuar = false;
 			 faultDrivers = true;
@@ -683,6 +689,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 faultDrivers = true;
 			 state = FAULT;
 			 break;
+
+			*/
 
 
 		 default: break;

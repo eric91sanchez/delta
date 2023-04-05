@@ -22,7 +22,7 @@ void interpretaComando(void){
 		state = HOME;
 	break;
 
-	case 'P':												//:Px0.1 y0.1 z-0.5 \0 (Eje, valor, espacio, Eje, valor, espacio, Eje, valor, espacio)
+	case 'P':												//:Px0.1 y0.1 z-0.5 \0 (Eje, valor, espacio, Eje, valor, espacio, Eje, valor)
 	case 'p':
 
 		flagErrorEndStop = 0;

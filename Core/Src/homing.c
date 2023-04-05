@@ -42,12 +42,10 @@ void homing(void) {
 	Stop_PWM_MOTOR_2;
 	Stop_PWM_MOTOR_3;
 
-
-	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm)); //Escritura del registro ARR
+	//Escritura del registro ARR
+	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm));
 	__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm));
 	__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(rpm));
-
-
 
 	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
 	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
