@@ -73,9 +73,8 @@ void interpretaComando(void){
 			}
 			i++;
 		}
+
 		receptionFlag = true;
-
-
 		break;
 
 
@@ -84,6 +83,12 @@ void interpretaComando(void){
 		HAL_UART_Transmit(&huart3, (uint8_t *)"Resetting...\n", 14, 100);
 		NVIC_SystemReset();
 
+		break;
+
+	case 'd':
+	case 'D':
+		readFile = true;
+		state = DEMO;
 		break;
 
 	default:break;

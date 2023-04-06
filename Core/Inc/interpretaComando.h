@@ -12,17 +12,13 @@
 #include <kinematic.h>
 #include "main.h"
 #include "stdlib.h"
-#include "trajectory.h"
 
 
-extern Vec3D Pini;
-extern Vec3D Pfin;
-extern statesMachine state;
+extern Vec3D Pini,Pfin;
 extern UART_HandleTypeDef huart3;
-extern uint8_t rx_buffer[30];
-extern bool receptionFlag;
-
-extern double vmax,amax,jmax,vi,vf;
+extern uint8_t rx_buffer[BUFFER_SIZE];
+extern bool receptionFlag,readFile;
+extern statesMachine state;
 
 
 extern double flagErrorEndStop;
