@@ -5,7 +5,6 @@
  *      Author: Elias Correa y Eliseo Elorga
  */
 
-
 #include "statesMachine.h"
 
 
@@ -24,22 +23,23 @@ bool faultDrivers = false;
 
 //--------------------------------------------
 //Valores para crear el perfil de velocidad
+//'q' es una variable fisica que puedo interpretarse como posicon cartesiana o articular. qd,qdd,qddd son sus respectivas derivadas
+
 double q=0,qd=0,qdd=0,qddd=0;
-double jmax = 1;
-double jmin;
+double jmax = 1;        //Jerk maximo
+double jmin;			//Jerk minimo
 
-double vmax = 0.5;
-double vmin;
+double vmax = 0.5;		//Velocidad maxima
+double vmin;			//Velocidad minima
 
-double vi = 0.3;
-double vf = 0;
+double vi = 0.3;		//Velocidad inicial
+double vf = 0;			//Velocidad final
 
-double amax = 2;
-double amin;
+double amax = 2;		//Aceleracion maxima
+double amin;			//Aceleracion minima
 //--------------------------------------------
 
-Vec3D Pini;
-Vec3D Pfin;
+Vec3D Pini,Pfin;       //Punto inicial y final  (coordenadas cartesianas)
 
 double arrayParams1[7];
 double arrayParams2[7];
@@ -47,17 +47,24 @@ double arrayParams3[7];
 
 double rpm_fault = 1;
 
-
-
 bool timeFlag;
 uint8_t rx_index = 0;
-uint8_t rx_buffer[30];
+uint8_t rx_buffer[BUFFER_SIZE];
 uint8_t rx_data;
 uint8_t message[] = "Inicializacion en curso...\n";		//Mensaje enviado al iniciar el programa
 uint8_t message1[] = "El robot ya se encuentra operacional.\n";
 
 bool receptionFlag=false;
+bool readFile=false;
+bool startDemo = false;
 
+//--------------------------------------------
+//Lectura de archivo para demo
+
+FILE *file;
+char *filename = "archivo.txt";
+char buffer[BUFFER_SIZE];
+//--------------------------------------------
 
 void robotInitialization(void){
 
@@ -103,7 +110,6 @@ void statesMachineLoop(void){
 		  HAL_UART_Receive_IT(&huart3, &rx_data, 1);
 		  robotInitialization();
 		  HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100); //Mensaje inidicando que el Robot esta listo para su uso
-
 
 		  state = READY;
 
@@ -208,8 +214,9 @@ void statesMachineLoop(void){
 		HAL_TIM_Base_Stop_IT(&htim15);
 		HAL_TIM_Base_Stop(&htim5);
 
+		if (startDemo){state=DEMO;}
+		else{state = READY;}
 
-		state = READY;
 
 		break;
 
@@ -248,9 +255,6 @@ void statesMachineLoop(void){
 			HAL_TIM_Base_Start(&htim5);
 			HAL_TIM_Base_Start_IT(&htim15);
 
-
-
-
 			state = WORKING;
 		}
 		break;
@@ -261,20 +265,13 @@ void statesMachineLoop(void){
 		__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm_fault));
 		__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(rpm_fault));
 
-
-
 		TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
 		TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
 		TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
 
-
-		//test++;
-
 		while((endStopAlarmSup || endStopAlarmInf) && continuar){
 
 			 //HAL_UART_Transmit(&huart3,(uint8_t*)"EndStopAlarm\r\n", 16, 100);
-			//test1++;
-
 
 			 if (ES1i_PRESSED){
 				 HAL_Delay(10);
@@ -359,9 +356,10 @@ void statesMachineLoop(void){
 
 		while(faultDrivers && continuar){
 
-//				relayAbierto;
-//				HAL_Delay(100);
-//				relayCerrado;
+
+			//relayAbierto;
+			//HAL_Delay(100);
+			//relayCerrado;
 
 			faultDrivers = false;
 			continuar = false;
@@ -373,6 +371,39 @@ void statesMachineLoop(void){
 
 
 		break;
+
+	case DEMO:
+
+	    // Abre el archivo para lectura (una sola vez siempre y cuando readFile sea verdadero )
+		if (readFile){
+			file = fopen(filename, "r");
+
+			// Verifica si el archivo se ha abierto correctamente
+			if (file == NULL) {
+				HAL_UART_Transmit(&huart3,(uint8_t*)"No se pudo abrir el archivo.\n", 30, 100);
+				break;
+			}
+			readFile = false;
+			startDemo = true;
+		}
+
+	    // Lee cada línea del archivo y la guarda en el buffer
+	    if (fgets(buffer, BUFFER_SIZE, file) != NULL) {
+
+	        // Copia la línea al buffer de tipo uint8_t
+	        //uint8_t rx_buffer[strlen(buffer)];
+	        memcpy(rx_buffer, buffer, strlen(buffer));
+
+	        interpretaComando();
+
+	        state = READY;
+	    }
+	    else{
+			// Cierra el archivo
+			startDemo = false;
+			fclose(file);
+			HAL_UART_Transmit(&huart3,(uint8_t*)"Fin demo\n", 10, 100);
+	    }
 
 	default:break;
 	}

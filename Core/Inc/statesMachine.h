@@ -8,6 +8,11 @@
 #ifndef INC_STATESMACHINE_H_
 #define INC_STATESMACHINE_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
 #include "main.h"
 #include "trajectory.h"
 #include "homing.h"
