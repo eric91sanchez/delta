@@ -13,9 +13,7 @@
 #include "interpretaComando.h"
 
 
-extern TIM_HandleTypeDef htim12;
-extern TIM_HandleTypeDef htim13;
-extern TIM_HandleTypeDef htim14;
+extern TIM_HandleTypeDef htim12,htim13,htim14;
 
 extern Motor motor1,motor2,motor3;
 extern bool homFin;
