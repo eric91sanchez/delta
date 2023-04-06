@@ -1,0 +1,2 @@
+../Core/Src/statesMachine.c:62:6:robotInitialization	8	static
+../Core/Src/statesMachine.c:94:6:statesMachineLoop	8	static
