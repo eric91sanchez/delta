@@ -4,7 +4,7 @@ En este proyecto se desarrolla el firmware que controla un robot paralelo tipo D
 
 
 
-**Periféricos utilizados: **
+**Periféricos utilizados:**
 
 UART3: Corresponde a la uart vinculada con ST-Link de la placa y que permite la comunicacion con una PC para el evidio y recepcion de datos. (asociado a una interrupcion).
 
