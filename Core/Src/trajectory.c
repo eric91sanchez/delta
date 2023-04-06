@@ -5,10 +5,11 @@
  *      Authors: Elias Correa y Eliseo Elorga
  */
 
-#include <GlobalFunc.h>
+#include "GlobalFunc.h"
 #include "trajectory.h"
 #include <stdlib.h>
 
+double period[3],accumulatedError[3],periodError[3];
 bool flagInv = false;
 double alima;
 double alimd;
@@ -283,51 +284,30 @@ void setProfilTimer(void){
 	motor2.rpm = motor2.omega * RADs_TO_RPM;
 	motor3.rpm = motor3.omega * RADs_TO_RPM;
 
-	//Escritura del registro ARR
-	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(motor1.rpm));
-	__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(motor2.rpm));
-	__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(motor3.rpm));
+
+    period[0] = COUNTERPERIOD(motor1.rpm);
+    period[1] = COUNTERPERIOD(motor2.rpm);
+    period[3] = COUNTERPERIOD(motor3.rpm);
+
+	// Calculo el error por casteo a int, y cuando supero la unidad, lo compenzo
+
+	for (int i = 0; i < 3; i++) {
+		periodError[i] = period[i] - (double)((int32_t) period[i]);
+		accumulatedError[i] += periodError[i];
+		if (accumulatedError[i] > 1) {
+			period[i] += 1;
+			accumulatedError[i] -=  1;
+		}
+	}
+
+    //Escritura del registro ARR
+    __HAL_TIM_SET_AUTORELOAD(&htim12,period[0]);
+	__HAL_TIM_SET_AUTORELOAD(&htim13,period[1]);
+	__HAL_TIM_SET_AUTORELOAD(&htim14,period[3]);
 
 	TIM12->CCR1 = (uint32_t)((double)(TIM12->ARR) / 2.0);
 	TIM13->CCR1 = (uint32_t)((double)(TIM13->ARR) / 2.0);
 	TIM14->CCR1 = (uint32_t)((double)(TIM14->ARR) / 2.0);
-
-
-	// Calculo el error por casteo a int, y cuando supero la unidad, lo compenzo --------------
-
-	/*
-
-	for (int i = 0; i < 3; ++i) {
-		ErrorPeriodo[i] = periodoM[i] - (double) ((int32_t) periodoM[i]);
-		ErrorAcumuladoPeriodo[i] = ErrorAcumuladoPeriodo[i] + ErrorPeriodo[i];
-		if (ErrorAcumuladoPeriodo[i] > 1) {
-			periodoM[i] = periodoM[i] + 1;
-			ErrorAcumuladoPeriodo[i] = ErrorAcumuladoPeriodo[i] - 1;
-		}
-		if (periodoM[i] < 2) {
-			periodoM[i] = 0; // velocidad lineal de 10.000mm/s !!!
-		}
-
-		else if (periodoM[i] > pow(2, 16)) { 		// desborde de timer 32 bits
-			periodoM[i] = pow(2, 16);
-		}
-	}
-
-		periodoM[0]=(uint32_t)(((FCL * 60.0) / (rpm1 * ((double)(TIM12->PSC) + 1.0) * STEPREV)) - 1.0);
-		periodoM[1]=(uint32_t)(((FCL * 60.0) / (rpm2 * ((double)(TIM13->PSC) + 1.0) * STEPREV)) - 1.0);
-		periodoM[2]=(uint32_t)(((FCL * 60.0) / (rpm3 * ((double)(TIM14->PSC) + 1.0) * STEPREV)) - 1.0);
-
-
-		if (TIM12->CNT > periodoM[0]) {
-					TIM12->CNT = periodoM[0] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-		}
-		if (TIM13->CNT > periodoM[1]) {
-					TIM13->CNT = periodoM[1] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-		}
-		if (TIM14->CNT > periodoM[2]) {
-					TIM14->CNT = periodoM[2] - 1;// Reinicio clock solo si hace falta y a un valor cercano a la interrupcion, para que no haga ese paso de nuevo
-		}
-		*/
 
 
 }
