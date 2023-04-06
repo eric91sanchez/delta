@@ -32,7 +32,7 @@ Core/Src/homing.o: ../Core/Src/homing.c ../Core/Inc/homing.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
  ../Core/Inc/interpretaComando.h ../Core/Inc/kinematic.h \
- ../Core/Inc/GlobalFunc.h ../Core/Inc/main.h ../Core/Inc/trajectory.h
+ ../Core/Inc/GlobalFunc.h ../Core/Inc/main.h
 ../Core/Inc/homing.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
@@ -71,4 +71,3 @@ Core/Src/homing.o: ../Core/Src/homing.c ../Core/Inc/homing.h \
 ../Core/Inc/kinematic.h:
 ../Core/Inc/GlobalFunc.h:
 ../Core/Inc/main.h:
-../Core/Inc/trajectory.h:

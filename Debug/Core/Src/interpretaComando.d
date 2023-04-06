@@ -33,7 +33,7 @@ Core/Src/interpretaComando.o: ../Core/Src/interpretaComando.c \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../Core/Inc/main.h ../Core/Inc/trajectory.h
+ ../Core/Inc/main.h
 ../Core/Inc/interpretaComando.h:
 ../Core/Inc/kinematic.h:
 ../Core/Inc/GlobalFunc.h:
@@ -71,4 +71,3 @@ Core/Src/interpretaComando.o: ../Core/Src/interpretaComando.c \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
 ../Core/Inc/main.h:
-../Core/Inc/trajectory.h:

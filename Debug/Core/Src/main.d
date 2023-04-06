@@ -34,9 +34,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/tim.h ../Core/Inc/main.h ../Core/Inc/usart.h \
  ../Core/Inc/gpio.h ../Core/Inc/motor.h ../Core/Inc/homing.h \
  ../Core/Inc/interpretaComando.h ../Core/Inc/kinematic.h \
- ../Core/Inc/GlobalFunc.h ../Core/Inc/trajectory.h \
- ../Core/Inc/interpretaComando.h ../Core/Inc/statesMachine.h \
- ../Core/Inc/homing.h ../Core/Inc/motor.h
+ ../Core/Inc/GlobalFunc.h ../Core/Inc/interpretaComando.h \
+ ../Core/Inc/statesMachine.h ../Core/Inc/trajectory.h \
+ ../Core/Inc/homing.h ../Core/Inc/motor.h ../Core/Inc/trajectory.h
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -79,8 +79,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/interpretaComando.h:
 ../Core/Inc/kinematic.h:
 ../Core/Inc/GlobalFunc.h:
-../Core/Inc/trajectory.h:
 ../Core/Inc/interpretaComando.h:
 ../Core/Inc/statesMachine.h:
+../Core/Inc/trajectory.h:
 ../Core/Inc/homing.h:
 ../Core/Inc/motor.h:
+../Core/Inc/trajectory.h:
