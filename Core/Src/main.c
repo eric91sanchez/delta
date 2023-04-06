@@ -25,6 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <string.h>
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
@@ -32,6 +33,7 @@
 #include "homing.h"
 #include "interpretaComando.h"
 #include "statesMachine.h"
+#include "trajectory.h"
 //#include "inverseJacobian.h"
 /* USER CODE END Includes */
 
@@ -54,6 +56,7 @@
 
 /* USER CODE BEGIN PV */
 Motor motor1, motor2,motor3;
+
 double time;
 double flagErrorEndStop = 0;
 uint8_t cm0;				//Flag start transmit
@@ -405,7 +408,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
-	if (htim == &htim15) {  //Timer that update velocity'curve
+	if (htim == &htim15) {  //Timer that update velocity'curve. It interrups every 10 ms
 
 		if (!timeFlag) {
 			timeFlag = true;

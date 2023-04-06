@@ -47,7 +47,7 @@ typedef struct Vector3D{
 }Vec3D;
 
 typedef enum { false, true } bool;
-typedef enum {INIT,READY,WORKING,HOME,FAULT} statesMachine;
+typedef enum {INIT,READY,WORKING,HOME,DEMO,FAULT} statesMachine;
 
 typedef struct Motor{
 
@@ -70,6 +70,8 @@ typedef struct Motor{
 extern bool faultDrivers,endStopAlarmInf,endStopAlarmSup,continuar;
 extern bool timeFlag;
 extern uint8_t rx_index,rx_buffer[30],rx_data;
+extern statesMachine state;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -204,7 +206,7 @@ void Error_Handler(void);
 #define relayCerrado (HAL_GPIO_WritePin(relayDrivers_GPIO_Port, relayDrivers_Pin, GPIO_PIN_RESET))
 
 #define FCL 64000000.0
-
+#define BUFFER_SIZE 30
 
 #define MICROSTEPRESOLUTION 8000.0			   //Micropasos por revolucion. Corresponde a la configuracion de los Swithces del Driver
 #define REDUCTOR 1.0				 		   //Relacion de reduccion (Se la esablece a 1 ya que hemos quitado los reductores del robot)
