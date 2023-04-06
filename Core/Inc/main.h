@@ -67,8 +67,9 @@ typedef struct Motor{
 
 }Motor;
 
-
-
+extern bool faultDrivers,endStopAlarmInf,endStopAlarmSup,continuar;
+extern bool timeFlag;
+extern uint8_t rx_index,rx_buffer[30],rx_data;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
