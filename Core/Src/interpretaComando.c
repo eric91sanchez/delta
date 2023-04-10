@@ -11,6 +11,7 @@
 bool newline_detected = false;
 volatile double aux;
 uint8_t auxString[10];
+int i,j;
 
 void interpretaComando(void){
 
@@ -25,9 +26,9 @@ void interpretaComando(void){
 	case 'P':	//Formato de la trama  :Px0.1 y0.1 z-0.5(Eje, valor, espacio, Eje, valor, espacio, Eje, valor)
 	case 'p':
 		//TODO: VER SI SE PUEDE DEFINIR i,j como int. y asi borrar la variable flagError
-		flagErrorEndStop = 0;
-		uint8_t i = 1;
-		uint8_t j = 0;
+		//flagErrorEndStop = 0;
+		i = 1;
+		j = 0;
 		while(rx_buffer[i] != 0 && !newline_detected){
 			if(rx_buffer[i] == 'x'){
 				while(rx_buffer[i+1] != ' '){			//Almacenar dato en buffer hasta que se encuentre un espacio
