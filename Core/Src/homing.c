@@ -27,6 +27,7 @@ void homing(void) {
 	positive_Dir_MOTOR_2;
 	positive_Dir_MOTOR_3;
 
+	//Se desabilitan interrupciones externas
 	HAL_NVIC_DisableIRQ(EXTI0_IRQn);	//Apago interrupcion EndStop 1 Superior
 	HAL_NVIC_DisableIRQ(EXTI1_IRQn);	//Apago interrupcion EndStop 1 Inferior
 	HAL_NVIC_DisableIRQ(EXTI2_IRQn);	//Apago interrupcion EndStop 2 Superior
@@ -35,14 +36,12 @@ void homing(void) {
 	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);	//Apago interrupcion EndStop 3 Inferior
 	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn); //Apago interrupcion faultDriver
 
-
-    //Me aseguro que los motores esten detenidos
-
+    //Se asegura que los motores esten detenidos
 	Stop_PWM_MOTOR_1;
 	Stop_PWM_MOTOR_2;
 	Stop_PWM_MOTOR_3;
 
-	//Escritura del registro ARR
+	//Escritura del registro ARR de los PWM
 	__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm));
 	__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm));
 	__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(rpm));

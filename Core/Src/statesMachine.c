@@ -74,11 +74,12 @@ void robotInitialization(void){
 	* a darles una consigna pequeña de posicion en direccion horario para que los eslabones no entren en la
 	* singularidad de los 90º */
 
-
+	//TIMERS 12, 13 y 14 --> PWM step motors
 	HAL_TIM_Base_Start(&htim12);
 	HAL_TIM_Base_Start(&htim13);
 	HAL_TIM_Base_Start(&htim14);
 
+	//Enable drivers motores (0 es habilitado)
 	HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
@@ -90,6 +91,7 @@ void robotInitialization(void){
 	positive_Dir_MOTOR_2;
 	positive_Dir_MOTOR_3;
 
+	//flag paso alcanzado en falso
 	motor1.stepReached = false;
 	motor2.stepReached = false;
 	motor3.stepReached = false;
@@ -126,6 +128,7 @@ void statesMachineLoop(void){
         	homFin = false;
         	HAL_Delay(1);
 
+        	//Se habilitan interrupciones
         	HAL_NVIC_EnableIRQ(EXTI0_IRQn);		//Enciendo interrupcion EndStop 1 Superior
         	HAL_NVIC_EnableIRQ(EXTI1_IRQn);		//Enciendo interrupcion EndStop 1 Inferior
         	HAL_NVIC_EnableIRQ(EXTI2_IRQn);		//Enciendo interrupcion EndStop 2 Superior
@@ -134,6 +137,7 @@ void statesMachineLoop(void){
         	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Enciendo interrupcion EndStop 3 Inferior
         	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); //Enciendo interrupcion faultDriver
 
+        	//inicializa posición
 			Pini.x=0;
 			Pini.y=0;
 			Pini.z =-0.5208; //antes era -0.33
@@ -160,16 +164,16 @@ void statesMachineLoop(void){
 		while (!(motor1.stepReached && motor2.stepReached  && motor3.stepReached)){
 
 			if (state==FAULT)break;
-
+			//TODO revisar
 			if (motor1.stepReached) {
 				Stop_PWM_MOTOR_1;
 				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
 			}else if (motor2.stepReached) {
 				Stop_PWM_MOTOR_2;
-				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_2);
+				HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
 			}else if (motor3.stepReached){
 				Stop_PWM_MOTOR_3;
-				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_3);
+				HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 			}
 
 			motor1.omega = get_Straj(time,motor1.currentAngle,motor1.theta,arrayParams1);
@@ -181,9 +185,10 @@ void statesMachineLoop(void){
 
 			if(startMotors){
 				startMotors = false;
-				Start_PWM_MOTOR_1;	// Activar generacion de pwm
-				Start_PWM_MOTOR_2;	// Activar generacion de pwm
-				Start_PWM_MOTOR_3;	// Activar generacion de pwm
+				// Activar TIMERs generacion de pwm
+				Start_PWM_MOTOR_1;
+				Start_PWM_MOTOR_2;
+				Start_PWM_MOTOR_3;
 			}
 
 			stopMotors = true;
@@ -211,6 +216,7 @@ void statesMachineLoop(void){
 		Pini.y = Pfin.y;
 		Pini.z = Pfin.z;
 
+		//Stop Timers tiempo
 		HAL_TIM_Base_Stop_IT(&htim15);
 		HAL_TIM_Base_Stop(&htim5);
 
@@ -228,6 +234,7 @@ void statesMachineLoop(void){
 
 			startMotors = true;
 
+			//Start InputCapture
 			HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
 			HAL_TIM_IC_Start_IT(&htim3, TIM_CHANNEL_1);
 			HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_1);
@@ -252,6 +259,7 @@ void statesMachineLoop(void){
 			motor2.stepReached = false;
 			motor3.stepReached = false;
 
+			//Start counting time
 			HAL_TIM_Base_Start(&htim5);
 			HAL_TIM_Base_Start_IT(&htim15);
 
@@ -261,7 +269,8 @@ void statesMachineLoop(void){
 
 	case FAULT:
 
-		__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm_fault)); //Escritura del registro ARR
+		//Establece velocidad baja (1rpm), movimiento en fault
+		__HAL_TIM_SET_AUTORELOAD(&htim12,COUNTERPERIOD(rpm_fault));
 		__HAL_TIM_SET_AUTORELOAD(&htim13,COUNTERPERIOD(rpm_fault));
 		__HAL_TIM_SET_AUTORELOAD(&htim14,COUNTERPERIOD(rpm_fault));
 
@@ -293,8 +302,6 @@ void statesMachineLoop(void){
 					 Stop_PWM_MOTOR_1;
 				 }
 			 }
-
-
 			 if (ES2i_PRESSED){
 				 HAL_Delay(30);
 				 if (ES2i_PRESSED){
@@ -336,7 +343,6 @@ void statesMachineLoop(void){
 				 }
 			 }
 
-
 			 if(ES1s_UNPRESSED && ES2s_UNPRESSED && ES3s_UNPRESSED && ES1i_UNPRESSED && ES2i_UNPRESSED && ES3i_UNPRESSED){
 				 HAL_Delay(10);
 				 if(ES1s_UNPRESSED && ES2s_UNPRESSED && ES3s_UNPRESSED && ES1i_UNPRESSED && ES2i_UNPRESSED && ES3i_UNPRESSED){
@@ -346,16 +352,13 @@ void statesMachineLoop(void){
 					 continuar = false;
 					 HAL_UART_Transmit(&huart3,(uint8_t*)"Fin_FAULT\r\n", 13, 100);
 					 state = READY;
-
 				 }
 
 			 }
 
-
 		}//End while
 
 		while(faultDrivers && continuar){
-
 
 			//relayAbierto;
 			//HAL_Delay(100);
@@ -368,8 +371,6 @@ void statesMachineLoop(void){
 			state = READY;
 
 		}//End while
-
-
 		break;
 
 	case DEMO:
