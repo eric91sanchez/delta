@@ -200,6 +200,8 @@ void SystemClock_Config(void)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	test++;
+
+
 	switch( GPIO_Pin){
 
 		 case E_EndStop1_Inf_Pin:

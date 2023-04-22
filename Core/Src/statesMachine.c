@@ -53,7 +53,7 @@ uint8_t rx_buffer[BUFFER_SIZE];
 uint8_t rx_data;
 uint8_t message[] = "Inicializacion en curso...\n";		//Mensaje enviado al iniciar el programa
 uint8_t message1[] = "El robot ya se encuentra operacional.\n";
-
+uint8_t message2[]="done\n";
 bool receptionFlag=false;
 bool readFile=false;
 bool startDemo = false;
@@ -137,6 +137,9 @@ void statesMachineLoop(void){
         	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);	//Enciendo interrupcion EndStop 3 Inferior
         	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn); //Enciendo interrupcion faultDriver
 
+
+        	HAL_Delay(10);
+
         	//inicializa posición
 			Pini.x=0;
 			Pini.y=0;
@@ -149,6 +152,9 @@ void statesMachineLoop(void){
 			motor1.currentAngle = 0.0;
 			motor2.currentAngle = 0.0;
 			motor3.currentAngle = 0.0;
+
+			endStopAlarmSup=false;
+			endStopAlarmInf=false;
 
 			state = READY;
 
@@ -215,6 +221,8 @@ void statesMachineLoop(void){
 		Pini.x = Pfin.x;
 		Pini.y = Pfin.y;
 		Pini.z = Pfin.z;
+
+		HAL_UART_Transmit(&huart3, message2, sizeof(message2), 100);
 
 		//Stop Timers tiempo
 		HAL_TIM_Base_Stop_IT(&htim15);

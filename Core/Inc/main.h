@@ -99,12 +99,6 @@ void Error_Handler(void);
 #define E_EndStop2_Inf_Pin GPIO_PIN_3
 #define E_EndStop2_Inf_GPIO_Port GPIOE
 #define E_EndStop2_Inf_EXTI_IRQn EXTI3_IRQn
-#define E_EndStop3_Sup_Pin GPIO_PIN_4
-#define E_EndStop3_Sup_GPIO_Port GPIOE
-#define E_EndStop3_Sup_EXTI_IRQn EXTI4_IRQn
-#define E_EndStop3_Inf_Pin GPIO_PIN_5
-#define E_EndStop3_Inf_GPIO_Port GPIOE
-#define E_EndStop3_Inf_EXTI_IRQn EXTI9_5_IRQn
 #define BUTTON_Pin GPIO_PIN_13
 #define BUTTON_GPIO_Port GPIOC
 #define BUTTON_EXTI_IRQn EXTI15_10_IRQn
@@ -158,6 +152,12 @@ void Error_Handler(void);
 #define E_EndStop1_Inf_Pin GPIO_PIN_12
 #define E_EndStop1_Inf_GPIO_Port GPIOG
 #define E_EndStop1_Inf_EXTI_IRQn EXTI15_10_IRQn
+#define E_EndStop3_Sup_Pin GPIO_PIN_4
+#define E_EndStop3_Sup_GPIO_Port GPIOB
+#define E_EndStop3_Sup_EXTI_IRQn EXTI4_IRQn
+#define E_EndStop3_Inf_Pin GPIO_PIN_5
+#define E_EndStop3_Inf_GPIO_Port GPIOB
+#define E_EndStop3_Inf_EXTI_IRQn EXTI9_5_IRQn
 #define E_EndStop1_Sup_Pin GPIO_PIN_0
 #define E_EndStop1_Sup_GPIO_Port GPIOE
 #define E_EndStop1_Sup_EXTI_IRQn EXTI0_IRQn

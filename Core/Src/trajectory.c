@@ -79,7 +79,7 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
     } else if (t>Tj1 && t<=Ta-Tj1){   //b) [Tj1,Ta-Tj1]
         //printf("tramo2\n");
         q = qi+vi*t+(alima/6)*(3*pow(t,2)-3*Tj1*t+pow(Tj1,2));
-        qd = vi+amax*(t-Tj1/2);
+        qd = vi+alima*(t-Tj1/2);
         qdd = jmax*Tj1;
         qddd = 0;
 
@@ -91,7 +91,7 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
     } else if (t>Ta-Tj1 && t<=Ta){    //c) [Ta-Tj1,Ta]
         //printf("tramo3\n");
         q = qi+(vlim+vi)*Ta/2-vlim*(Ta-t)-jmin*pow(Ta-t,3)/6;
-        qd = vmax+jmin*pow(Ta-t,2)/2;
+        qd = vlim+jmin*pow(Ta-t,2)/2;
         qdd = -jmin*(Ta-t);
         qddd = jmin;
         if (flagInv){
@@ -104,7 +104,7 @@ double get_Straj(double t,double _qi, double _qf ,double *params){
     else if (t>Ta && t<=Ta+Tv){
         //printf("tramo4\n");
         q = qi+(vlim+vi)*Ta/2+vlim*(t-Ta);
-        qd = vmax;
+        qd = vlim;
         qdd = 0;
         qddd = 0;
         if (flagInv){
