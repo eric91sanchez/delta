@@ -50,8 +50,7 @@ bool timeFlag;
 uint8_t rx_index = 0;
 uint8_t rx_buffer[BUFFER_SIZE];
 uint8_t rx_data;
-uint8_t message[] = "Inicializacion en curso...\n";		//Mensaje enviado al iniciar el programa
-uint8_t message1[] = "El robot ya se encuentra operacional.\n";
+uint8_t message1[]="The robot is ready to be used.\n";
 uint8_t message2[]="done\n";
 bool receptionFlag=false;
 
@@ -67,7 +66,7 @@ void statesMachineLoop(void){
 
 	case INIT:
 
-		HAL_UART_Transmit(&huart3, message, sizeof(message), 100); //Mensaje de inicializacion en curso.
+		HAL_UART_Transmit(&huart2,(uint8_t*)"S1\n", 4, 100);
 		HAL_UART_Receive_IT(&huart3, &rx_data, 1);
 
 		//TIMERS 12, 13 y 14 --> PWM step motors
@@ -93,13 +92,15 @@ void statesMachineLoop(void){
 		motor3.stepReached = false;
 
 		HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100); //Mensaje inidicando que el Robot esta listo para su uso
+		HAL_Delay(100);
+		HAL_UART_Transmit(&huart2,(uint8_t*)"S2\n", 4, 100);
 
 		state = READY;
 
 		break;
 
 	case HOME:
-
+		HAL_UART_Transmit(&huart2,(uint8_t*)"S3\n", 4, 100);
 		receptionFlag = false; //Solo para asegurarse de no saltar al estado ready con esta bandera en true
 
 		homing();
@@ -136,7 +137,7 @@ void statesMachineLoop(void){
 
 			endStopAlarmSup=false;
 			endStopAlarmInf=false;
-
+			HAL_UART_Transmit(&huart2,(uint8_t*)"S2\n", 4, 100);
 			state = READY;
 
         }
@@ -151,7 +152,7 @@ void statesMachineLoop(void){
 		while (!(motor1.stepReached && motor2.stepReached  && motor3.stepReached)){
 
 			if (state==FAULT)break;
-			//TODO revisar
+
 			if (motor1.stepReached) {
 				Stop_PWM_MOTOR_1;
 				HAL_TIM_IC_Stop(&htim2, TIM_CHANNEL_1);
@@ -251,6 +252,7 @@ void statesMachineLoop(void){
 			HAL_TIM_Base_Start(&htim5);
 			HAL_TIM_Base_Start_IT(&htim15);
 
+			HAL_UART_Transmit(&huart2,(uint8_t*)"S4\n", 4, 100);
 			state = WORKING;
 		}
 		break;
@@ -338,7 +340,7 @@ void statesMachineLoop(void){
 					 endStopAlarmSup = false;
 					 endStopAlarmInf = false;
 					 continuar = false;
-					 HAL_UART_Transmit(&huart3,(uint8_t*)"Fin_FAULT\r\n", 13, 100);
+					 HAL_UART_Transmit(&huart2,(uint8_t*)"S2\n", 13, 100);
 					 state = READY;
 				 }
 
@@ -355,7 +357,7 @@ void statesMachineLoop(void){
 			faultDrivers = false;
 			continuar = false;
 
-			HAL_UART_Transmit(&huart3,(uint8_t*)"Fin_FALL\r\n", 13, 100);
+			HAL_UART_Transmit(&huart2,(uint8_t*)"S2\n", 13, 100);
 			state = READY;
 
 		}//End while
