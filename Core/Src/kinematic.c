@@ -1,5 +1,5 @@
 /*
- * cinematica.c
+ * kinematic.c
  *
  *  Created on: Jun 22, 2022
  *      Author: Elias Correa y Eliseo Elorga

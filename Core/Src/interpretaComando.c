@@ -86,11 +86,6 @@ void interpretaComando(void){
 
 		break;
 
-	case 'd':
-	case 'D':
-		readFile = true;
-		state = DEMO;
-		break;
 
 	default:break;
 

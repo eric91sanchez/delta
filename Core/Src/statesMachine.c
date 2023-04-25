@@ -44,7 +44,6 @@ Vec3D Pini,Pfin;       //Punto inicial y final  (coordenadas cartesianas)
 double arrayParams1[7];
 double arrayParams2[7];
 double arrayParams3[7];
-
 double rpm_fault = 1;
 
 bool timeFlag;
@@ -55,49 +54,9 @@ uint8_t message[] = "Inicializacion en curso...\n";		//Mensaje enviado al inicia
 uint8_t message1[] = "El robot ya se encuentra operacional.\n";
 uint8_t message2[]="done\n";
 bool receptionFlag=false;
-bool readFile=false;
-bool startDemo = false;
+
 
 //--------------------------------------------
-//Lectura de archivo para demo
-
-FILE *file;
-char *filename = "archivo.txt";
-char buffer[BUFFER_SIZE];
-//--------------------------------------------
-
-void robotInitialization(void){
-
-	/* En esta rutina se procederá a inicializar perifericos vinculados al robot asi como la definicion
-	* de un estado seguro y no referenciado del robot al momento de energizarlo, esto quiere decir que
-	* habilatamos los drivers al momento de lanzar el programa para que los motores se bloqueen. Se procedera
-	* a darles una consigna pequeña de posicion en direccion horario para que los eslabones no entren en la
-	* singularidad de los 90º */
-
-	//TIMERS 12, 13 y 14 --> PWM step motors
-	HAL_TIM_Base_Start(&htim12);
-	HAL_TIM_Base_Start(&htim13);
-	HAL_TIM_Base_Start(&htim14);
-
-	//Enable drivers motores (0 es habilitado)
-	HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
-
-	HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
-
-	// Se estable la direccion horario por defecto
-	positive_Dir_MOTOR_1;
-	positive_Dir_MOTOR_2;
-	positive_Dir_MOTOR_3;
-
-	//flag paso alcanzado en falso
-	motor1.stepReached = false;
-	motor2.stepReached = false;
-	motor3.stepReached = false;
-
-
-}
 
 
 void statesMachineLoop(void){
@@ -108,12 +67,34 @@ void statesMachineLoop(void){
 
 	case INIT:
 
-		  HAL_UART_Transmit(&huart3, message, sizeof(message), 100); //Mensaje de inicializacion en curso.
-		  HAL_UART_Receive_IT(&huart3, &rx_data, 1);
-		  robotInitialization();
-		  HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100); //Mensaje inidicando que el Robot esta listo para su uso
+		HAL_UART_Transmit(&huart3, message, sizeof(message), 100); //Mensaje de inicializacion en curso.
+		HAL_UART_Receive_IT(&huart3, &rx_data, 1);
 
-		  state = READY;
+		//TIMERS 12, 13 y 14 --> PWM step motors
+		HAL_TIM_Base_Start(&htim12);
+		HAL_TIM_Base_Start(&htim13);
+		HAL_TIM_Base_Start(&htim14);
+
+		//Enable drivers motores (0 es habilitado)
+		HAL_GPIO_WritePin(S_Enable_1_GPIO_Port, S_Enable_1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(S_Enable_2_GPIO_Port, S_Enable_2_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(S_Enable_3_GPIO_Port, S_Enable_3_Pin, GPIO_PIN_RESET);
+
+		HAL_Delay(50); //50 ms es el tiempo que la señal ENABLE en cambiar de estado
+
+		// Se estable la direccion horario por defecto
+		positive_Dir_MOTOR_1;
+		positive_Dir_MOTOR_2;
+		positive_Dir_MOTOR_3;
+
+		//flag paso alcanzado en falso
+		motor1.stepReached = false;
+		motor2.stepReached = false;
+		motor3.stepReached = false;
+
+		HAL_UART_Transmit(&huart3, message1, sizeof(message1), 100); //Mensaje inidicando que el Robot esta listo para su uso
+
+		state = READY;
 
 		break;
 
@@ -228,8 +209,7 @@ void statesMachineLoop(void){
 		HAL_TIM_Base_Stop_IT(&htim15);
 		HAL_TIM_Base_Stop(&htim5);
 
-		if (startDemo){state=DEMO;}
-		else{state = READY;}
+		state = READY;
 
 
 		break;
@@ -380,39 +360,6 @@ void statesMachineLoop(void){
 
 		}//End while
 		break;
-
-	case DEMO:
-
-	    // Abre el archivo para lectura (una sola vez siempre y cuando readFile sea verdadero )
-		if (readFile){
-			file = fopen(filename, "r");
-
-			// Verifica si el archivo se ha abierto correctamente
-			if (file == NULL) {
-				HAL_UART_Transmit(&huart3,(uint8_t*)"No se pudo abrir el archivo.\n", 30, 100);
-				break;
-			}
-			readFile = false;
-			startDemo = true;
-		}
-
-	    // Lee cada línea del archivo y la guarda en el buffer
-	    if (fgets(buffer, BUFFER_SIZE, file) != NULL) {
-
-	        // Copia la línea al buffer de tipo uint8_t
-	        //uint8_t rx_buffer[strlen(buffer)];
-	        memcpy(rx_buffer, buffer, strlen(buffer));
-
-	        interpretaComando();
-
-	        state = READY;
-	    }
-	    else{
-			// Cierra el archivo
-			startDemo = false;
-			fclose(file);
-			HAL_UART_Transmit(&huart3,(uint8_t*)"Fin demo\n", 10, 100);
-	    }
 
 	default:break;
 	}

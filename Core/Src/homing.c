@@ -7,7 +7,7 @@
  *
  */
 #include "homing.h"
-
+#define TIME_OFFSET 1100
 
 double rpm = 1.0;  //Valor experimental. Se encontro que es una buena velocidad para la tarea de homing
 bool homAprox, homStart;
@@ -86,7 +86,7 @@ void homing(void) {
                 negative_Dir_MOTOR_1;
                 HAL_Delay(0.5); 							//delay cambio de dir
                 Start_PWM_MOTOR_1;
-                HAL_Delay(500); //Lo dejamos que se mueva medio segundo en la direccion descreciente
+                HAL_Delay(TIME_OFFSET); //Lo dejamos que se mueva medio segundo en la direccion descreciente
 
             }
 
@@ -113,7 +113,7 @@ void homing(void) {
                 negative_Dir_MOTOR_2;
                 HAL_Delay(0.5);
                 Start_PWM_MOTOR_2;
-                HAL_Delay(500);
+                HAL_Delay(TIME_OFFSET);
 
             }
 
@@ -140,7 +140,7 @@ void homing(void) {
                 negative_Dir_MOTOR_3;
                 HAL_Delay(0.5);
                 Start_PWM_MOTOR_3;
-                HAL_Delay(500);
+                HAL_Delay(TIME_OFFSET);
             }
 
             Stop_PWM_MOTOR_3;

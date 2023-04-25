@@ -17,7 +17,7 @@
 extern Vec3D Pini,Pfin;
 extern UART_HandleTypeDef huart3;
 extern uint8_t rx_buffer[BUFFER_SIZE];
-extern bool receptionFlag,readFile;
+extern bool receptionFlag;
 extern statesMachine state;
 
 

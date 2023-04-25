@@ -22,22 +22,11 @@ extern double vmin,jmin,amin;
 
 extern Motor motor1,motor2,motor3;
 
-/*
-
-extern double ErrorPeriodo[3];
-extern double ErrorAcumuladoPeriodo[3];
-*/
-
-extern TIM_HandleTypeDef htim12;
-extern TIM_HandleTypeDef htim13;
-extern TIM_HandleTypeDef htim14;
-
+extern TIM_HandleTypeDef htim12,htim13,htim14;
 extern UART_HandleTypeDef huart3;
-
 
 void update_ScurveTraj(double _qi ,double _qf, double vi,double vf ,double vmax,double amax,double jmax, double *params);
 double get_Straj(double t,double _qi, double _qf,double *params);
-
 void setProfilTimer(void);
 
 

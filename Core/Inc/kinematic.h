@@ -12,7 +12,6 @@
 #include <main.h>
 
 extern Motor motor1,motor2,motor3;
-
 void inverseKinematic(Vec3D _Pfin);
 
 #endif /* INC_KINEMATIC_H_ */

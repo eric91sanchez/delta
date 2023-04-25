@@ -24,7 +24,6 @@ extern TIM_HandleTypeDef htim2,htim3,htim4,htim12,htim13,htim14,htim15,htim5;
 extern Motor motor1,motor2,motor3;
 extern double time;
 
-void robotInitialization(void);
 void statesMachineLoop(void);
 
 
