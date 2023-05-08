@@ -58,10 +58,7 @@
 Motor motor1, motor2,motor3;
 
 double time;
-double flagErrorEndStop = 0;
 uint8_t cm0;				//Flag start transmit
-
-int test =0,test1=0;  //TODO: Variables para debuguear, borrar al final
 
 /* USER CODE END PV */
 
@@ -199,9 +196,6 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
-	test++;
-
-
 	switch( GPIO_Pin){
 
 		 case E_EndStop1_Inf_Pin:
@@ -218,6 +212,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
+			 HAL_UART_Transmit(&huart3,(uint8_t*)"S5\n", 4, 100);
 			 state = FAULT;
 			 break;
 
@@ -233,7 +228,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
 			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
-			 endStopAlarmSup = true;
+			 upperESalarm = true;
+			 HAL_UART_Transmit(&huart3,(uint8_t*)"S5\n", 4, 100);
 			 state = FAULT;
 			 break;
 
@@ -250,6 +246,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
+			 HAL_UART_Transmit(&huart3,(uint8_t*)"S5\n", 4, 100);
 			 state = FAULT;
 			 break;
 
@@ -266,7 +263,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
 			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
-			 endStopAlarmSup = true;
+			 upperESalarm = true;
+			 HAL_UART_Transmit(&huart3,(uint8_t*)"S5\n", 4, 100);
 			 state = FAULT;
 			 break;
 
@@ -283,6 +281,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
 			 endStopAlarmInf = true;
+			 HAL_UART_Transmit(&huart3,(uint8_t*)"S5\n", 4, 100);
 			 state = FAULT;
 
 			 break;
@@ -299,13 +298,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 			 HAL_TIM_IC_Stop(&htim3, TIM_CHANNEL_1);
 			 HAL_TIM_IC_Stop(&htim4, TIM_CHANNEL_1);
 
-			 endStopAlarmSup = true;
+			 upperESalarm = true;
+			 HAL_UART_Transmit(&huart3,(uint8_t*)"S5\n", 4, 100);
 			 state = FAULT;
 			 break;
 
 		 case BUTTON_Pin:
 
-			 if (!endStopAlarmSup && !endStopAlarmInf && !faultDrivers){
+			 if (!upperESalarm && !endStopAlarmInf && !faultDrivers){
 				 continuar = false;
 			 }else{continuar = true;}
 

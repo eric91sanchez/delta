@@ -21,8 +21,6 @@ extern bool receptionFlag;
 extern statesMachine state;
 
 
-extern double flagErrorEndStop;
-
 void interpretaComando(void);
 
 

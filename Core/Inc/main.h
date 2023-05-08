@@ -47,7 +47,7 @@ typedef struct Vector3D{
 }Vec3D;
 
 typedef enum { false, true } bool;
-typedef enum {INIT,READY,WORKING,HOME,DEMO,FAULT} statesMachine;
+typedef enum {INIT,READY,WORKING,HOME,FAULT} statesMachine;
 
 typedef struct Motor{
 
@@ -67,7 +67,7 @@ typedef struct Motor{
 
 }Motor;
 
-extern bool faultDrivers,endStopAlarmInf,endStopAlarmSup,continuar;
+extern bool faultDrivers,endStopAlarmInf,upperESalarm,continuar;
 extern bool timeFlag;
 extern uint8_t rx_index,rx_buffer[30],rx_data;
 extern statesMachine state;
@@ -213,6 +213,11 @@ void Error_Handler(void);
 #define STEPREV MICROSTEPRESOLUTION*REDUCTOR   //Paso por revolucion considerando la reduccion.
 
 #define COUNTERPERIOD(rpm) (uint32_t)((FCL/((double)(TIM12->PSC) + 1.0))*( 60.0 / ((rpm) * STEPREV)) - 1.0)
+
+#define DELAY_FAULT 1000  //valor experimental 1segundo
+#define DELAY_ENABLE 50   //Este valor se encuentra en el datasheet de los drivers
+#define DELAY_DIR 0.5	  //Este valor se encuentra en el datasheet de los drivers
+
 
 /* USER CODE END Private defines */
 

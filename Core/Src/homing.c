@@ -7,11 +7,10 @@
  *
  */
 #include "homing.h"
-#define TIME_OFFSET 1100
+#define TIME_OFFSET 1100  //Valor experimental. Se encontró que para ese offset los eslabones quedaban exactamente a cero grados respecto de la horizontal
 
 double rpm = 1.0;  //Valor experimental. Se encontro que es una buena velocidad para la tarea de homing
 bool homAprox, homStart;
-
 
 void homing(void) {
 
@@ -84,7 +83,7 @@ void homing(void) {
             while(ES1s_PRESSED){
 
                 negative_Dir_MOTOR_1;
-                HAL_Delay(0.5); 							//delay cambio de dir
+                HAL_Delay(DELAY_DIR); 							//delay cambio de dir
                 Start_PWM_MOTOR_1;
                 HAL_Delay(TIME_OFFSET); //Lo dejamos que se mueva medio segundo en la direccion descreciente
 
@@ -111,7 +110,7 @@ void homing(void) {
             while(ES2s_PRESSED){
 
                 negative_Dir_MOTOR_2;
-                HAL_Delay(0.5);
+                HAL_Delay(DELAY_DIR);
                 Start_PWM_MOTOR_2;
                 HAL_Delay(TIME_OFFSET);
 
@@ -138,7 +137,7 @@ void homing(void) {
             while(ES3s_PRESSED){
 
                 negative_Dir_MOTOR_3;
-                HAL_Delay(0.5);
+                HAL_Delay(DELAY_DIR);
                 Start_PWM_MOTOR_3;
                 HAL_Delay(TIME_OFFSET);
             }
@@ -150,7 +149,6 @@ void homing(void) {
             if (ES1s_UNPRESSED && !motor1.hom)Start_PWM_MOTOR_1;
             if (ES2s_UNPRESSED && !motor2.hom)Start_PWM_MOTOR_2;
         }// ES3s_UNPRESSED : Se dejó de presionar el FC3 sup
-
 
 
         if (motor1.hom && motor2.hom && motor3.hom){

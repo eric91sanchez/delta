@@ -12,7 +12,7 @@
 #include "main.h"
 
 extern Motor motor1,motor2,motor3;
-extern double flagErrorEndStop;
+
 
 void configMotor(Motor *motor, int i);
 
